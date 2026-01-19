@@ -1,9 +1,16 @@
 <script setup lang="ts">
-const menuItems = [
-  { name: "Pulpit", icon: "📊", to: "/app/dashboard" },
+// Menu główne (operacyjne)
+const mainItems = [
+  { name: "Pulpit", icon: "📊", to: "/app" }, // Zmieniłem na /app (index)
   { name: "Transakcje", icon: "💳", to: "/app/transakcje" },
   { name: "Budżet", icon: "📉", to: "/app/budzet" },
   { name: "Cele", icon: "🎯", to: "/app/cele" },
+];
+
+// Menu ustawień (administracyjne)
+const settingsItems = [
+  { name: "Mój Plan", icon: "💎", to: "/app/plan", highlight: true }, // Dodany highlight
+  { name: "Ustawienia", icon: "⚙️", to: "/app/ustawienia" }, // Placeholder na przyszłość
 ];
 </script>
 
@@ -16,55 +23,102 @@ const menuItems = [
       <div
         class="h-20 flex items-center px-8 border-b border-slate-800/50 bg-gradient-to-r from-slate-900 to-slate-800"
       >
-        <div
-          class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 mr-3"
-        >
-          V
-        </div>
-        <span class="text-white font-bold text-xl tracking-tight">Vaulta</span>
+        <NuxtLink to="/app" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform"
+          >
+            V
+          </div>
+          <span class="text-white font-bold text-xl tracking-tight"
+            >Vaulta</span
+          >
+        </NuxtLink>
       </div>
 
-      <nav class="flex-1 px-4 py-8 space-y-2">
-        <p
-          class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4"
-        >
-          Menu Główne
-        </p>
-
-        <NuxtLink
-          v-for="item in menuItems"
-          :key="item.name"
-          :to="item.to"
-          active-class="bg-blue-600/10 text-blue-400 border-blue-600"
-          class="flex items-center px-4 py-3 rounded-xl border-l-4 border-transparent hover:bg-slate-800 transition-all duration-300 group relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"
-          ></div>
-
-          <span
-            class="mr-3 text-xl group-hover:scale-110 transition-transform duration-300 block"
-            >{{ item.icon }}</span
+      <nav class="flex-1 px-4 py-8 space-y-8 overflow-y-auto custom-scrollbar">
+        <div>
+          <p
+            class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4"
           >
-          <span class="font-medium">{{ item.name }}</span>
-        </NuxtLink>
+            Aplikacja
+          </p>
+          <div class="space-y-1">
+            <NuxtLink
+              v-for="item in mainItems"
+              :key="item.name"
+              :to="item.to"
+              active-class="bg-blue-600/10 text-blue-400 border-blue-600"
+              class="flex items-center px-4 py-3 rounded-xl border-l-4 border-transparent hover:bg-slate-800 transition-all duration-300 group relative overflow-hidden"
+            >
+              <div
+                class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"
+              ></div>
+              <span
+                class="mr-3 text-xl group-hover:scale-110 transition-transform duration-300 block"
+                >{{ item.icon }}</span
+              >
+              <span class="font-medium">{{ item.name }}</span>
+            </NuxtLink>
+          </div>
+        </div>
+
+        <div>
+          <p
+            class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4"
+          >
+            Konto
+          </p>
+          <div class="space-y-1">
+            <NuxtLink
+              v-for="item in settingsItems"
+              :key="item.name"
+              :to="item.to"
+              active-class="bg-blue-600/10 text-blue-400 border-blue-600"
+              class="flex items-center justify-between px-4 py-3 rounded-xl border-l-4 border-transparent hover:bg-slate-800 transition-all duration-300 group relative overflow-hidden"
+            >
+              <div
+                class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"
+              ></div>
+
+              <div class="flex items-center">
+                <span
+                  class="mr-3 text-xl group-hover:scale-110 transition-transform duration-300 block"
+                  >{{ item.icon }}</span
+                >
+                <span class="font-medium">{{ item.name }}</span>
+              </div>
+
+              <span
+                v-if="item.highlight"
+                class="text-[10px] font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full shadow-lg shadow-blue-500/40"
+              >
+                UPGRADE
+              </span>
+            </NuxtLink>
+          </div>
+        </div>
       </nav>
 
       <div
-        class="p-4 m-4 rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-3 hover:bg-slate-800 transition cursor-pointer"
+        class="p-4 m-4 mt-auto rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-3 hover:bg-slate-800 transition cursor-pointer group"
       >
         <img
           src="https://i.pravatar.cc/150?u=marek"
           alt="Avatar"
-          class="w-10 h-10 rounded-full border-2 border-slate-600"
+          class="w-10 h-10 rounded-full border-2 border-slate-600 group-hover:border-blue-500 transition-colors"
         />
         <div class="overflow-hidden">
           <p class="text-sm font-bold text-white truncate">Marek Nowak</p>
-          <p class="text-xs text-slate-500 truncate">marek@example.com</p>
+          <p
+            class="text-xs text-slate-500 truncate group-hover:text-blue-400 transition-colors"
+          >
+            Plan Darmowy
+          </p>
         </div>
         <button
-          class="ml-auto text-slate-400 hover:text-white"
+          class="ml-auto text-slate-400 hover:text-white transition-transform hover:rotate-90"
           @click="$router.push('/')"
+          title="Wyloguj"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,8 +138,35 @@ const menuItems = [
       </div>
     </aside>
 
-    <main class="flex-1 md:ml-72 p-8 overflow-y-auto">
-      <slot />
+    <main class="flex-1 md:ml-72 flex flex-col h-screen overflow-hidden">
+      <div
+        class="bg-indigo-600 text-white px-4 py-2 text-sm font-medium text-center shadow-md z-40 relative"
+      >
+        👋 Cześć! Przeglądasz <strong>Wersję Demo</strong>. Wszystkie dane są
+        przykładowe.
+        <NuxtLink
+          to="/app/register"
+          class="underline ml-2 hover:text-indigo-100"
+          >Załóż prawdziwe konto &rarr;</NuxtLink
+        >
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-8 bg-slate-50">
+        <slot />
+      </div>
     </main>
   </div>
 </template>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  border-radius: 20px;
+}
+</style>

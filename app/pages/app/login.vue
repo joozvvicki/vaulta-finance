@@ -1,20 +1,30 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "auth",
-});
+definePageMeta({ layout: "auth" });
 
 const email = ref("");
 const password = ref("");
 const isLoading = ref(false);
 const router = useRouter();
+const route = useRoute();
 
-const handleLogin = () => {
+const handleLogin = async () => {
   isLoading.value = true;
   setTimeout(() => {
     isLoading.value = false;
     router.push("/app/dashboard");
-  }, 1000);
+  }, 1500);
 };
+
+onMounted(async () => {
+  if (route.query.demo === "true") {
+    await new Promise((r) => setTimeout(r, 500));
+
+    email.value = "demo@vaulta.pl";
+    password.value = "demo12345";
+
+    handleLogin();
+  }
+});
 </script>
 
 <template>

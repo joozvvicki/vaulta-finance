@@ -14,10 +14,9 @@ const handleRegister = () => {
   if (!form.value.terms) return alert("Musisz zaakceptować regulamin!");
 
   isLoading.value = true;
-  // Symulacja API
   setTimeout(() => {
     isLoading.value = false;
-    router.push("/app");
+    router.push("/app/dashboard");
   }, 1500);
 };
 </script>

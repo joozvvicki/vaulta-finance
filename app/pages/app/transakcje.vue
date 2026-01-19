@@ -4,72 +4,11 @@ definePageMeta({ layout: "dashboard" });
 const searchQuery = ref("");
 const statusFilter = ref("Wszystkie");
 
-// Mock data
-const transactions = [
-  {
-    id: 1,
-    merchant: "Spotify AB",
-    date: "2026-01-18",
-    category: "Rozrywka",
-    amount: -29.99,
-    status: "Completed",
-    icon: "🎧",
-  },
-  {
-    id: 2,
-    merchant: "Żabka Polska",
-    date: "2026-01-18",
-    category: "Zakupy",
-    amount: -45.5,
-    status: "Completed",
-    icon: "🐸",
-  },
-  {
-    id: 3,
-    merchant: "Pracodawca sp. z o.o.",
-    date: "2026-01-15",
-    category: "Wypłata",
-    amount: 8500.0,
-    status: "Completed",
-    icon: "💼",
-  },
-  {
-    id: 4,
-    merchant: "Uber Trip",
-    date: "2026-01-14",
-    category: "Transport",
-    amount: -35.2,
-    status: "Pending",
-    icon: "u",
-  },
-  {
-    id: 5,
-    merchant: "Netflix",
-    date: "2026-01-12",
-    category: "Rozrywka",
-    amount: -52.0,
-    status: "Completed",
-    icon: "🎬",
-  },
-  {
-    id: 6,
-    merchant: "Orlen",
-    date: "2026-01-10",
-    category: "Paliwo",
-    amount: -240.0,
-    status: "Completed",
-    icon: "⛽",
-  },
-  {
-    id: 7,
-    merchant: "Bankomat Euronet",
-    date: "2026-01-09",
-    category: "Gotówka",
-    amount: -100.0,
-    status: "Failed",
-    icon: "🏧",
-  },
-];
+const {
+  data: transactions,
+  pending,
+  error,
+} = await useFetch("/api/transactions");
 
 const statusColor = (status: string) => {
   switch (status) {
@@ -131,9 +70,27 @@ const statusColor = (status: string) => {
     </div>
 
     <div
-      class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+      class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px]"
     >
-      <table class="w-full text-left border-collapse">
+      <div v-if="pending" class="p-6 space-y-4">
+        <div
+          v-for="i in 5"
+          :key="i"
+          class="flex items-center justify-between animate-pulse"
+        >
+          <div class="flex items-center gap-4">
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+            <div class="h-4 bg-slate-200 rounded w-32"></div>
+          </div>
+          <div class="h-4 bg-slate-200 rounded w-16"></div>
+        </div>
+      </div>
+
+      <div v-else-if="error" class="p-12 text-center text-red-500">
+        Wystąpił błąd podczas pobierania transakcji. Spróbuj odświeżyć.
+      </div>
+
+      <table v-else class="w-full text-left border-collapse">
         <thead
           class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold"
         >
@@ -193,7 +150,6 @@ const statusColor = (status: string) => {
           </tr>
         </tbody>
       </table>
-
       <div
         class="px-6 py-4 border-t border-slate-100 flex justify-between items-center text-sm text-slate-500"
       >

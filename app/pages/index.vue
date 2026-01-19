@@ -154,16 +154,19 @@ const toggleFaq = (index: number) => {
           }"
           class="flex flex-col sm:flex-row justify-center gap-4"
         >
-          <button
-            class="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
+          <NuxtLink
+            to="/app/register"
+            class="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 inline-flex justify-center"
           >
             Zacznij za darmo
-          </button>
-          <button
-            class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition"
+          </NuxtLink>
+
+          <NuxtLink
+            to="/app/login?demo=true"
+            class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition inline-flex justify-center"
           >
             Zobacz demo
-          </button>
+          </NuxtLink>
         </div>
       </div>
 
@@ -266,6 +269,11 @@ const toggleFaq = (index: number) => {
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50',
                 ]"
+                @click="
+                  plan.name === 'Enterprise'
+                    ? $router.push('/enterprise')
+                    : $router.push('/app/login')
+                "
               >
                 {{ plan.cta }}
               </button>
@@ -402,11 +410,13 @@ const toggleFaq = (index: number) => {
           <div class="flex justify-center gap-4">
             <button
               class="px-6 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition text-sm"
+              @click="$router.push('/pomoc')"
             >
               Centrum Pomocy
             </button>
             <button
               class="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition text-sm shadow-sm"
+              @click="$router.push('/pomoc/kontakt')"
             >
               Napisz do nas
             </button>

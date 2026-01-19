@@ -26,13 +26,24 @@
           <NuxtLink to="/#cennik" class="hover:text-blue-600 transition"
             >Cennik</NuxtLink
           >
+          <NuxtLink to="/kariera" class="hover:text-blue-600 transition"
+            >Kariera</NuxtLink
+          >
         </nav>
-        <button
-          class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800 transition"
-          @click="$router.push({ path: '/app/login' })"
-        >
-          Zaloguj się
-        </button>
+        <div class="flex gap-2">
+          <button
+            class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800 transition"
+            @click="$router.push({ path: '/app/login' })"
+          >
+            Zaloguj się
+          </button>
+          <button
+            class="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition inline-flex justify-center"
+            @click="$router.push({ path: '/app/register' })"
+          >
+            Załóż konto
+          </button>
+        </div>
       </div>
     </header>
 
@@ -75,7 +86,12 @@
               >
             </li>
             <li>
-              <a href="#" class="hover:text-white transition">RODO</a>
+              <NuxtLink
+                to="/rodo"
+                class="hover:text-white transition flex items-center gap-2"
+              >
+                Obowiązek RODO
+              </NuxtLink>
             </li>
           </ul>
         </div>
