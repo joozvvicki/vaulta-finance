@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Menu główne (operacyjne)
 const mainItems = [
-  { name: "Pulpit", icon: "📊", to: "/app" }, // Zmieniłem na /app (index)
+  { name: "Pulpit", icon: "📊", to: "/app/dashboard" }, // Zmieniłem na /app (index)
   { name: "Transakcje", icon: "💳", to: "/app/transakcje" },
   { name: "Budżet", icon: "📉", to: "/app/budzet" },
   { name: "Cele", icon: "🎯", to: "/app/cele" },
