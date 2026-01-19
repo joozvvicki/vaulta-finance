@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      budget_categories: {
+        Row: {
+          category: string
+          created_at: string
+          icon: string | null
+          id: string
+          keywords: string[] | null
+          limit: number
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          keywords?: string[] | null
+          limit?: number
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          keywords?: string[] | null
+          limit?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           color: string | null
@@ -55,6 +85,8 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          initial_balance: number | null
+          saved_balance: number | null
         }
         Insert: {
           avatar_url?: string | null
@@ -63,6 +95,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          initial_balance?: number | null
+          saved_balance?: number | null
         }
         Update: {
           avatar_url?: string | null
@@ -71,6 +105,8 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          initial_balance?: number | null
+          saved_balance?: number | null
         }
         Relationships: []
       }

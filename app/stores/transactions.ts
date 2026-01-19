@@ -140,8 +140,6 @@ export const useTransactionStore = defineStore("transactions", () => {
     sortedTransactions.value.slice(0, 5),
   );
 
-  // --- SYNCHRONIZACJA MAJĄTKU Z BAZĄ ---
-
   async function setTotalBalance(targetBalance: number) {
     const totalSumFromTransactions = transactions.value.reduce(
       (acc, t) => acc + Number(t.amount),

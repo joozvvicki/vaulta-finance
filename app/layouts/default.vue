@@ -1,22 +1,45 @@
+<script setup lang="ts">
+const user = useSupabaseUser();
+const { profile, fetchProfile } = useProfile();
+
+const userInitial = computed(() => {
+  const name = profile.value?.full_name || user.value?.email;
+  return name ? name.charAt(0).toUpperCase() : "U";
+});
+
+const displayName = computed(() => {
+  return profile.value?.full_name?.split(" ")[0] || "Użytkownik";
+});
+
+onMounted(async () => {
+  await fetchProfile();
+});
+</script>
+
 <template>
   <div class="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col">
     <header
       class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200"
     >
       <div
-        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative"
       >
-        <NuxtLink to="/" class="flex items-center gap-2">
-          <div
-            class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold"
-          >
-            V
-          </div>
-          <span class="text-xl font-bold tracking-tight text-slate-900"
-            >Vaulta</span
-          >
-        </NuxtLink>
-        <nav class="hidden md:flex gap-8 text-sm font-medium text-slate-600">
+        <div class="flex-1 flex items-center justify-start">
+          <NuxtLink to="/" class="flex items-center gap-2 group">
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30 group-hover:scale-105 transition-transform"
+            >
+              V
+            </div>
+            <span class="text-xl font-bold tracking-tight text-slate-900"
+              >Vaulta</span
+            >
+          </NuxtLink>
+        </div>
+
+        <nav
+          class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-8 text-sm font-medium text-slate-600"
+        >
           <NuxtLink to="/" class="hover:text-blue-600 transition"
             >Strona główna</NuxtLink
           >
@@ -30,19 +53,67 @@
             >Kariera</NuxtLink
           >
         </nav>
-        <div class="flex gap-2">
-          <button
-            class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800 transition"
-            @click="$router.push({ path: '/login' })"
-          >
-            Zaloguj się
-          </button>
-          <button
-            class="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition inline-flex justify-center"
-            @click="$router.push({ path: '/register' })"
-          >
-            Załóż konto
-          </button>
+
+        <div class="flex-1 flex items-center justify-end gap-4">
+          <div v-if="user" class="flex items-center gap-3">
+            <div class="hidden sm:flex flex-col items-end mr-1">
+              <span
+                class="text-xs font-bold text-slate-400 uppercase tracking-wider"
+                >Zalogowany jako</span
+              >
+              <span class="text-sm font-bold text-slate-900 leading-tight">{{
+                displayName
+              }}</span>
+            </div>
+
+            <img
+              v-if="user && profile.avatar_url"
+              :src="profile.avatar_url"
+              class="w-8 h-8 rounded-full flex items-center justify-center font-bold border border-blue-200"
+            />
+            <div
+              v-else
+              class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold border border-blue-200"
+            >
+              {{ userInitial }}
+            </div>
+
+            <NuxtLink
+              to="/app/dashboard"
+              class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20 flex items-center gap-2"
+            >
+              Pulpit
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </NuxtLink>
+          </div>
+
+          <div v-else class="flex gap-2">
+            <button
+              class="text-slate-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 transition"
+              @click="$router.push({ path: '/login' })"
+            >
+              Zaloguj się
+            </button>
+            <button
+              class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/30"
+              @click="$router.push({ path: '/register' })"
+            >
+              Załóż konto
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -56,17 +127,28 @@
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8"
       >
         <div>
-          <div class="text-white font-bold text-xl mb-4">Vaulta</div>
+          <div
+            class="text-white font-bold text-xl mb-4 flex items-center gap-2"
+          >
+            <div
+              class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white text-xs"
+            >
+              V
+            </div>
+            Vaulta
+          </div>
           <p class="text-sm">Twoje centrum dowodzenia finansami.</p>
         </div>
         <div>
           <h4 class="text-white font-bold mb-4">Firma</h4>
           <ul class="space-y-2 text-sm">
             <li>
-              <NuxtLink to="/o-nas" class="hover:text-white">O nas</NuxtLink>
+              <NuxtLink to="/o-nas" class="hover:text-white transition"
+                >O nas</NuxtLink
+              >
             </li>
             <li>
-              <NuxtLink to="/kariera" class="hover:text-white"
+              <NuxtLink to="/kariera" class="hover:text-white transition"
                 >Kariera</NuxtLink
               >
             </li>

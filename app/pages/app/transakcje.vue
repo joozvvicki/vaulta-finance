@@ -41,6 +41,7 @@ const filteredTransactions = computed(() => {
 
 const isImportModalOpen = ref(false);
 const isImporting = ref(false);
+
 const handleImportedData = async (newTransactions: any[]) => {
   if (newTransactions.length === 0) return;
 
@@ -69,7 +70,7 @@ const handleImportedData = async (newTransactions: any[]) => {
 
   try {
     const toInsert = newTransactions.map((t) => ({
-      user_id: userId, // Używamy zweryfikowanego userId
+      user_id: userId,
       date: formatDateForDb(t.date),
       merchant: t.merchant,
       amount: t.amount,
@@ -144,7 +145,8 @@ const getIconByCategory = (cat: string) => {
       <div class="flex gap-3">
         <button
           @click="isImportModalOpen = true"
-          class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm"
+          :disabled="store.isLoading"
+          class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
         >
           <svg
             class="w-4 h-4"
@@ -164,7 +166,8 @@ const getIconByCategory = (cat: string) => {
 
         <button
           @click="openAddModal"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-500/30"
+          :disabled="store.isLoading"
+          class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-500/30 disabled:opacity-50"
         >
           <span>+</span> Dodaj ręcznie
         </button>
@@ -211,11 +214,46 @@ const getIconByCategory = (cat: string) => {
             <th class="px-6 py-4 w-10"></th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+
+        <tbody v-if="store.isLoading" class="divide-y divide-slate-100">
+          <tr v-for="i in 6" :key="i" class="animate-pulse">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-200"></div>
+                <div class="space-y-2">
+                  <div class="h-3 w-24 bg-slate-200 rounded"></div>
+                  <div class="h-2 w-16 bg-slate-100 rounded"></div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-5 w-20 bg-slate-100 rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-3 w-20 bg-slate-200 rounded"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-5 w-16 bg-slate-200 rounded-full"></div>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="h-4 w-24 bg-slate-200 rounded ml-auto"></div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="h-6 w-6 bg-slate-100 rounded-full"></div>
+            </td>
+          </tr>
+        </tbody>
+
+        <TransitionGroup
+          v-else
+          name="list"
+          tag="tbody"
+          class="divide-y divide-slate-100"
+        >
           <tr
-            v-for="(t, index) in filteredTransactions"
+            v-for="t in filteredTransactions"
             :key="t.id"
-            class="hover:bg-slate-50 transition group cursor-pointer"
+            class="hover:bg-slate-50 transition-colors group cursor-pointer"
             @click="openEditModal(t)"
           >
             <td class="px-6 py-4">
@@ -271,20 +309,24 @@ const getIconByCategory = (cat: string) => {
               </button>
             </td>
           </tr>
-        </tbody>
+        </TransitionGroup>
       </table>
 
       <div
-        v-if="filteredTransactions.length === 0"
-        class="p-12 text-center text-slate-500"
+        v-if="!store.isLoading && filteredTransactions.length === 0"
+        class="flex flex-col items-center justify-center py-24"
       >
-        Brak transakcji spełniających kryteria.
+        <div class="text-4xl mb-4">🏜️</div>
+        <p class="text-slate-500 font-medium">
+          Brak transakcji spełniających kryteria.
+        </p>
       </div>
 
       <div
         class="px-6 py-4 border-t border-slate-100 flex justify-between items-center text-sm text-slate-500"
       >
-        <p>
+        <p v-if="store.isLoading">Odświeżanie...</p>
+        <p v-else>
           Pokazano {{ filteredTransactions.length }} z
           {{ store.transactions.length }}
         </p>
@@ -343,12 +385,14 @@ const getIconByCategory = (cat: string) => {
 </template>
 
 <style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
+/* Animacje dla listy transakcji */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
 }
-.modal-enter-from,
-.modal-leave-to {
+.list-enter-from,
+.list-leave-to {
   opacity: 0;
+  transform: translateX(-15px);
 }
 </style>

@@ -119,7 +119,7 @@ const getIconByCategory = (cat: string) => {
 const handleSave = () => {
   if (!form.merchant || !form.amount) return;
 
-  const finalAmount = parseFloat(form.amount.replace(",", "."));
+  const finalAmount = parseFloat(form.amount);
   const signedAmount =
     form.type === "expense" ? -Math.abs(finalAmount) : Math.abs(finalAmount);
 

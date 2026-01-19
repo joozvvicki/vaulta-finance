@@ -1,51 +1,29 @@
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue";
+import { computed, ref, reactive, onMounted } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
-import { useLocalStorage } from "@vueuse/core";
+import { useBudgetStore } from "~/stores/budget";
 import { startOfMonth, isAfter, parseISO, parse, isValid } from "date-fns";
 
 definePageMeta({ layout: "dashboard" });
 
-const store = useTransactionStore();
+const transactionStore = useTransactionStore();
+const budgetStore = useBudgetStore();
 
-const budgetConfig = useLocalStorage("user-budget-config", [
-  {
-    category: "Jedzenie",
-    limit: 1500,
-    icon: "🍔",
-    keywords: [
-      "jedzenie",
-      "restauracja",
-      "sklep",
-      "zakupy",
-      "żabka",
-      "biedronka",
-      "lidl",
-    ],
-  },
-  {
-    category: "Transport",
-    limit: 400,
-    icon: "🚗",
-    keywords: ["paliwo", "uber", "bolt", "bilet", "orlen", "transport", "mpk"],
-  },
-  {
-    category: "Rozrywka",
-    limit: 500,
-    icon: "🍿",
-    keywords: ["kino", "netflix", "spotify", "gra", "rozrywka", "steam"],
-  },
-  {
-    category: "Rachunki",
-    limit: 1000,
-    icon: "💡",
-    keywords: ["prąd", "czynsz", "internet", "telefon", "gaz", "energia"],
-  },
-]);
+// Inicjalizacja danych
+onMounted(() => {
+  budgetStore.fetchCategories();
+  transactionStore.fetchTransactions(); // Upewniamy się, że transakcje też są
+});
 
+// Łączymy loadingi
+const isLoading = computed(
+  () => budgetStore.isLoading || transactionStore.isLoading,
+);
+
+// --- LOGIKA MODALA ZARZĄDZANIA ---
 const isManageModalOpen = ref(false);
 const isEditing = ref(false);
-const editingIndex = ref(-1);
+const editingId = ref<string | null>(null);
 
 const form = reactive({
   category: "",
@@ -65,48 +43,55 @@ const startAdding = () => {
   form.icon = "💰";
   form.keywordsStr = "";
   isEditing.value = true;
-  editingIndex.value = -1;
+  editingId.value = null;
 };
 
-const startEditing = (index: number) => {
-  const item: any = budgetConfig.value[index];
+const startEditing = (id: string) => {
+  const item = budgetStore.categories.find((c) => c.id === id);
+  if (!item) return;
+
   form.category = item.category;
   form.limit = item.limit;
   form.icon = item.icon;
-  form.keywordsStr = item.keywords.join(", ");
+  form.keywordsStr = item.keywords ? item.keywords.join(", ") : "";
   isEditing.value = true;
-  editingIndex.value = index;
+  editingId.value = id;
 };
 
-const saveCategory = () => {
+const saveCategory = async () => {
   if (!form.category) return;
 
-  const newEntry = {
+  const keywordsArray = form.keywordsStr
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s);
+
+  const payload = {
     category: form.category,
     limit: Number(form.limit),
     icon: form.icon || "📦",
-    keywords: form.keywordsStr
-      .split(",")
-      .map((s) => s.trim())
-      .filter((s) => s),
+    keywords: keywordsArray,
   };
 
-  if (editingIndex.value === -1) {
-    budgetConfig.value.push(newEntry);
+  if (editingId.value) {
+    await budgetStore.updateCategory(editingId.value, payload);
   } else {
-    budgetConfig.value[editingIndex.value] = newEntry;
+    await budgetStore.addCategory(payload);
   }
 
   isEditing.value = false;
 };
 
-const deleteCategory = (index: number) => {
+const deleteCategory = async (id: string) => {
   if (confirm("Czy na pewno chcesz usunąć tę kategorię budżetową?")) {
-    budgetConfig.value.splice(index, 1);
+    await budgetStore.deleteCategory(id);
   }
 };
 
+// --- LOGIKA OBLICZEŃ ---
+
 const parseDateSafe = (dateStr: string) => {
+  if (!dateStr) return new Date();
   let date = parseISO(dateStr);
   if (isValid(date)) return date;
   date = parse(dateStr, "dd.MM.yyyy", new Date());
@@ -114,25 +99,32 @@ const parseDateSafe = (dateStr: string) => {
   return new Date();
 };
 
+// Główna logika łączenia budżetów z transakcjami
 const budgets = computed(() => {
   const firstDayOfMonth = startOfMonth(new Date());
 
-  return budgetConfig.value.map((b) => {
-    const spentInThisCategory = store.transactions
+  return budgetStore.categories.map((b) => {
+    const spentInThisCategory = transactionStore.transactions
       .filter((t) => {
+        // Ignorujemy przychody
         if (Number(t.amount) >= 0) return false;
 
+        // Sprawdzamy datę (tylko bieżący miesiąc)
         const tDate = parseDateSafe(t.date);
         const isCurrentMonth =
           isAfter(tDate, firstDayOfMonth) ||
           tDate.getTime() === firstDayOfMonth.getTime();
         if (!isCurrentMonth) return false;
 
+        // Dopasowanie po słowach kluczowych lub nazwie kategorii
         const cat = t.category.toLowerCase();
         const merch = t.merchant.toLowerCase();
 
+        // Zabezpieczenie na null w keywords
+        const keywords = b.keywords || [];
+
         const matches =
-          b.keywords.some(
+          keywords.some(
             (k) =>
               cat.includes(k.toLowerCase()) || merch.includes(k.toLowerCase()),
           ) || cat === b.category.toLowerCase();
@@ -161,6 +153,7 @@ const totalStats = computed(() => {
   };
 });
 
+// Helpery UI
 const getPercentage = (spent: number, limit: number) =>
   Math.min((spent / limit) * 100, 100);
 
@@ -189,7 +182,8 @@ const getBarColor = (spent: number, limit: number) => {
 
       <button
         @click="openManageModal"
-        class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm"
+        :disabled="isLoading"
+        class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -217,6 +211,20 @@ const getBarColor = (spent: number, limit: number) => {
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
       <div
+        v-if="isLoading"
+        class="rounded-2xl p-6 bg-slate-200 h-48 animate-pulse relative overflow-hidden"
+      >
+        <div class="h-4 w-32 bg-slate-300 rounded mb-4"></div>
+        <div class="h-8 w-48 bg-slate-300 rounded mb-8"></div>
+        <div class="h-3 w-full bg-slate-300 rounded-full mb-4"></div>
+        <div class="flex justify-between">
+          <div class="h-3 w-24 bg-slate-300 rounded"></div>
+          <div class="h-3 w-24 bg-slate-300 rounded"></div>
+        </div>
+      </div>
+
+      <div
+        v-else
         class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden"
       >
         <div
@@ -256,64 +264,91 @@ const getBarColor = (spent: number, limit: number) => {
     </div>
 
     <div class="grid gap-6">
-      <div
-        v-for="(b, index) in budgets"
-        :key="b.category"
-        class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md"
-        v-motion
-        :initial="{ opacity: 0, y: 20 }"
-        :enter="{ opacity: 1, y: 0, transition: { delay: index * 100 } }"
-      >
-        <div class="flex justify-between items-center mb-4">
-          <div class="flex items-center gap-4">
-            <div
-              class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-2xl border border-slate-100 shadow-sm"
-            >
-              {{ b.icon }}
-            </div>
-            <div>
-              <h3 class="font-bold text-slate-900 text-lg">{{ b.category }}</h3>
-              <p
-                v-if="b.spent > b.limit"
-                class="text-xs text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-full inline-block mt-1"
-              >
-                ⚠️ Przekroczono o {{ (b.spent - b.limit).toFixed(2) }} PLN
-              </p>
-              <p v-else-if="b.spent === 0" class="text-xs text-slate-400 mt-1">
-                Brak wydatków w tym miesiącu
-              </p>
-              <p v-else class="text-xs text-green-600 font-medium mt-1">
-                W normie ({{ ((b.spent / b.limit) * 100).toFixed(0) }}%)
-              </p>
-            </div>
-          </div>
-
-          <div class="text-right">
-            <p class="text-xl font-bold text-slate-900">
-              {{
-                b.spent.toLocaleString("pl-PL", { minimumFractionDigits: 2 })
-              }}
-            </p>
-            <p class="text-xs text-slate-500 font-medium">
-              z {{ b.limit.toLocaleString("pl-PL") }} PLN
-            </p>
-          </div>
-        </div>
-
+      <template v-if="isLoading">
         <div
-          class="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden"
+          v-for="i in 3"
+          :key="i"
+          class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm animate-pulse"
         >
-          <div
-            class="h-full rounded-full transition-all duration-1000 ease-out"
-            :class="getBarColor(b.spent, b.limit)"
-            :style="{ width: `${getPercentage(b.spent, b.limit)}%` }"
-          ></div>
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-slate-200"></div>
+              <div>
+                <div class="h-4 w-32 bg-slate-200 rounded mb-2"></div>
+                <div class="h-3 w-24 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="h-5 w-24 bg-slate-200 rounded mb-1 ml-auto"></div>
+              <div class="h-3 w-16 bg-slate-100 rounded ml-auto"></div>
+            </div>
+          </div>
+          <div class="w-full h-3 bg-slate-100 rounded-full"></div>
         </div>
-      </div>
+      </template>
+
+      <TransitionGroup name="list" tag="div" class="grid gap-6">
+        <div
+          v-for="b in budgets"
+          :key="b.id"
+          class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-blue-200"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-2xl border border-slate-100 shadow-sm"
+              >
+                {{ b.icon }}
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-lg">
+                  {{ b.category }}
+                </h3>
+                <p
+                  v-if="b.spent > b.limit"
+                  class="text-xs text-red-600 font-bold bg-red-50 px-2 py-0.5 rounded-full inline-block mt-1"
+                >
+                  ⚠️ Przekroczono o {{ (b.spent - b.limit).toFixed(2) }} PLN
+                </p>
+                <p
+                  v-else-if="b.spent === 0"
+                  class="text-xs text-slate-400 mt-1"
+                >
+                  Brak wydatków w tym miesiącu
+                </p>
+                <p v-else class="text-xs text-green-600 font-medium mt-1">
+                  W normie ({{ ((b.spent / b.limit) * 100).toFixed(0) }}%)
+                </p>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <p class="text-xl font-bold text-slate-900">
+                {{
+                  b.spent.toLocaleString("pl-PL", { minimumFractionDigits: 2 })
+                }}
+              </p>
+              <p class="text-xs text-slate-500 font-medium">
+                z {{ b.limit.toLocaleString("pl-PL") }} PLN
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="relative w-full h-3 bg-slate-100 rounded-full overflow-hidden"
+          >
+            <div
+              class="h-full rounded-full transition-all duration-1000 ease-out"
+              :class="getBarColor(b.spent, b.limit)"
+              :style="{ width: `${getPercentage(b.spent, b.limit)}%` }"
+            ></div>
+          </div>
+        </div>
+      </TransitionGroup>
     </div>
 
     <div
-      v-if="store.transactions.length === 0"
+      v-if="!isLoading && transactionStore.transactions.length === 0"
       class="text-center py-12 text-slate-400"
     >
       <p>
@@ -346,9 +381,9 @@ const getBarColor = (spent: number, limit: number) => {
             <h3 class="font-bold text-lg text-slate-900">
               {{
                 isEditing
-                  ? editingIndex === -1
-                    ? "Dodaj kategorię"
-                    : "Edytuj kategorię"
+                  ? editingId
+                    ? "Edytuj kategorię"
+                    : "Dodaj kategorię"
                   : "Zarządzaj budżetami"
               }}
             </h3>
@@ -363,8 +398,8 @@ const getBarColor = (spent: number, limit: number) => {
           <div v-if="!isEditing" class="p-6 overflow-y-auto flex-1">
             <div class="space-y-3 mb-6">
               <div
-                v-for="(cat, idx) in budgetConfig"
-                :key="cat.category"
+                v-for="cat in budgetStore.categories"
+                :key="cat.id"
                 class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition"
               >
                 <div class="flex items-center gap-3">
@@ -378,14 +413,14 @@ const getBarColor = (spent: number, limit: number) => {
                 </div>
                 <div class="flex gap-2">
                   <button
-                    @click="startEditing(idx)"
+                    @click="startEditing(cat.id)"
                     class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
                     title="Edytuj"
                   >
                     ✏️
                   </button>
                   <button
-                    @click="deleteCategory(idx)"
+                    @click="deleteCategory(cat.id)"
                     class="p-2 text-red-600 hover:bg-red-50 rounded-lg"
                     title="Usuń"
                   >
@@ -487,5 +522,16 @@ const getBarColor = (spent: number, limit: number) => {
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+
+/* Animacje listy */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.4s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
 }
 </style>
