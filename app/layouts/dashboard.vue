@@ -62,7 +62,10 @@ const menuItems = [
           <p class="text-sm font-bold text-white truncate">Marek Nowak</p>
           <p class="text-xs text-slate-500 truncate">marek@example.com</p>
         </div>
-        <button class="ml-auto text-slate-400 hover:text-white">
+        <button
+          class="ml-auto text-slate-400 hover:text-white"
+          @click="$router.push('/')"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

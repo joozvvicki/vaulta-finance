@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+
 const features = [
   {
     title: "Saldo w czasie rzeczywistym",
@@ -64,6 +66,7 @@ const testimonials = [
     author: "Anna N., Graficzka",
   },
 ];
+
 const faqs = [
   {
     q: "Czy Vaulta jest bezpieczna?",
@@ -101,24 +104,56 @@ const toggleFaq = (index: number) => {
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10"
       >
         <div
+          v-motion
+          :initial="{ opacity: 0, y: -20 }"
+          :enter="{ opacity: 1, y: 0, transition: { duration: 600 } }"
           class="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-blue-600 uppercase bg-blue-50 rounded-full"
         >
           Nowa integracja: Bank Pekao API 🚀
         </div>
+
         <h1
+          v-motion
+          :initial="{ opacity: 0, y: 30 }"
+          :enter="{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 800, delay: 100 },
+          }"
           class="text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6"
         >
           Twoje finanse.<br />
           <span
             class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600"
-            >W jednym miejscu.</span
           >
+            W jednym miejscu.
+          </span>
         </h1>
-        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10">
+
+        <p
+          v-motion
+          :initial="{ opacity: 0, y: 30 }"
+          :enter="{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 800, delay: 200 },
+          }"
+          class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10"
+        >
           Połącz konta bankowe, śledź wydatki i kontroluj budżet domowy za
           pomocą bezpiecznego API. Bez ręcznego wpisywania danych.
         </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
+
+        <div
+          v-motion
+          :initial="{ opacity: 0, scale: 0.9 }"
+          :enter="{
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 600, delay: 300 },
+          }"
+          class="flex flex-col sm:flex-row justify-center gap-4"
+        >
           <button
             class="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1"
           >
@@ -133,13 +168,16 @@ const toggleFaq = (index: number) => {
       </div>
 
       <div
-        class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-200/30 rounded-full blur-3xl -z-10 opacity-50"
+        v-motion
+        :initial="{ opacity: 0, scale: 0.8 }"
+        :enter="{ opacity: 0.5, scale: 1, transition: { duration: 1500 } }"
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-200/30 rounded-full blur-3xl -z-10"
       ></div>
     </section>
 
     <section id="funkcje" class="py-20 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16" v-motion-slide-visible-once-bottom>
           <h2 class="text-3xl font-bold text-slate-900 mb-4">
             Co potrafi Vaulta?
           </h2>
@@ -147,11 +185,19 @@ const toggleFaq = (index: number) => {
             Technologia Open Banking pracuje dla Ciebie.
           </p>
         </div>
+
         <div class="grid md:grid-cols-3 gap-8">
           <div
-            v-for="feature in features"
+            v-for="(feature, index) in features"
             :key="feature.title"
             class="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-lg transition duration-300"
+            v-motion
+            :initial="{ opacity: 0, y: 50 }"
+            :visibleOnce="{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 500, delay: index * 150 },
+            }"
           >
             <div class="text-4xl mb-4">{{ feature.icon }}</div>
             <h3 class="text-xl font-bold text-slate-900 mb-2">
@@ -165,54 +211,65 @@ const toggleFaq = (index: number) => {
 
     <section id="cennik" class="py-20 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
+        <div class="text-center mb-16" v-motion-slide-visible-once-bottom>
           <h2 class="text-3xl font-bold text-slate-900">
             Wybierz plan dla siebie
           </h2>
         </div>
+
         <div class="grid md:grid-cols-3 gap-8 items-center">
           <div
-            v-for="plan in pricing"
+            v-for="(plan, index) in pricing"
             :key="plan.name"
-            :class="[
-              'p-8 rounded-2xl border transition relative',
-              plan.highlight
-                ? 'bg-white border-blue-200 shadow-2xl scale-105 z-10'
-                : 'bg-slate-100 border-slate-200',
-            ]"
+            v-motion
+            :initial="{ opacity: 0, y: 50 }"
+            :visibleOnce="{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 500, delay: index * 150 },
+            }"
           >
             <div
-              v-if="plan.highlight"
-              class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg"
-            >
-              POLECANY
-            </div>
-            <h3 class="text-xl font-bold text-slate-900">{{ plan.name }}</h3>
-            <div class="my-4">
-              <span class="text-4xl font-extrabold text-slate-900">{{
-                plan.price
-              }}</span>
-              <span class="text-slate-500 text-sm">{{ plan.period }}</span>
-            </div>
-            <ul class="space-y-3 mb-8">
-              <li
-                v-for="feat in plan.features"
-                :key="feat"
-                class="flex items-center text-slate-600 text-sm"
-              >
-                <span class="mr-2 text-green-500">✓</span> {{ feat }}
-              </li>
-            </ul>
-            <button
               :class="[
-                'w-full py-3 rounded-lg font-bold transition',
+                'p-8 rounded-2xl border transition relative h-full',
                 plan.highlight
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50',
+                  ? 'bg-white border-blue-200 shadow-2xl scale-105 z-10'
+                  : 'bg-slate-100 border-slate-200',
               ]"
             >
-              {{ plan.cta }}
-            </button>
+              <div
+                v-if="plan.highlight"
+                class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg"
+              >
+                POLECANY
+              </div>
+              <h3 class="text-xl font-bold text-slate-900">{{ plan.name }}</h3>
+              <div class="my-4">
+                <span class="text-4xl font-extrabold text-slate-900">{{
+                  plan.price
+                }}</span>
+                <span class="text-slate-500 text-sm">{{ plan.period }}</span>
+              </div>
+              <ul class="space-y-3 mb-8">
+                <li
+                  v-for="feat in plan.features"
+                  :key="feat"
+                  class="flex items-center text-slate-600 text-sm"
+                >
+                  <span class="mr-2 text-green-500">✓</span> {{ feat }}
+                </li>
+              </ul>
+              <button
+                :class="[
+                  'w-full py-3 rounded-lg font-bold transition',
+                  plan.highlight
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50',
+                ]"
+              >
+                {{ plan.cta }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -220,7 +277,10 @@ const toggleFaq = (index: number) => {
 
     <section id="opinie" class="py-20 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">
+        <h2
+          class="text-3xl font-bold text-center text-slate-900 mb-12"
+          v-motion-slide-visible-once-bottom
+        >
           Zaufali nam
         </h2>
         <div class="grid md:grid-cols-2 gap-8">
@@ -228,6 +288,13 @@ const toggleFaq = (index: number) => {
             v-for="(item, i) in testimonials"
             :key="i"
             class="p-6 bg-slate-50 rounded-xl border border-slate-100"
+            v-motion
+            :initial="{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }"
+            :visibleOnce="{
+              opacity: 1,
+              x: 0,
+              transition: { duration: 600, delay: 100 },
+            }"
           >
             <p class="text-slate-700 italic mb-4">"{{ item.text }}"</p>
             <p class="font-bold text-slate-900">– {{ item.author }}</p>
@@ -242,7 +309,7 @@ const toggleFaq = (index: number) => {
       ></div>
 
       <div class="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
-        <div class="text-center mb-12">
+        <div class="text-center mb-12" v-motion-slide-visible-once-bottom>
           <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">
             Częste pytania
           </h2>
@@ -259,6 +326,13 @@ const toggleFaq = (index: number) => {
             :class="{
               'shadow-md border-blue-200 ring-1 ring-blue-100':
                 activeFaqIndex === i,
+            }"
+            v-motion
+            :initial="{ opacity: 0, y: 20 }"
+            :visibleOnce="{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 400, delay: i * 100 },
             }"
           >
             <button
@@ -312,6 +386,13 @@ const toggleFaq = (index: number) => {
 
         <div
           class="mt-12 text-center bg-blue-50/50 border border-blue-100 rounded-2xl p-8"
+          v-motion
+          :initial="{ opacity: 0, scale: 0.9 }"
+          :visibleOnce="{
+            opacity: 1,
+            scale: 1,
+            transition: { duration: 500, delay: 400 },
+          }"
         >
           <h3 class="font-bold text-slate-900 mb-2">Nadal masz pytania?</h3>
           <p class="text-slate-600 mb-6 text-sm">
