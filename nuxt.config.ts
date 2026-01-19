@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@vueuse/motion/nuxt"],
+  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "@vueuse/motion/nuxt"],
   build: {
     transpile: ["vue3-apexcharts"],
   },
