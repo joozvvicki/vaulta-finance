@@ -86,7 +86,7 @@ const handleResetRequest = () => {
 
     <div class="mt-6 text-center text-sm border-t border-slate-100 pt-4">
       <NuxtLink
-        to="/app/login"
+        to="/login"
         class="font-medium text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1 transition"
       >
         <span>←</span> Wróć do logowania

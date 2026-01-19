@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-import { useLocalStorage } from "@vueuse/core";
 
 export interface Goal {
-  id: number;
+  id: string; // Zmiana na string (UUID z Supabase)
+  user_id?: string;
   title: string;
   saved: number;
   target: number;
@@ -11,56 +11,98 @@ export interface Goal {
 }
 
 export const useGoalsStore = defineStore("goals", () => {
-  // Przykładowe dane startowe
-  const goals = useLocalStorage<Goal[]>("user-goals", [
-    {
-      id: 1,
-      title: "Wakacje w Japonii",
-      saved: 8500,
-      target: 15000,
-      img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=400&q=80",
-      color: "bg-purple-600",
-    },
-    {
-      id: 2,
-      title: "Nowy MacBook",
-      saved: 4200,
-      target: 10000,
-      img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80",
-      color: "bg-teal-500",
-    },
-  ]);
+  const client = useSupabaseClient();
+  const user = useSupabaseUser();
 
-  function addGoal(goal: Omit<Goal, "id">) {
-    goals.value.push({
-      ...goal,
-      id: Date.now(),
-    });
-  }
+  const goals = ref<Goal[]>([]);
+  const isLoading = ref(false);
+  const isLoaded = ref(false);
 
-  function updateGoal(id: number, updated: Partial<Goal>) {
-    const index = goals.value.findIndex((g) => g.id === id);
-    if (index !== -1) {
-      goals.value[index] = { ...goals.value[index], ...updated };
+  // --- AKCJE ---
+
+  async function fetchGoals(force = false) {
+    if (isLoaded.value && !force) return;
+    if (!user.value) return;
+
+    isLoading.value = true;
+    try {
+      const { data, error } = await client
+        .from("goals")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+      if (error) throw error;
+      goals.value = (data as any) || [];
+      isLoaded.value = true;
+    } catch (e: any) {
+      console.error("Błąd pobierania celów:", e.message);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  function removeGoal(id: number) {
-    goals.value = goals.value.filter((g) => g.id !== id);
+  async function addGoal(goal: Omit<Goal, "id">) {
+    try {
+      const { data, error } = await client
+        .from("goals")
+        .insert([{ ...goal, user_id: user.value?.id }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      goals.value.push(data);
+    } catch (e: any) {
+      alert("Błąd dodawania celu: " + e.message);
+    }
   }
 
-  function deposit(id: number, amount: number) {
+  async function updateGoal(id: string, updated: Partial<Goal>) {
+    try {
+      const { error } = await client.from("goals").update(updated).eq("id", id);
+
+      if (error) throw error;
+
+      const index = goals.value.findIndex((g) => g.id === id);
+      if (index !== -1) {
+        goals.value[index] = { ...goals.value[index], ...updated };
+      }
+    } catch (e: any) {
+      alert("Błąd aktualizacji: " + e.message);
+    }
+  }
+
+  async function deposit(id: string, amount: number) {
     const goal = goals.value.find((g) => g.id === id);
-    if (goal) {
-      goal.saved += Number(amount);
+    if (!goal) return;
+
+    const newSaved = Number(goal.saved) + Number(amount);
+    await updateGoal(id, { saved: newSaved });
+  }
+
+  async function removeGoal(id: string) {
+    try {
+      const { error } = await client.from("goals").delete().eq("id", id);
+      if (error) throw error;
+      goals.value = goals.value.filter((g) => g.id !== id);
+    } catch (e: any) {
+      alert("Błąd usuwania celu: " + e.message);
     }
+  }
+
+  function clearStore() {
+    goals.value = [];
+    isLoaded.value = false;
   }
 
   return {
     goals,
+    isLoading,
+    isLoaded,
+    fetchGoals,
     addGoal,
     updateGoal,
     removeGoal,
     deposit,
+    clearStore,
   };
 });

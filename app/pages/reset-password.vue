@@ -73,7 +73,7 @@ const handleNewPassword = () => {
 
     <div class="mt-6 text-center text-sm">
       <NuxtLink
-        to="/app/login"
+        to="/login"
         class="font-medium text-slate-600 hover:text-slate-900 transition"
       >
         Anuluj

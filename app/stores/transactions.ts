@@ -1,17 +1,9 @@
-import { useLocalStorage } from "@vueuse/core";
 import { defineStore } from "pinia";
-import {
-  subDays,
-  isAfter,
-  parse,
-  isValid,
-  parseISO,
-  compareDesc,
-  startOfMonth,
-} from "date-fns";
+import { parseISO, compareDesc, startOfMonth, isAfter } from "date-fns";
 
 export interface Transaction {
-  id: string | number;
+  id: string;
+  user_id?: string;
   date: string;
   merchant: string;
   description?: string;
@@ -23,22 +15,96 @@ export interface Transaction {
 }
 
 export const useTransactionStore = defineStore("transactions", () => {
-  const transactions = useLocalStorage<Transaction[]>("transactions", []);
+  const client = useSupabaseClient();
+  const user = useSupabaseUser();
 
-  const initialBalance = useLocalStorage<number>("initialBalance", 0);
-  const savedBalance = useLocalStorage<number>("savedBalance", 0);
+  const { profile, updateProfileBalance } = useProfile();
 
-  const parseDateSafe = (dateStr: string) => {
-    let date = parseISO(dateStr);
-    if (isValid(date)) return date;
-    date = parse(dateStr, "dd.MM.yyyy", new Date());
-    if (isValid(date)) return date;
-    return new Date();
-  };
+  const transactions = ref<Transaction[]>([]);
+  const isLoading = ref(false);
+
+  // --- AKCJE API ---
+
+  async function fetchTransactions() {
+    isLoading.value = true;
+    try {
+      // Pobieramy ID bezpośrednio z sesji dla pewności
+      const {
+        data: { session },
+      } = await client.auth.getSession();
+      const userId = session?.user?.id;
+
+      if (!userId) return;
+
+      const { data, error } = await client
+        .from("transactions")
+        .select("*")
+        .eq("user_id", userId)
+        .order("date", { ascending: false });
+
+      if (error) throw error;
+      transactions.value = (data as any) || [];
+    } catch (e: any) {
+      console.error("Błąd pobierania transakcji:", e.message);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function addTransaction(t: Omit<Transaction, "id">) {
+    try {
+      const { data, error } = await client
+        .from("transactions")
+        .insert([{ ...t, user_id: user.value?.id }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      transactions.value.unshift(data as any);
+    } catch (e: any) {
+      alert("Błąd dodawania: " + e.message);
+    }
+  }
+
+  async function updateTransaction(
+    id: string,
+    updatedFields: Partial<Transaction>,
+  ) {
+    try {
+      const { error } = await client
+        .from("transactions")
+        .update(updatedFields)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      const index = transactions.value.findIndex((t) => t.id === id);
+      if (index !== -1) {
+        transactions.value[index] = {
+          ...transactions.value[index],
+          ...updatedFields,
+        };
+      }
+    } catch (e: any) {
+      alert("Błąd aktualizacji: " + e.message);
+    }
+  }
+
+  async function removeTransaction(id: string) {
+    try {
+      const { error } = await client.from("transactions").delete().eq("id", id);
+      if (error) throw error;
+      transactions.value = transactions.value.filter((t) => t.id !== id);
+    } catch (e: any) {
+      alert("Błąd usuwania: " + e.message);
+    }
+  }
+
+  // --- GETTERY (Obliczenia oparte na profilu z Supabase) ---
 
   const sortedTransactions = computed(() => {
     return [...transactions.value].sort((a, b) =>
-      compareDesc(parseDateSafe(a.date), parseDateSafe(b.date)),
+      compareDesc(parseISO(a.date), parseISO(b.date)),
     );
   });
 
@@ -47,20 +113,21 @@ export const useTransactionStore = defineStore("transactions", () => {
       (acc, t) => acc + Number(t.amount),
       0,
     );
-    return Number(initialBalance.value) + totalSum;
+    // initial_balance pochodzi teraz z tabeli profiles
+    return Number(profile.value.initial_balance || 0) + totalSum;
   });
 
   const totalWealth = computed(() => {
-    return currentBalance.value + savedBalance.value;
+    // saved_balance pochodzi teraz z tabeli profiles
+    return currentBalance.value + Number(profile.value.saved_balance || 0);
   });
 
   const monthlyExpenses = computed(() => {
     const firstDayOfMonth = startOfMonth(new Date());
-
     return transactions.value
       .filter((t) => {
         if (Number(t.amount) >= 0) return false;
-        const tDate = parseDateSafe(t.date);
+        const tDate = parseISO(t.date);
         return (
           isAfter(tDate, firstDayOfMonth) ||
           tDate.getTime() === firstDayOfMonth.getTime()
@@ -73,57 +140,34 @@ export const useTransactionStore = defineStore("transactions", () => {
     sortedTransactions.value.slice(0, 5),
   );
 
-  function setTotalBalance(targetBalance: number) {
+  // --- SYNCHRONIZACJA MAJĄTKU Z BAZĄ ---
+
+  async function setTotalBalance(targetBalance: number) {
     const totalSumFromTransactions = transactions.value.reduce(
       (acc, t) => acc + Number(t.amount),
       0,
     );
+    const newInitial = targetBalance - totalSumFromTransactions;
 
-    initialBalance.value = targetBalance - totalSumFromTransactions;
+    await updateProfileBalance({ initial_balance: newInitial });
   }
 
-  function addTransaction(transaction: Transaction) {
-    transactions.value.unshift(transaction);
-  }
-
-  function importTransactions(newTransactions: Transaction[]) {
-    transactions.value = [...newTransactions, ...transactions.value];
-  }
-
-  function removeTransaction(id: string | number) {
-    transactions.value = transactions.value.filter((t) => t.id !== id);
-  }
-
-  function setSavedBalance(val: number) {
-    savedBalance.value = val;
-  }
-
-  function updateTransaction(
-    id: string | number,
-    updatedFields: Partial<Transaction>,
-  ) {
-    const index = transactions.value.findIndex((t) => t.id === id);
-    if (index !== -1 && transactions.value[index]) {
-      transactions.value[index] = {
-        ...transactions.value[index],
-        ...updatedFields,
-      };
-    }
+  async function setSavedBalance(val: number) {
+    await updateProfileBalance({ saved_balance: val });
   }
 
   return {
     transactions,
-    initialBalance,
+    isLoading,
     currentBalance,
-    savedBalance,
     totalWealth,
     monthlyExpenses,
     recentTransactions,
     sortedTransactions,
+    fetchTransactions,
     setTotalBalance,
     setSavedBalance,
     addTransaction,
-    importTransactions,
     removeTransaction,
     updateTransaction,
   };

@@ -155,15 +155,15 @@ const toggleFaq = (index: number) => {
           class="flex flex-col sm:flex-row justify-center gap-4"
         >
           <NuxtLink
-            to="/app/register"
+            to="/register"
             class="px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:bg-blue-700 transition transform hover:-translate-y-1 inline-flex justify-center"
           >
             Zacznij za darmo
           </NuxtLink>
 
           <NuxtLink
-            to="/app/login?demo=true"
-            class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-50 transition inline-flex justify-center"
+            to="/login?demo=true"
+            class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:bg-slate-Ę50 transition inline-flex justify-center"
           >
             Zobacz demo
           </NuxtLink>
@@ -272,7 +272,7 @@ const toggleFaq = (index: number) => {
                 @click="
                   plan.name === 'Enterprise'
                     ? $router.push('/enterprise')
-                    : $router.push('/app/login')
+                    : $router.push('/login')
                 "
               >
                 {{ plan.cta }}

@@ -1,4 +1,24 @@
 <script setup lang="ts">
+const { profile, fetchProfile } = useProfile();
+const user = useSupabaseUser();
+const client = useSupabaseClient();
+const router = useRouter();
+const store = useTransactionStore();
+
+// Jedyny watch, który inicjuje pobieranie danych dla całej aplikacji
+watch(
+  () => user.value?.id,
+  (id) => {
+    if (id) fetchProfile(id);
+  },
+  { immediate: true },
+);
+
+const handleLogout = async () => {
+  await client.auth.signOut();
+  router.push("/login");
+};
+
 const mainItems = [
   { name: "Pulpit", icon: "📊", to: "/app/dashboard" },
   { name: "Transakcje", icon: "💳", to: "/app/transakcje" },
@@ -8,8 +28,22 @@ const mainItems = [
 
 const settingsItems = [
   { name: "Mój Plan", icon: "💎", to: "/app/plan", highlight: true },
-  { name: "Ustawienia", icon: "⚙️", to: "/app/ustawienia" },
+  { name: "Konto", icon: "⚙️", to: "/app/konto" },
 ];
+
+const goalsStore = useGoalsStore();
+
+const initAppData = async () => {
+  await Promise.all([
+    fetchProfile(),
+    store.fetchTransactions(),
+    goalsStore.fetchGoals(),
+  ]);
+};
+
+onMounted(async () => {
+  await initAppData();
+});
 </script>
 
 <template>
@@ -21,7 +55,7 @@ const settingsItems = [
       <div
         class="h-20 flex items-center px-8 border-b border-slate-800/50 bg-gradient-to-r from-slate-900 to-slate-800"
       >
-        <NuxtLink to="/app" class="flex items-center gap-3 group">
+        <NuxtLink to="/app/dashboard" class="flex items-center gap-3 group">
           <div
             class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform"
           >
@@ -72,51 +106,52 @@ const settingsItems = [
               :key="item.name"
               :to="item.to"
               active-class="bg-blue-600/10 text-blue-400 border-blue-600"
-              class="flex items-center justify-between px-4 py-3 rounded-xl border-l-4 border-transparent hover:bg-slate-800 transition-all duration-300 group relative overflow-hidden"
+              class="flex items-center justify-between px-4 py-3 rounded-xl border-l-4 border-transparent hover:bg-slate-800 transition-all group relative overflow-hidden"
             >
-              <div
-                class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"
-              ></div>
-
               <div class="flex items-center">
                 <span
-                  class="mr-3 text-xl group-hover:scale-110 transition-transform duration-300 block"
+                  class="mr-3 text-xl group-hover:scale-110 transition-transform block"
                   >{{ item.icon }}</span
                 >
                 <span class="font-medium">{{ item.name }}</span>
               </div>
-
               <span
                 v-if="item.highlight"
                 class="text-[10px] font-bold bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-2 py-0.5 rounded-full shadow-lg shadow-blue-500/40"
+                >UPGRADE</span
               >
-                UPGRADE
-              </span>
             </NuxtLink>
           </div>
         </div>
       </nav>
 
       <div
-        class="p-4 m-4 mt-auto rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-3 hover:bg-slate-800 transition cursor-pointer group"
+        class="p-4 m-4 mt-auto rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-3 hover:bg-slate-800 transition group"
       >
         <img
-          src="https://i.pravatar.cc/150?u=marek"
-          alt="Avatar"
-          class="w-10 h-10 rounded-full border-2 border-slate-600 group-hover:border-blue-500 transition-colors"
+          v-if="profile.avatar_url"
+          :src="profile.avatar_url"
+          class="w-10 h-10 rounded-full border-2 border-slate-600 group-hover:border-blue-500 object-cover"
         />
-        <div class="overflow-hidden">
-          <p class="text-sm font-bold text-white truncate">Marek Nowak</p>
-          <p
-            class="text-xs text-slate-500 truncate group-hover:text-blue-400 transition-colors"
-          >
-            Plan Darmowy
+        <div
+          v-else
+          class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold border-2 border-slate-600"
+        >
+          {{ profile.email?.charAt(0).toUpperCase() }}
+        </div>
+
+        <div class="overflow-hidden flex-1">
+          <p class="text-sm font-bold text-white truncate">
+            {{ profile.full_name }}
+          </p>
+          <p class="text-xs text-slate-500 truncate group-hover:text-blue-400">
+            {{ profile.email }}
           </p>
         </div>
+
         <button
-          class="ml-auto text-slate-400 hover:text-white transition-transform hover:rotate-90"
-          @click="$router.push('/')"
-          title="Wyloguj"
+          @click="handleLogout"
+          class="ml-auto text-slate-400 hover:text-red-400 transition-transform hover:scale-110"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -140,31 +175,11 @@ const settingsItems = [
       <div
         class="bg-indigo-600 text-white px-4 py-2 text-sm font-medium text-center shadow-md z-40 relative"
       >
-        👋 Cześć! Przeglądasz <strong>Wersję Demo</strong>. Wszystkie dane są
-        przykładowe.
-        <NuxtLink
-          to="/app/register"
-          class="underline ml-2 hover:text-indigo-100"
-          >Załóż prawdziwe konto &rarr;</NuxtLink
-        >
+        👋 Cześć {{ profile.full_name }}! Zarządzasz swoim portfelem.
       </div>
-
       <div class="flex-1 overflow-y-auto p-8 bg-slate-50">
         <slot />
       </div>
     </main>
   </div>
 </template>
-
-<style scoped>
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #334155;
-  border-radius: 20px;
-}
-</style>

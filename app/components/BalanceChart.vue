@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
-import { subDays, isSameDay, parseISO, parse, isValid, format } from "date-fns";
+import { subDays, isSameDay, parseISO, isValid, format } from "date-fns";
 import { pl } from "date-fns/locale";
 
 const props = defineProps<{
@@ -9,13 +9,13 @@ const props = defineProps<{
 }>();
 
 const store = useTransactionStore();
+const { profile } = useProfile(); // Pobieramy dostęp do zsynchronizowanego profilu
 
+// Bezpieczne parsowanie daty z Supabase (format YYYY-MM-DD)
 const parseDateSafe = (dateStr: string) => {
-  let date = parseISO(dateStr);
-  if (isValid(date)) return date;
-  date = parse(dateStr, "dd.MM.yyyy", new Date());
-  if (isValid(date)) return date;
-  return new Date();
+  if (!dateStr) return new Date();
+  const date = parseISO(dateStr);
+  return isValid(date) ? date : new Date();
 };
 
 const formatMoney = (amount: number) => {
@@ -25,18 +25,23 @@ const formatMoney = (amount: number) => {
 const chartData = computed(() => {
   const daysCount = props.period === "7d" ? 7 : 30;
 
-  const currentSavings = Number(store.savedBalance);
+  // Pobieramy wartości z profilu (Supabase)
+  const currentSavings = Number(profile.value.saved_balance || 0);
+  const initialBalanceFromDB = Number(profile.value.initial_balance || 0);
 
+  // Wyliczamy aktualny stan konta bieżącego na podstawie transakcji w store
   const currentCheckingBalance =
-    Number(store.initialBalance) +
+    initialBalanceFromDB +
     store.transactions.reduce((acc, t) => acc + Number(t.amount), 0);
 
   let runningCheckingBalance = currentCheckingBalance;
   const history = [];
 
+  // Generujemy punkty danych cofając się w czasie
   for (let i = 0; i < daysCount; i++) {
     const dateCursor = subDays(new Date(), i);
 
+    // Filtrujemy transakcje z konkretnego dnia
     const dailyTransactions = store.transactions.filter((t) =>
       isSameDay(parseDateSafe(t.date), dateCursor),
     );
@@ -60,9 +65,11 @@ const chartData = computed(() => {
       expense: dailyExpense,
     });
 
+    // Odejmujemy zmianę z danego dnia, aby uzyskać stan z dnia poprzedniego
     runningCheckingBalance -= dailyNetChange;
   }
 
+  // Odwracamy, aby wykres szedł od lewej (przeszłość) do prawej (dziś)
   return history.reverse();
 });
 
@@ -81,20 +88,27 @@ const chartOptions = computed(() => ({
     fontFamily: "inherit",
     animations: { enabled: true },
   },
-  colors: ["#2563eb"],
+  colors: ["#2563eb"], // Niebieski Vaulta
   fill: {
     type: "gradient",
     gradient: {
       shadeIntensity: 1,
-      opacityFrom: 0.7,
+      opacityFrom: 0.45,
       opacityTo: 0.05,
-      stops: [0, 90, 100],
+      stops: [20, 100],
     },
   },
   dataLabels: { enabled: false },
   stroke: {
     curve: "smooth",
     width: 3,
+  },
+  markers: {
+    size: 4,
+    colors: ["#fff"],
+    strokeColors: "#2563eb",
+    strokeWidth: 2,
+    hover: { size: 6 },
   },
   xaxis: {
     categories: chartData.value.map((d) => {
@@ -107,68 +121,71 @@ const chartOptions = computed(() => ({
     axisBorder: { show: false },
     axisTicks: { show: false },
     labels: {
-      style: { colors: "#64748b" },
-      rotate: props.period === "30d" ? -45 : 0,
+      style: { colors: "#64748b", fontSize: "10px", fontWeight: 600 },
     },
-    tickAmount: props.period === "7d" ? 7 : 10,
   },
-  yaxis: { show: false },
+  yaxis: {
+    show: false,
+  },
   grid: {
     borderColor: "#f1f5f9",
     strokeDashArray: 4,
+    padding: { left: 0, right: 0 },
   },
   tooltip: {
     theme: "light",
+    x: { show: false },
     custom: function ({ dataPointIndex }: any) {
       const data: any = chartData.value[dataPointIndex];
       const dateStr = format(data.date, "d MMMM yyyy", { locale: pl });
 
       return `
-        <div class="px-3 py-2 bg-white border border-slate-200 rounded shadow-xl text-sm font-sans z-50">
-          <div class="font-bold text-slate-800 mb-2 border-b border-slate-100 pb-1">${dateStr}</div>
+        <div class="px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-2xl text-sm font-sans z-50 min-w-[200px]">
+          <div class="font-bold text-slate-900 mb-2 border-b border-slate-50 pb-2 text-xs uppercase tracking-wider">${dateStr}</div>
           
-          <div class="space-y-1 mb-3">
-             <div class="flex items-center justify-between gap-6">
-                <span class="text-slate-500 text-xs">Oszczędności:</span>
-                <span class="font-medium text-slate-600 text-xs">${formatMoney(data.savings)}</span>
+          <div class="space-y-1.5 mb-3">
+             <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px] font-bold uppercase">Oszczędności</span>
+                <span class="font-bold text-slate-700 text-xs">${formatMoney(data.savings)}</span>
              </div>
-             <div class="flex items-center justify-between gap-6">
-                <span class="text-slate-500 text-xs">Bieżące:</span>
-                <span class="font-medium text-slate-600 text-xs">${formatMoney(data.checking)}</span>
+             <div class="flex items-center justify-between">
+                <span class="text-slate-400 text-[10px] font-bold uppercase">Bieżące</span>
+                <span class="font-bold text-slate-700 text-xs">${formatMoney(data.checking)}</span>
              </div>
-             <div class="flex items-center justify-between gap-6 pt-1 border-t border-slate-100">
-                <span class="text-slate-800 font-bold">Razem:</span>
-                <span class="font-bold text-blue-600">${formatMoney(data.total)}</span>
+             <div class="flex items-center justify-between pt-2 border-t border-slate-50">
+                <span class="text-slate-900 font-black text-xs uppercase">Razem</span>
+                <span class="font-black text-blue-600 text-sm">${formatMoney(data.total)}</span>
              </div>
           </div>
           
           ${
             data.income > 0 || data.expense < 0
-              ? `<div class="pt-2 border-t border-slate-100">`
-              : ""
-          }
-          
-          ${
-            data.income > 0
               ? `
-          <div class="flex items-center justify-between gap-6">
-            <span class="text-slate-400 text-[10px] uppercase tracking-wide">Wpływy</span>
-            <span class="font-bold text-green-600 text-xs">+${formatMoney(data.income)}</span>
-          </div>`
+            <div class="pt-2 border-t border-slate-50 grid grid-cols-2 gap-2">
+              ${
+                data.income > 0
+                  ? `
+                <div class="text-center">
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block">Wpływy</span>
+                  <span class="font-bold text-green-600 text-[11px]">+${data.income.toFixed(2)}</span>
+                </div>
+              `
+                  : "<div></div>"
+              }
+              ${
+                data.expense < 0
+                  ? `
+                <div class="text-center">
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block">Wydatki</span>
+                  <span class="font-bold text-red-500 text-[11px]">${data.expense.toFixed(2)}</span>
+                </div>
+              `
+                  : "<div></div>"
+              }
+            </div>
+          `
               : ""
           }
-          
-          ${
-            data.expense < 0
-              ? `
-          <div class="flex items-center justify-between gap-6">
-             <span class="text-slate-400 text-[10px] uppercase tracking-wide">Wydatki</span>
-            <span class="font-bold text-red-500 text-xs">${formatMoney(data.expense)}</span>
-          </div>`
-              : ""
-          }
-          
-          ${data.income > 0 || data.expense < 0 ? `</div>` : ""}
         </div>
       `;
     },
@@ -178,7 +195,15 @@ const chartOptions = computed(() => ({
 
 <template>
   <div class="w-full h-full min-h-[300px]">
-    <ClientOnly>
+    <div
+      v-if="store.isLoading"
+      class="h-[300px] flex items-center justify-center"
+    >
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+      ></div>
+    </div>
+    <ClientOnly v-else>
       <apexchart
         type="area"
         height="300"

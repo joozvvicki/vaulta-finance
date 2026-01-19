@@ -229,7 +229,7 @@ const benefits = [
             <p class="text-xs text-slate-500 text-center mt-4">
               Klikając wyślij, akceptujesz naszą
               <NuxtLink
-                to="/app/polityka-prywatnosci"
+                to="/polityka-prywatnosci"
                 class="text-blue-600 hover:underline"
                 >Politykę Prywatności</NuxtLink
               >.

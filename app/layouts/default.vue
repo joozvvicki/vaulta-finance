@@ -33,13 +33,13 @@
         <div class="flex gap-2">
           <button
             class="bg-slate-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-800 transition"
-            @click="$router.push({ path: '/app/login' })"
+            @click="$router.push({ path: '/login' })"
           >
             Zaloguj się
           </button>
           <button
             class="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-xl font-medium hover:bg-slate-50 transition inline-flex justify-center"
-            @click="$router.push({ path: '/app/register' })"
+            @click="$router.push({ path: '/register' })"
           >
             Załóż konto
           </button>
@@ -76,13 +76,13 @@
           <h4 class="text-white font-bold mb-4">Prawne</h4>
           <ul class="space-y-2 text-sm">
             <li>
-              <NuxtLink to="/app/regulamin" class="hover:text-white transition"
+              <NuxtLink to="/regulamin" class="hover:text-white transition"
                 >Regulamin</NuxtLink
               >
             </li>
             <li>
               <NuxtLink
-                to="/app/polityka-prywatnosci"
+                to="/polityka-prywatnosci"
                 class="hover:text-white transition"
                 >Polityka Prywatności</NuxtLink
               >
