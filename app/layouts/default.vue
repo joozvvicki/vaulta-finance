@@ -47,9 +47,11 @@
       </div>
     </header>
 
-    <slot />
+    <main class="flex-grow w-full relative z-0">
+      <slot />
+    </main>
 
-    <footer class="bg-slate-900 text-slate-400 py-12 mt-auto">
+    <footer class="bg-slate-900 text-slate-400 py-12 relative z-10">
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8"
       >

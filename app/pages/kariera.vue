@@ -224,7 +224,7 @@ const openMail = (role: string) => {
             nową rekrutację.
           </p>
           <a
-            href="mailto:rekrutacja@Vaulta.pl"
+            href="/pomoc/kontakt"
             class="text-blue-600 font-bold hover:underline"
             >Napisz do nas &rarr;</a
           >
