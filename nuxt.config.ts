@@ -17,6 +17,13 @@ export default defineNuxtConfig({
             "Agregacja kont bankowych, budżet domowy i analiza wydatków.",
         },
       ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/png",
+          href: "/logo.png",
+        },
+      ],
     },
     pageTransition: { name: "page", mode: "out-in" },
   },
