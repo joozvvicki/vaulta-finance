@@ -68,9 +68,8 @@ const startAdding = () => {
   editingIndex.value = -1;
 };
 
-// Przejście do edycji istniejącego
 const startEditing = (index: number) => {
-  const item = budgetConfig.value[index];
+  const item: any = budgetConfig.value[index];
   form.category = item.category;
   form.limit = item.limit;
   form.icon = item.icon;
@@ -79,7 +78,6 @@ const startEditing = (index: number) => {
   editingIndex.value = index;
 };
 
-// Zapisywanie (Dodaj lub Aktualizuj)
 const saveCategory = () => {
   if (!form.category) return;
 
@@ -94,24 +92,20 @@ const saveCategory = () => {
   };
 
   if (editingIndex.value === -1) {
-    // Dodawanie nowego
     budgetConfig.value.push(newEntry);
   } else {
-    // Aktualizacja
     budgetConfig.value[editingIndex.value] = newEntry;
   }
 
-  isEditing.value = false; // Wróć do listy
+  isEditing.value = false;
 };
 
-// Usuwanie
 const deleteCategory = (index: number) => {
   if (confirm("Czy na pewno chcesz usunąć tę kategorię budżetową?")) {
     budgetConfig.value.splice(index, 1);
   }
 };
 
-// --- LOGIKA OBLICZEŃ (BEZ ZMIAN) ---
 const parseDateSafe = (dateStr: string) => {
   let date = parseISO(dateStr);
   if (isValid(date)) return date;
@@ -136,7 +130,7 @@ const budgets = computed(() => {
 
         const cat = t.category.toLowerCase();
         const merch = t.merchant.toLowerCase();
-        // Sprawdzamy czy kategoria lub merchant zawiera słowa kluczowe
+
         const matches =
           b.keywords.some(
             (k) =>

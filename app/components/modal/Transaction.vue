@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { isValid, parse, parseISO, format } from "date-fns"; // Dodano 'format'
-import { ref, reactive, watch } from "vue";
+import { isValid, parse, parseISO, format } from "date-fns";
+import { reactive, watch } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
 
 const props = defineProps<{

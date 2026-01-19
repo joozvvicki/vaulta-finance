@@ -70,7 +70,6 @@ const handleSaveGoal = () => {
   isGoalModalOpen.value = false;
 };
 
-// --- MODAL: WPŁATA ---
 const isDepositModalOpen = ref(false);
 const depositAmount = ref("");
 const activeGoalId = ref<number | null>(null);

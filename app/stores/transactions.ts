@@ -59,7 +59,6 @@ export const useTransactionStore = defineStore("transactions", () => {
 
     return transactions.value
       .filter((t) => {
-        // Tylko wydatki
         if (Number(t.amount) >= 0) return false;
         const tDate = parseDateSafe(t.date);
         return (

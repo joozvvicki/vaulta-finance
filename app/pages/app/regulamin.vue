@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Używamy domyślnego layoutu (Header + Footer)
 definePageMeta({
   layout: "default",
 });

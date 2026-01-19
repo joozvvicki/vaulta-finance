@@ -15,7 +15,6 @@ const handleSubmit = async () => {
   if (!form.message || !form.email) return;
   isSending.value = true;
 
-  // Symulacja wysyłki
   await new Promise((r) => setTimeout(r, 1500));
 
   isSending.value = false;

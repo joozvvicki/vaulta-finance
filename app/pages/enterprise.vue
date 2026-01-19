@@ -18,7 +18,6 @@ const isSent = ref(false);
 const handleEnterpriseSubmit = async () => {
   isLoading.value = true;
 
-  // Symulacja wysyłania do CRM (np. HubSpot/Salesforce)
   await new Promise((resolve) => setTimeout(resolve, 1500));
 
   isLoading.value = false;

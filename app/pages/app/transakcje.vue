@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, reactive } from "vue";
+import { ref, computed } from "vue";
 import { useTransactionStore, type Transaction } from "~/stores/transactions";
-import { format } from "date-fns";
 
 definePageMeta({ layout: "dashboard" });
 
@@ -10,32 +9,26 @@ const store = useTransactionStore();
 const isTransactionModalOpen = ref(false);
 const editingId = ref<string | number | null>(null);
 
-// Otwieranie modala dodawania
 const openAddModal = () => {
   editingId.value = null;
   isTransactionModalOpen.value = true;
 };
 
-// Otwieranie modala edycji
 const openEditModal = (t: Transaction) => {
   editingId.value = t.id;
   isTransactionModalOpen.value = true;
 };
 
-// --- FILTROWANIE I WYSZUKIWANIE ---
 const searchQuery = ref("");
 const statusFilter = ref("Wszystkie");
 
-// Pobieramy posortowane transakcje ze Store i filtrujemy lokalnie
 const filteredTransactions = computed(() => {
   return store.sortedTransactions.filter((t) => {
-    // 1. Filtr Statusu
     const statusMatch =
       statusFilter.value === "Wszystkie" ||
       (statusFilter.value === "Zakończone" && t.status === "Completed") ||
       (statusFilter.value === "Oczekujące" && t.status === "Pending");
 
-    // 2. Wyszukiwarka (case insensitive)
     const searchMatch =
       !searchQuery.value ||
       t.merchant.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -46,7 +39,6 @@ const filteredTransactions = computed(() => {
   });
 });
 
-// --- IMPORT ---
 const isImportModalOpen = ref(false);
 const handleImportedData = (newTransactions: any[]) => {
   store.importTransactions(newTransactions);
@@ -60,7 +52,6 @@ const handleDelete = (id: string | number) => {
   }
 };
 
-// --- UI HELPERS ---
 const statusColor = (status: string) => {
   switch (status) {
     case "Completed":

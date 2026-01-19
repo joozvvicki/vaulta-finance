@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useTransactionStore } from "~/stores/transactions";
-import { ref, reactive, computed } from "vue"; // Pamiętaj o importach
 
 definePageMeta({ layout: "dashboard" });
 
@@ -14,19 +13,16 @@ const openNewTransaction = (category = "Inne") => {
 
 const store = useTransactionStore();
 
-// --- LOGIKA EDYCJI SALDA I OSZCZĘDNOŚCI ---
 const isEditBalanceOpen = ref(false);
 const newBalanceInput = ref("");
-const editingTarget = ref<"main" | "savings">("main"); // Wiemy co edytujemy
+const editingTarget = ref<"main" | "savings">("main");
 
 const openEditBalance = (target: "main" | "savings") => {
   editingTarget.value = target;
 
   if (target === "main") {
-    // Edycja sumy (Bieżące + Oszczędności)
     newBalanceInput.value = store.totalWealth.toFixed(2);
   } else {
-    // Edycja tylko oszczędności
     newBalanceInput.value = store.savedBalance.toFixed(2);
   }
 
@@ -34,16 +30,12 @@ const openEditBalance = (target: "main" | "savings") => {
 };
 
 const saveBalance = () => {
-  // Zamiana przecinka na kropkę
   const val = parseFloat(newBalanceInput.value.replace(",", "."));
 
   if (!isNaN(val)) {
     if (editingTarget.value === "main") {
-      // Jeśli użytkownik ustawia "Całkowite środki" na X,
-      // to Saldo Bieżące = X - Oszczędności
       store.setTotalBalance(val - store.savedBalance);
     } else {
-      // Jeśli ustawia Oszczędności, po prostu je zapisujemy
       store.setSavedBalance(val);
     }
 
@@ -53,8 +45,7 @@ const saveBalance = () => {
 
 const stats = computed(() => [
   {
-    name: "Całkowite środki", // Zmieniłem nazwę na bardziej precyzyjną
-    // Teraz korzystamy z computed 'totalWealth' ze store
+    name: "Całkowite środki",
     value: store.totalWealth.toLocaleString("pl-PL", {
       minimumFractionDigits: 2,
     }),
@@ -63,7 +54,7 @@ const stats = computed(() => [
     type: "good",
     icon: "💰",
     isEditable: true,
-    editTarget: "main", // Dodatkowa flaga dla przycisku
+    editTarget: "main",
   },
   {
     name: "Wydatki (Od wypłaty)",
@@ -86,7 +77,7 @@ const stats = computed(() => [
     type: "good",
     icon: "🐷",
     isEditable: true,
-    editTarget: "savings", // Edytujemy oszczędności
+    editTarget: "savings",
   },
 ]);
 
@@ -104,7 +95,7 @@ const handleTransfer = async () => {
   store.addTransaction({
     id: Date.now(),
     merchant: transferForm.recipient || "Przelew własny",
-    date: new Date().toISOString(), // Używamy ISO dla spójności
+    date: new Date().toISOString(),
     category: "Przelew",
     amount: -amountValue,
     currency: "PLN",

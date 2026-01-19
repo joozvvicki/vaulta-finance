@@ -7,7 +7,6 @@ const isSent = ref(false);
 
 const handleResetRequest = () => {
   isLoading.value = true;
-  // Symulacja wysyłki maila
   setTimeout(() => {
     isLoading.value = false;
     isSent.value = true;

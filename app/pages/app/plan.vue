@@ -3,12 +3,10 @@ import { ref, computed } from "vue";
 
 definePageMeta({ layout: "dashboard" });
 
-// Stan
 const billingCycle = ref<"monthly" | "yearly">("monthly");
-const currentPlanId = ref("free"); // Symulujemy, że użytkownik ma plan darmowy
-const isLoading = ref<string | null>(null); // ID planu, który się ładuje
+const currentPlanId = ref("free");
+const isLoading = ref<string | null>(null);
 
-// Dane planów
 const plans = [
   {
     id: "free",
@@ -23,7 +21,7 @@ const plans = [
     id: "pro",
     name: "Pro",
     priceMonthly: 19,
-    priceYearly: 190, // 2 miesiące gratis
+    priceYearly: 190,
     desc: "Dla świadomych finansowo",
     features: [
       "Nielimitowane banki",
@@ -37,7 +35,7 @@ const plans = [
   {
     id: "enterprise",
     name: "Enterprise",
-    priceMonthly: null, // Indywidualna wycena
+    priceMonthly: null,
     priceYearly: null,
     desc: "Dla firm i korporacji",
     features: [
@@ -61,10 +59,9 @@ const handleUpgrade = (planId: string) => {
 
   isLoading.value = planId;
 
-  // Symulacja procesu płatności (np. Stripe Checkout)
   setTimeout(() => {
     isLoading.value = null;
-    currentPlanId.value = planId; // Zmieniamy plan na aktywny
+    currentPlanId.value = planId;
     alert(`Gratulacje! Twój plan został zmieniony na ${planId.toUpperCase()}.`);
   }, 1500);
 };

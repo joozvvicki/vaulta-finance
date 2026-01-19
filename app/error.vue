@@ -1,15 +1,12 @@
 <script setup lang="ts">
 import type { NuxtError } from "#app";
 
-// Props 'error' jest automatycznie przekazywany przez Nuxt
 const props = defineProps<{
   error: NuxtError;
 }>();
 
-// Funkcja czyszcząca błąd i przekierowująca
 const handleError = () => clearError({ redirect: "/" });
 
-// Funkcja cofania (opcjonalnie)
 const goBack = () => useRouter().back();
 </script>
 

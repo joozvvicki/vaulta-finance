@@ -25,11 +25,8 @@ const formatMoney = (amount: number) => {
 const chartData = computed(() => {
   const daysCount = props.period === "7d" ? 7 : 30;
 
-  // 1. Pobieramy aktualny stan oszczędności
   const currentSavings = Number(store.savedBalance);
 
-  // 2. Obliczamy startowe saldo BIEŻĄCE (ROR)
-  // (Initial + Suma transakcji)
   const currentCheckingBalance =
     Number(store.initialBalance) +
     store.transactions.reduce((acc, t) => acc + Number(t.amount), 0);
@@ -37,11 +34,9 @@ const chartData = computed(() => {
   let runningCheckingBalance = currentCheckingBalance;
   const history = [];
 
-  // 3. Cofamy się w czasie
   for (let i = 0; i < daysCount; i++) {
     const dateCursor = subDays(new Date(), i);
 
-    // Filtrujemy transakcje z danego dnia
     const dailyTransactions = store.transactions.filter((t) =>
       isSameDay(parseDateSafe(t.date), dateCursor),
     );
@@ -56,17 +51,15 @@ const chartData = computed(() => {
 
     const dailyNetChange = dailyIncome + dailyExpense;
 
-    // Zapisujemy stan na koniec dnia
     history.push({
       date: dateCursor,
-      checking: runningCheckingBalance, // Tylko bieżące
-      savings: currentSavings, // Oszczędności (zakładamy stałe dla historii)
-      total: runningCheckingBalance + currentSavings, // SUMA (To rysujemy)
+      checking: runningCheckingBalance,
+      savings: currentSavings,
+      total: runningCheckingBalance + currentSavings,
       income: dailyIncome,
       expense: dailyExpense,
     });
 
-    // Cofamy saldo bieżące
     runningCheckingBalance -= dailyNetChange;
   }
 
@@ -76,7 +69,6 @@ const chartData = computed(() => {
 const series = computed(() => [
   {
     name: "Całkowite środki",
-    // Rysujemy SUMĘ (Total Wealth)
     data: chartData.value.map((d) => parseFloat(d.total.toFixed(2))),
   },
 ]);
@@ -89,7 +81,7 @@ const chartOptions = computed(() => ({
     fontFamily: "inherit",
     animations: { enabled: true },
   },
-  colors: ["#2563eb"], // Niebieski wykres
+  colors: ["#2563eb"],
   fill: {
     type: "gradient",
     gradient: {
@@ -125,7 +117,6 @@ const chartOptions = computed(() => ({
     borderColor: "#f1f5f9",
     strokeDashArray: 4,
   },
-  // --- ROZBUDOWANY TOOLTIP ---
   tooltip: {
     theme: "light",
     custom: function ({ dataPointIndex }: any) {
