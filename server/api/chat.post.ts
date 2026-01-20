@@ -4,52 +4,68 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const apiKey = config.geminiApiKey;
 
-  if (!apiKey) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Brak klucza API Gemini w konfiguracji serwera.",
-    });
-  }
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3-flash-preview",
+    generationConfig: { responseMimeType: "application/json" },
+  });
 
   const body = await readBody(event);
   const { message, contextData } = body;
 
-  if (!message) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Wiadomość jest pusta",
-    });
-  }
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" }); // Tutaj flash działa stabilnie
-
   const systemInstruction = `
-    Jesteś inteligentnym asystentem finansowym w aplikacji "Vaulte".
-    Twoim celem jest pomaganie użytkownikowi w zarządzaniu budżetem.
+    Jesteś zaawansowanym zarządcą finansów w aplikacji Vaulte.
+    Masz dostęp do aktualnych danych użytkownika (Context).
     
-    Oto dane finansowe użytkownika (jeśli dostępne):
-    ${JSON.stringify(contextData || {})}
+    Twoim zadaniem jest klasyfikacja intencji i zwrócenie obiektu JSON.
+    Masz dwa główne typy odpowiedzi: "MESSAGE" (rozmowa) i "ACTION" (operacja na danych).
 
-    Zasady:
-    1. Odpowiadaj krótko, konkretnie i w języku polskim.
-    2. Analizuj wydatki, sugeruj oszczędności, ale nie bądź oceniejący.
-    3. Jeśli użytkownik pyta o coś niezwiązanego z finansami, grzecznie przekieruj rozmowę na finanse.
-    4. Formatuj odpowiedź używając Markdown (pogrubienia, listy).
+    DOSTĘPNE AKCJE (pole "action"):
+    
+    1. ZARZĄDZANIE TRANSAKCJAMI:
+       - "ADD_TRANSACTION": Nowy wydatek/przychód.
+       - "UPDATE_TRANSACTION": Edycja istniejącej. Musisz znaleźć ID w kontekście!
+       - "DELETE_TRANSACTION": Usunięcie. Musisz znaleźć ID w kontekście!
+    
+    2. ZARZĄDZANIE CELAMI (GOALS):
+       - "ADD_GOAL",
+        "UPDATE_GOAL",
+        "DELETE_GOAL"
+    
+    3. ZARZĄDZANIE BUDŻETEM (CATEGORIES):
+       - "ADD_CATEGORY", "UPDATE_CATEGORY", "DELETE_CATEGORY"
+
+    STRUKTURA ODPOWIEDZI JSON:
+    {
+      "type": "ACTION" | "MESSAGE",
+      "text": "Krótki komentarz dla użytkownika (np. 'Zrobione', 'Nie znalazłem takiej transakcji')",
+      "operation": {
+        "domain": "TRANSACTION" | "GOAL" | "BUDGET",
+        "action": "CREATE" | "UPDATE" | "DELETE",
+        "id": "string (UUID znaleziony w kontekście - TYLKO dla UPDATE/DELETE)",
+        "payload": {
+          // Tutaj pola do zmiany/dodania, np. amount, merchant, title, target itp.
+          // Dla UPDATE wysyłaj tylko te pola, które się zmieniają.
+          // Dla merchant (STRING), jeśli nie ma dajemy "Nieznany"
+        }
+      }
+    }
+
+    ZASADY:
+    1. Jeśli użytkownik mówi "Usuń Netflixa", przeszukaj podane w kontekście transakcje, znajdź tę z opisem "Netflix" i użyj jej ID. Jeśli jest ich kilka, wybierz najnowszą, chyba że użytkownik sprecyzował.
+    2. Jeśli nie możesz znaleźć obiektu do edycji/usunięcia w kontekście, zwróć type: "MESSAGE" z prośbą o szczegóły.
+    3. Kwoty wydatków w payload zawsze ujemne, przychodów dodatnie.
+
+    Kontekst danych: ${JSON.stringify(contextData)}
+    Dzisiejsza data: ${new Date().toISOString().split("T")[0]}
   `;
 
   try {
-    const data = await model.generateContent([
-      systemInstruction,
-      `Pytanie użytkownika: ${message}`,
-    ]);
-
-    return { answer: data.response.text() };
+    const result = await model.generateContent(
+      `${systemInstruction}\n\nKomenda użytkownika: ${message}`,
+    );
+    return { response: result.response.text() };
   } catch (error: any) {
-    console.error("Błąd Gemini:", error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Błąd komunikacji z AI",
-    });
+    throw createError({ statusCode: 500, statusMessage: error.message });
   }
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
 import { useGoalsStore } from "~/stores/goals";
 import { useBudgetStore } from "~/stores/budget";
@@ -11,66 +11,262 @@ const md = new MarkdownIt({
   html: false,
 });
 
+// --- STAN UI ---
 const isOpen = ref(false);
-const messages = ref<{ role: "user" | "ai"; text: string }[]>([
-  {
-    role: "ai",
-    text: "Cześć! Jestem Twoim asystentem Vaulte. **Jak mogę Ci pomóc w finansach?**",
-  },
-]);
 const userQuestion = ref("");
 const isLoading = ref(false);
 const chatContainer = ref<HTMLElement | null>(null);
+const messages = ref<{ role: "user" | "ai"; text: string }[]>([
+  {
+    role: "ai",
+    text: "Cześć! Jestem Twoim asystentem Vaulte. **Jak mogę Ci dzisiaj pomóc?**",
+  },
+]);
 
+// --- STORE & PROFILE ---
+const { profile } = useProfile();
 const transactionStore = useTransactionStore();
 const goalsStore = useGoalsStore();
 const budgetStore = useBudgetStore();
 
-const scrollToBottom = async () => {
-  await nextTick();
-  if (chatContainer.value) {
-    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+const isListening = ref(false);
+let recognition: any = null;
+let silenceTimer: any = null;
+
+if (import.meta.client) {
+  const SpeechRecognition =
+    (window as any).SpeechRecognition ||
+    (window as any).webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = "pl-PL";
+    recognition.continuous = true;
+    recognition.interimResults = true; // Pozwalamy na podgląd, ale filtrujemy wyniki
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+
+      if (finalTranscript) {
+        // Dodajemy tylko sfinalizowane fragmenty
+        userQuestion.value = (
+          userQuestion.value +
+          " " +
+          finalTranscript
+        ).trim();
+      }
+    };
+
+    recognition.onend = () => {
+      // Jeśli mikrofon wyłączył się sam, a my nadal chcemy słuchać
+      if (isListening.value) {
+        // Małe opóźnienie przed restartem zapobiega błędowi 'network' (spamming API)
+        setTimeout(() => {
+          if (isListening.value) {
+            try {
+              recognition.start();
+            } catch (e) {
+              console.warn(e);
+            }
+          }
+        }, 300);
+      }
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error("Speech Error:", event.error);
+
+      if (event.error === "network") {
+        // Jeśli sieć padła, przerywamy nasłuch całkowicie, by nie spamować
+        isListening.value = false;
+        recognition.stop();
+        return;
+      }
+
+      if (event.error === "no-speech") return;
+      if (event.error === "not-allowed") {
+        alert(
+          "Arc/Dia zablokował dostęp do mikrofonu. Sprawdź ikonę kłódki przy adresie URL.",
+        );
+        isListening.value = false;
+      }
+    };
+  }
+}
+
+const toggleListening = () => {
+  if (!recognition) {
+    alert("Twoja przeglądarka nie wspiera rozpoznawania mowy.");
+    return;
+  }
+  if (isListening.value) {
+    isListening.value = false;
+    recognition.stop();
+  } else {
+    isListening.value = true;
+    recognition.start();
   }
 };
 
+// --- SYSTEM POTWIERDZANIA AKCJI ---
+const pendingAction = ref<any>(null);
+
+const getActionDescription = computed(() => {
+  if (!pendingAction.value) return "";
+  const { domain, action, payload } = pendingAction.value;
+
+  const domains: Record<string, string> = {
+    TRANSACTION: "transakcją",
+    GOAL: "celem",
+    BUDGET: "budżetem",
+  };
+
+  const actions: Record<string, string> = {
+    CREATE: "Utworzenie",
+    UPDATE: "Aktualizacja",
+    DELETE: "Usunięcie",
+  };
+
+  let desc = `${actions[action] || action} związana z ${domains[domain] || domain}`;
+  if (payload?.amount) desc += ` (${payload.amount} PLN)`;
+  if (payload?.merchant || payload?.title)
+    desc += ` - ${payload.merchant || payload.title}`;
+
+  return desc;
+});
+
+const handleAiAction = async (operation: any) => {
+  const { domain, action, id, payload } = operation;
+
+  if (domain === "TRANSACTION") {
+    if (action === "CREATE") {
+      await transactionStore.addTransaction({
+        date: new Date().toISOString().split("T")[0],
+        status: "Completed",
+        currency: "PLN",
+        icon: "🤖",
+        ...payload,
+        merchant: payload.merchant || "Nieznany",
+      });
+    } else if (action === "UPDATE" && id) {
+      await transactionStore.updateTransaction(id, payload);
+    } else if (action === "DELETE" && id) {
+      await transactionStore.removeTransaction(id);
+    }
+  } else if (domain === "GOAL") {
+    if (action === "CREATE") {
+      await goalsStore.addGoal({ saved: 0, color: "bg-blue-500", ...payload });
+    } else if (action === "UPDATE" && id) {
+      await goalsStore.updateGoal(id, payload);
+    } else if (action === "DELETE" && id) {
+      await goalsStore.removeGoal(id);
+    }
+  } else if (domain === "BUDGET") {
+    if (action === "CREATE") {
+      await budgetStore.addCategory(payload);
+    } else if (action === "UPDATE" && id) {
+      await budgetStore.updateCategory(id, payload);
+    } else if (action === "DELETE" && id) {
+      await budgetStore.deleteCategory(id);
+    }
+  }
+};
+
+const confirmAction = async () => {
+  if (!pendingAction.value) return;
+  isLoading.value = true;
+  try {
+    const domain = pendingAction.value.domain;
+    await handleAiAction(pendingAction.value);
+
+    if (domain === "TRANSACTION") await transactionStore.fetchTransactions();
+    if (domain === "GOAL") await goalsStore.fetchGoals();
+    if (domain === "BUDGET") await budgetStore.fetchCategories();
+
+    messages.value.push({
+      role: "ai",
+      text: "✅ Operacja wykonana pomyślnie.",
+    });
+  } catch (e) {
+    messages.value.push({
+      role: "ai",
+      text: "❌ Wystąpił błąd podczas operacji.",
+    });
+  } finally {
+    pendingAction.value = null;
+    isLoading.value = false;
+    await scrollToBottom();
+  }
+};
+
+const cancelAction = () => {
+  pendingAction.value = null;
+  messages.value.push({ role: "ai", text: "🚫 Operacja anulowana." });
+};
+
+// --- KOMUNIKACJA Z GEMINI ---
+const scrollToBottom = async () => {
+  await nextTick();
+  if (chatContainer.value)
+    chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+};
+
 const askGemini = async () => {
-  if (!userQuestion.value.trim() || isLoading.value) return;
+  if (!userQuestion.value.trim() || isLoading.value || pendingAction.value)
+    return;
 
   const question = userQuestion.value;
   userQuestion.value = "";
-
   messages.value.push({ role: "user", text: question });
+
+  if (isListening.value) {
+    isListening.value = false;
+    recognition.stop();
+  }
+
   await scrollToBottom();
   isLoading.value = true;
 
   try {
     const context = {
       transactions: transactionStore.transactions.slice(0, 50),
-      balance: transactionStore.transactions.reduce(
-        (acc, t) => acc + t.amount,
-        0,
-      ),
       goals: goalsStore.goals,
       budget: budgetStore.categories,
+      balance: profile.value?.initialBalance || 0,
+      savedBalance: profile.value?.savedBalance || 0,
     };
 
     const { data, error } = await useFetch("/api/chat", {
       method: "POST",
-      body: {
-        message: question,
-        contextData: context,
-      },
+      body: { message: question, contextData: context },
     });
 
-    if (error.value) throw new Error("Błąd API");
+    if (error.value) throw new Error("API Error");
 
-    if (data.value?.answer) {
-      messages.value.push({ role: "ai", text: data.value.answer });
+    if (data.value?.response) {
+      let result;
+      try {
+        result = JSON.parse(data.value.response);
+      } catch (err) {
+        result = { type: "MESSAGE", text: data.value.response };
+      }
+
+      if (result.text) messages.value.push({ role: "ai", text: result.text });
+      if (result.type === "ACTION" && result.operation) {
+        pendingAction.value = result.operation;
+        await scrollToBottom();
+      }
     }
   } catch (e) {
     messages.value.push({
       role: "ai",
-      text: "Przepraszam, mam chwilowe problemy z połączeniem. Spróbuj później.",
+      text: "Coś poszło nie tak. Spróbuj ponownie.",
     });
   } finally {
     isLoading.value = false;
@@ -83,7 +279,7 @@ const askGemini = async () => {
   <button
     v-if="!isOpen"
     @click="isOpen = true"
-    class="fixed bottom-24 left-4 md:bottom-24 md:right-6 md:bottom-8 md:right-8 z-40 w-14 h-14 bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-full shadow-xl shadow-indigo-500/40 flex items-center justify-center hover:scale-110 transition-transform"
+    class="fixed bottom-24 left-4 md:!left-[auto] md:bottom-4 md:right-4 z-100 w-14 h-14 bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-transform"
   >
     <span class="text-2xl">✨</span>
   </button>
@@ -91,7 +287,7 @@ const askGemini = async () => {
   <Transition name="slide-up">
     <div
       v-if="isOpen"
-      class="fixed bottom-24 right-6 md:bottom-24 md:right-8 z-50 w-[90vw] md:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden"
+      class="fixed bottom-24 left-4 md:!left-[auto] md:bottom-4 md:right-4 z-50 w-[90vw] md:w-96 h-[500px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden"
     >
       <div
         class="p-4 bg-gradient-to-r from-indigo-600 to-violet-600 text-white flex justify-between items-center"
@@ -127,8 +323,37 @@ const askGemini = async () => {
             "
           >
             <span v-if="msg.role === 'user'">{{ msg.text }}</span>
-
             <div v-else class="prose-chat" v-html="md.render(msg.text)"></div>
+          </div>
+        </div>
+
+        <div
+          v-if="pendingAction"
+          class="flex justify-start w-full animate-fade-in"
+        >
+          <div
+            class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl rounded-tl-none shadow-sm w-[95%]"
+          >
+            <p class="text-xs font-bold text-indigo-500 uppercase mb-1">
+              Wymagane potwierdzenie
+            </p>
+            <p class="text-sm text-slate-700 mb-3 font-medium">
+              {{ getActionDescription }}
+            </p>
+            <div class="flex gap-2">
+              <button
+                @click="confirmAction"
+                class="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-sm font-bold"
+              >
+                ✅ Tak
+              </button>
+              <button
+                @click="cancelAction"
+                class="flex-1 bg-white border border-slate-300 text-slate-600 py-2 rounded-lg text-sm font-bold"
+              >
+                Anuluj
+              </button>
+            </div>
           </div>
         </div>
 
@@ -149,18 +374,47 @@ const askGemini = async () => {
         </div>
       </div>
 
-      <div class="p-3 border-t border-slate-100 bg-white flex gap-2">
-        <input
-          v-model="userQuestion"
-          @keyup.enter="askGemini"
-          type="text"
-          placeholder="Zapytaj o swoje finanse..."
-          class="flex-1 bg-slate-100 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-        />
+      <div
+        class="p-3 border-t border-slate-100 bg-white flex items-center gap-2"
+      >
+        <div class="relative flex-1">
+          <input
+            v-model="userQuestion"
+            :disabled="isLoading || pendingAction !== null"
+            @keyup.enter="askGemini"
+            type="text"
+            placeholder="Zadaj pytanie..."
+            class="w-full bg-slate-100 border-none rounded-xl pl-4 pr-10 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+          <button
+            @click="toggleListening"
+            class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors"
+            :class="
+              isListening
+                ? 'bg-red-500 text-white animate-pulse'
+                : 'text-slate-400 hover:bg-slate-200'
+            "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"
+              />
+            </svg>
+          </button>
+        </div>
         <button
           @click="askGemini"
-          :disabled="isLoading || !userQuestion"
-          class="bg-indigo-600 text-white p-2 px-4 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition"
+          :disabled="isLoading || !userQuestion || pendingAction !== null"
+          class="bg-indigo-600 text-white p-2 px-4 rounded-xl font-bold"
         >
           ➤
         </button>
@@ -179,40 +433,28 @@ const askGemini = async () => {
   opacity: 0;
   transform: translateY(20px) scale(0.95);
 }
-
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 :deep(.prose-chat strong) {
   font-weight: 700;
   color: #1e293b;
 }
-
 :deep(.prose-chat ul) {
   list-style-type: disc;
   padding-left: 1.25rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
 }
-
-:deep(.prose-chat ol) {
-  list-style-type: decimal;
-  padding-left: 1.25rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-:deep(.prose-chat li) {
-  margin-bottom: 0.25rem;
-}
-
 :deep(.prose-chat p) {
   margin-bottom: 0.5rem;
-}
-
-:deep(.prose-chat p:last-child) {
-  margin-bottom: 0;
-}
-
-:deep(.prose-chat a) {
-  color: #2563eb;
-  text-decoration: underline;
 }
 </style>

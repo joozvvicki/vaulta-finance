@@ -74,7 +74,6 @@ const handleSave = () => {
     store.updateGoal(props.editId, payload);
   } else {
     store.addGoal({
-      id: Date.now().toString(),
       ...payload,
     });
   }
