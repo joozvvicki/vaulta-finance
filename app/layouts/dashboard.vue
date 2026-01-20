@@ -48,7 +48,7 @@ const mobileNavItems = [
   { name: "Budżet", icon: IconChartBar, to: "/app/budzet" },
   { name: "Home", icon: IconHome, to: "/app/dashboard" },
   { name: "Cele", icon: IconTarget, to: "/app/cele" },
-  { name: "Konto", icon: "special", to: "/app/konto" },
+  { name: "Konto", icon: "image", to: "/app/konto" },
 ];
 
 const activeIndex = computed(() => {
@@ -193,12 +193,6 @@ onMounted(async () => {
     <main
       class="flex-1 md:ml-72 flex flex-col h-screen overflow-hidden relative"
     >
-      <div
-        class="bg-indigo-600 text-white px-4 py-2 text-sm font-medium text-center shadow-md z-20 relative"
-      >
-        👋 Cześć {{ profile.full_name?.split(" ")[0] || "Mistrzu" }}!
-      </div>
-
       <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50 pb-28 md:pb-8">
         <slot />
       </div>
@@ -240,7 +234,7 @@ onMounted(async () => {
               "
             >
               <img
-                v-if="item.icon === 'special'"
+                v-if="item.icon === 'image'"
                 :src="profile.avatar_url"
                 class="w-6 h-6 rounded-full"
               />
@@ -265,7 +259,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* Ukrywanie paska przewijania w sidebarze */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

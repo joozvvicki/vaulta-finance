@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTransactionStore } from "~/stores/transactions";
-import { onMounted, ref, watch, computed, reactive } from "vue";
+import { ref, watch, computed, reactive } from "vue";
+import { IconBasketPlus, IconPlus } from "@tabler/icons-vue";
 
 definePageMeta({ layout: "dashboard" });
 
@@ -13,7 +14,7 @@ const isTransactionModalOpen = ref(false);
 const initialCategory = ref("Inne");
 const isEditBalanceOpen = ref(false);
 const isTransferModalOpen = ref(false);
-const isSending = ref(false);
+const isFastTransferModalOpen = ref(false);
 const period = ref<"7d" | "30d">("7d");
 
 const CountUp = defineComponent({
@@ -98,11 +99,9 @@ const saveBalance = async () => {
   isEditBalanceOpen.value = false;
 };
 
-// --- STATYSTYKI ---
 const stats = computed(() => [
   {
     name: "Całkowite środki",
-    // Dodajemy rawValue do animacji
     rawValue: Number(store.totalWealth),
     currency: "PLN",
     change: "Suma",
@@ -128,33 +127,6 @@ const stats = computed(() => [
     editTarget: "savings",
   },
 ]);
-
-// --- SZYBKI PRZELEW ---
-const transferForm = reactive({ recipient: "", title: "", amount: "" });
-
-const handleTransfer = async () => {
-  if (!transferForm.amount) return;
-  isSending.value = true;
-
-  const amountValue = parseFloat(transferForm.amount.replace(",", "."));
-
-  await store.addTransaction({
-    merchant: transferForm.recipient || "Przelew zewnętrzny",
-    date: new Date().toISOString().split("T")[0],
-    category: "Przelewy",
-    amount: -amountValue,
-    currency: "PLN",
-    status: "Completed",
-    icon: "💸",
-    description: transferForm.title,
-  });
-
-  isSending.value = false;
-  isTransferModalOpen.value = false;
-  transferForm.recipient = "";
-  transferForm.title = "";
-  transferForm.amount = "";
-};
 </script>
 
 <template>
@@ -173,7 +145,7 @@ const handleTransfer = async () => {
         </div>
       </div>
 
-      <div class="flex gap-3">
+      <div class="gap-3 hidden md:flex">
         <button
           @click="isTransferModalOpen = true"
           :disabled="isLoading"
@@ -433,71 +405,26 @@ const handleTransfer = async () => {
       </div>
     </div>
 
-    <div
-      v-if="isTransferModalOpen"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
+    <button
+      @click="openNewTransaction()"
+      :disabled="isLoading"
+      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2 transition disabled:opacity-50"
     >
-      <div
-        class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 border border-slate-100"
-      >
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="font-bold text-xl text-slate-900">Szybki przelew</h3>
-          <button
-            @click="isTransferModalOpen = false"
-            class="text-slate-300 hover:text-slate-600"
-          >
-            ✕
-          </button>
-        </div>
+      <IconPlus />
+    </button>
 
-        <div class="space-y-4">
-          <div>
-            <label
-              class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1"
-              >Odbiorca</label
-            >
-            <input
-              v-model="transferForm.recipient"
-              placeholder="Np. Jan Kowalski"
-              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-blue-500 transition text-sm"
-            />
-          </div>
-          <div>
-            <label
-              class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1"
-              >Tytuł przelewu</label
-            >
-            <input
-              v-model="transferForm.title"
-              placeholder="Np. Za obiad"
-              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-blue-500 transition text-sm"
-            />
-          </div>
-          <div>
-            <label
-              class="block text-[10px] font-bold text-slate-400 uppercase mb-1 ml-1"
-              >Kwota (PLN)</label
-            >
-            <input
-              v-model="transferForm.amount"
-              type="text"
-              placeholder="0.00"
-              class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 outline-none focus:border-blue-500 transition text-sm font-bold"
-            />
-          </div>
-        </div>
+    <button
+      @click="isFastTransferModalOpen = true"
+      :disabled="isLoading"
+      class="fixed md:hidden bg-white text-slate-700 bottom-24 right-20 border border-slate-200 px-2 py-2 rounded-full text-sm font-bold hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+    >
+      <IconBasketPlus />
+    </button>
 
-        <div class="mt-8">
-          <button
-            @click="handleTransfer"
-            :disabled="isSending"
-            class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 disabled:opacity-50"
-          >
-            {{ isSending ? "Przetwarzanie..." : "Wyślij środki" }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <ModalFastTransaction
+      :is-open="isFastTransferModalOpen"
+      @close="isFastTransferModalOpen = false"
+    />
 
     <ModalTransaction
       :is-open="isTransactionModalOpen"
