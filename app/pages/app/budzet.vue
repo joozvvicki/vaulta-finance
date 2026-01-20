@@ -3,6 +3,7 @@ import { computed, ref, reactive, onMounted } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
 import { useBudgetStore } from "~/stores/budget";
 import { startOfMonth, isAfter, parseISO, parse, isValid } from "date-fns";
+import { IconSettings } from "@tabler/icons-vue";
 
 definePageMeta({ layout: "dashboard" });
 
@@ -177,7 +178,7 @@ const getBarColor = (spent: number, limit: number) => {
       <button
         @click="openManageModal"
         :disabled="isLoading"
-        class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+        class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -356,155 +357,18 @@ const getBarColor = (spent: number, limit: number) => {
       >
     </div>
 
-    <Transition name="modal">
-      <div
-        v-if="isManageModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      >
-        <div
-          class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-          @click="isManageModalOpen = false"
-        ></div>
+    <button
+      @click="openManageModal()"
+      :disabled="isLoading"
+      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2 transition disabled:opacity-50"
+    >
+      <IconSettings />
+    </button>
 
-        <div
-          class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]"
-        >
-          <div
-            class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50"
-          >
-            <h3 class="font-bold text-lg text-slate-900">
-              {{
-                isEditing
-                  ? editingId
-                    ? "Edytuj kategorię"
-                    : "Dodaj kategorię"
-                  : "Zarządzaj budżetami"
-              }}
-            </h3>
-            <button
-              @click="isManageModalOpen = false"
-              class="text-slate-400 hover:text-slate-600"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div v-if="!isEditing" class="p-6 overflow-y-auto flex-1">
-            <div class="space-y-3 mb-6">
-              <div
-                v-for="cat in budgetStore.categories"
-                :key="cat.id"
-                class="flex items-center justify-between p-3 border border-slate-200 rounded-xl hover:bg-slate-50 transition"
-              >
-                <div class="flex items-center gap-3">
-                  <span class="text-2xl">{{ cat.icon }}</span>
-                  <div>
-                    <p class="font-bold text-slate-900">{{ cat.category }}</p>
-                    <p class="text-xs text-slate-500">
-                      Limit: {{ cat.limit }} PLN
-                    </p>
-                  </div>
-                </div>
-                <div class="flex gap-2">
-                  <button
-                    @click="startEditing(cat.id)"
-                    class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                    title="Edytuj"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    @click="deleteCategory(cat.id)"
-                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-                    title="Usuń"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <button
-              @click="startAdding"
-              class="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 font-bold hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center gap-2"
-            >
-              <span>+</span> Dodaj nową kategorię
-            </button>
-          </div>
-
-          <div v-else class="p-6 overflow-y-auto flex-1 space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Nazwa kategorii</label
-              >
-              <input
-                v-model="form.category"
-                type="text"
-                placeholder="np. Edukacja"
-                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Limit (PLN)</label
-                >
-                <input
-                  v-model="form.limit"
-                  type="number"
-                  class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Ikona (Emoji)</label
-                >
-                <input
-                  v-model="form.icon"
-                  type="text"
-                  placeholder="np. 📚"
-                  class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none text-center"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Słowa kluczowe (oddziel przecinkami)</label
-              >
-              <p class="text-xs text-slate-500 mb-2">
-                Służą do automatycznego przypisywania wydatków do tej kategorii.
-              </p>
-              <textarea
-                v-model="form.keywordsStr"
-                rows="3"
-                placeholder="np. udemy, kurs, książka, empik"
-                class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-              ></textarea>
-            </div>
-          </div>
-
-          <div
-            v-if="isEditing"
-            class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2"
-          >
-            <button
-              @click="isEditing = false"
-              class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition"
-            >
-              Wróć
-            </button>
-            <button
-              @click="saveCategory"
-              class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
-            >
-              Zapisz
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
+    <ModalBudgetManage
+      :is-open="isManageModalOpen"
+      @close="isManageModalOpen = false"
+    />
   </div>
 </template>
 

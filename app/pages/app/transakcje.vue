@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { IconPlus, IconUpload } from "@tabler/icons-vue";
 import { ref, computed } from "vue";
 import { useTransactionStore, type Transaction } from "~/stores/transactions";
 
@@ -40,61 +41,6 @@ const filteredTransactions = computed(() => {
 });
 
 const isImportModalOpen = ref(false);
-const isImporting = ref(false);
-
-const handleImportedData = async (newTransactions: any[]) => {
-  if (newTransactions.length === 0) return;
-
-  isImporting.value = true;
-  const client = useSupabaseClient();
-
-  const {
-    data: { user },
-  } = await client.auth.getUser();
-  const userId = user?.id;
-
-  if (!userId) {
-    alert("Błąd: Nie znaleziono sesji użytkownika. Zaloguj się ponownie.");
-    isImporting.value = false;
-    return;
-  }
-
-  const formatDateForDb = (dateStr: string) => {
-    if (!dateStr) return new Date().toISOString().split("T")[0];
-    if (dateStr.includes(".")) {
-      const [day, month, year] = dateStr.split(".");
-      return `${year}-${month}-${day}`;
-    }
-    return dateStr;
-  };
-
-  try {
-    const toInsert = newTransactions.map((t) => ({
-      user_id: userId,
-      date: formatDateForDb(t.date),
-      merchant: t.merchant,
-      amount: t.amount,
-      category: t.category,
-      description: t.description || "",
-      status: t.status || "Completed",
-      currency: t.currency || "PLN",
-      icon: t.icon,
-    }));
-
-    const { error } = await client.from("transactions").insert(toInsert);
-
-    if (error) throw error;
-
-    await store.fetchTransactions();
-    isImportModalOpen.value = false;
-    alert(`Sukces! Zaimportowano ${newTransactions.length} transakcji.`);
-  } catch (e: any) {
-    console.error("Błąd RLS/Bazy:", e.message);
-    alert("Błąd uprawnień: " + e.message);
-  } finally {
-    isImporting.value = false;
-  }
-};
 
 const handleDelete = (id: string) => {
   if (confirm("Czy na pewno usunąć tę transakcję?")) {
@@ -148,7 +94,7 @@ const getIconByCategory = (cat: string) => {
         <button
           @click="isImportModalOpen = true"
           :disabled="store.isLoading"
-          class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+          class="hidden md:flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
         >
           <svg
             class="w-4 h-4"
@@ -169,7 +115,7 @@ const getIconByCategory = (cat: string) => {
         <button
           @click="openAddModal"
           :disabled="store.isLoading"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-500/30 disabled:opacity-50"
+          class="hidden md:flex bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-500/30 disabled:opacity-50"
         >
           <span>+</span> Dodaj ręcznie
         </button>
@@ -329,48 +275,24 @@ const getIconByCategory = (cat: string) => {
       </div>
     </div>
 
-    <div
-      v-if="isImportModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md"
+    <button
+      @click="openAddModal()"
+      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2 transition disabled:opacity-50"
     >
-      <div
-        class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200"
-        v-motion-pop
-      >
-        <div
-          class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50"
-        >
-          <div>
-            <h3 class="font-bold text-lg text-slate-900">Importuj historię</h3>
-            <p class="text-xs text-slate-500">
-              Obsługa formatów: Pekao, PKO BP
-            </p>
-          </div>
-          <button
-            @click="isImportModalOpen = false"
-            class="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-full"
-          >
-            ✕
-          </button>
-        </div>
+      <IconPlus />
+    </button>
 
-        <div class="p-8">
-          <div v-if="isImporting" class="py-12 text-center">
-            <div
-              class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
-            ></div>
-            <p class="text-sm font-bold text-slate-900">
-              Zapisywanie w chmurze...
-            </p>
-            <p class="text-xs text-slate-500 mt-1">
-              To może potrwać chwilę przy dużej ilości danych.
-            </p>
-          </div>
+    <button
+      @click="isImportModalOpen = true"
+      class="fixed md:hidden bg-white text-slate-700 bottom-24 right-20 border border-slate-200 px-2 py-2 rounded-full text-sm font-bold hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
+    >
+      <IconUpload />
+    </button>
 
-          <TransactionImport v-else @imported="handleImportedData" />
-        </div>
-      </div>
-    </div>
+    <ModalImport
+      :is-open="isImportModalOpen"
+      @close="isImportModalOpen = false"
+    />
 
     <ModalTransaction
       :is-open="isTransactionModalOpen"

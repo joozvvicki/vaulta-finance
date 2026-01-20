@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { IconPlus } from "@tabler/icons-vue";
 import { ref, reactive } from "vue";
 import { useGoalsStore, type Goal } from "~/stores/goals";
 
@@ -7,86 +8,28 @@ definePageMeta({ layout: "dashboard" });
 const store = useGoalsStore();
 
 const isGoalModalOpen = ref(false);
-const isEditing = ref(false);
-const editingId = ref<number | null>(null);
-
-const goalForm = reactive({
-  title: "",
-  target: "",
-  saved: "",
-  img: "",
-  color: "bg-blue-600",
-});
-
-const availableColors = [
-  "bg-blue-600",
-  "bg-purple-600",
-  "bg-emerald-600",
-  "bg-teal-500",
-  "bg-orange-500",
-  "bg-rose-500",
-  "bg-indigo-600",
-  "bg-slate-800",
-];
-
-const openAddModal = () => {
-  isEditing.value = false;
-  goalForm.title = "";
-  goalForm.target = "";
-  goalForm.saved = "0";
-  goalForm.img =
-    "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=400&q=80";
-  goalForm.color = "bg-blue-600";
-  isGoalModalOpen.value = true;
-};
-
-const openEditModal = (goal: Goal) => {
-  isEditing.value = true;
-  editingId.value = goal.id;
-  goalForm.title = goal.title;
-  goalForm.target = goal.target.toString();
-  goalForm.saved = goal.saved.toString();
-  goalForm.img = goal.img;
-  goalForm.color = goal.color;
-  isGoalModalOpen.value = true;
-};
-
-const handleSaveGoal = () => {
-  if (!goalForm.title || !goalForm.target) return;
-
-  const payload = {
-    title: goalForm.title,
-    target: Number(goalForm.target),
-    saved: Number(goalForm.saved),
-    img: goalForm.img || "https://placehold.co/600x400?text=Cel",
-    color: goalForm.color,
-  };
-
-  if (isEditing.value && editingId.value) {
-    store.updateGoal(editingId.value, payload);
-  } else {
-    store.addGoal(payload);
-  }
-  isGoalModalOpen.value = false;
-};
-
 const isDepositModalOpen = ref(false);
-const depositAmount = ref("");
-const activeGoalId = ref<number | null>(null);
-const activeGoalTitle = ref("");
+const editId = ref<any>();
+const goalId = ref<any>();
 
-const openDepositModal = (goal: Goal) => {
-  activeGoalId.value = goal.id;
-  activeGoalTitle.value = goal.title;
-  depositAmount.value = "";
+const openEditModal = (id: any) => {
+  editId.value = id;
+  isGoalModalOpen.value = true;
+};
+
+const openDepsitModal = (id: any) => {
+  goalId.value = id;
   isDepositModalOpen.value = true;
 };
 
-const handleDeposit = () => {
-  if (activeGoalId.value && depositAmount.value) {
-    store.deposit(activeGoalId.value, Number(depositAmount.value));
-    isDepositModalOpen.value = false;
-  }
+const closeGoalModal = () => {
+  editId.value = null;
+  isGoalModalOpen.value = false;
+};
+
+const closeDepositModal = () => {
+  goalId.value = null;
+  isDepositModalOpen.value = false;
 };
 
 const handleDelete = (id: number) => {
@@ -120,8 +63,8 @@ onMounted(() => {
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <button
-        @click="openAddModal"
-        class="group border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center min-h-[300px] hover:border-blue-500 hover:bg-blue-50 transition p-6"
+        @click="isGoalModalOpen = true"
+        class="hidden md:flex group border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center min-h-[300px] hover:border-blue-500 hover:bg-blue-50 transition p-6"
       >
         <div
           class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4 group-hover:bg-blue-200 transition"
@@ -165,7 +108,7 @@ onMounted(() => {
 
         <div
           class="h-40 overflow-hidden relative cursor-pointer"
-          @click="openEditModal(goal)"
+          @click="openEditModal(goal.id)"
         >
           <img
             :src="goal.img"
@@ -227,7 +170,7 @@ onMounted(() => {
           </div>
 
           <button
-            @click="openDepositModal(goal)"
+            @click="openDepsitModal(goal.id)"
             class="w-full mt-6 py-2 border border-slate-200 rounded-lg font-bold text-sm text-slate-700 hover:bg-slate-50 transition active:scale-95"
           >
             Dopłać +
@@ -236,157 +179,24 @@ onMounted(() => {
       </div>
     </div>
 
-    <Transition name="modal">
-      <div
-        v-if="isGoalModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      >
-        <div
-          class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-          @click="isGoalModalOpen = false"
-        ></div>
-        <div
-          class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 max-h-[90vh] overflow-y-auto"
-        >
-          <h3 class="font-bold text-xl text-slate-900 mb-6">
-            {{ isEditing ? "Edytuj cel" : "Nowy cel finansowy" }}
-          </h3>
+    <button
+      @click="isGoalModalOpen = true"
+      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2 transition disabled:opacity-50"
+    >
+      <IconPlus />
+    </button>
 
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Nazwa celu</label
-              >
-              <input
-                v-model="goalForm.title"
-                type="text"
-                placeholder="np. Dom na Mazurach"
-                class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
+    <ModalDeposit
+      :is-open="isDepositModalOpen"
+      :goal-id="goalId"
+      @close="closeDepositModal"
+    />
 
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Kwota docelowa</label
-                >
-                <input
-                  v-model="goalForm.target"
-                  type="number"
-                  class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Już uzbierano</label
-                >
-                <input
-                  v-model="goalForm.saved"
-                  type="number"
-                  class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Link do zdjęcia (URL)</label
-              >
-              <input
-                v-model="goalForm.img"
-                type="text"
-                placeholder="https://..."
-                class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-xs"
-              />
-              <div
-                v-if="goalForm.img"
-                class="mt-2 h-32 rounded-lg overflow-hidden border border-slate-200"
-              >
-                <img :src="goalForm.img" class="w-full h-full object-cover" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-slate-700 mb-2"
-                >Kolor paska</label
-              >
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="color in availableColors"
-                  :key="color"
-                  @click="goalForm.color = color"
-                  :class="[
-                    color,
-                    goalForm.color === color
-                      ? 'ring-2 ring-offset-2 ring-slate-400 scale-110'
-                      : '',
-                  ]"
-                  class="w-8 h-8 rounded-full transition-all"
-                ></button>
-              </div>
-            </div>
-          </div>
-
-          <div class="mt-8 flex justify-end gap-3">
-            <button
-              @click="isGoalModalOpen = false"
-              class="px-4 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition"
-            >
-              Anuluj
-            </button>
-            <button
-              @click="handleSaveGoal"
-              class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
-            >
-              Zapisz cel
-            </button>
-          </div>
-        </div>
-      </div>
-    </Transition>
-
-    <Transition name="modal">
-      <div
-        v-if="isDepositModalOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      >
-        <div
-          class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-          @click="isDepositModalOpen = false"
-        ></div>
-        <div
-          class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center"
-        >
-          <div
-            class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"
-          >
-            💸
-          </div>
-          <h3 class="font-bold text-xl text-slate-900 mb-1">Dopłać do celu</h3>
-          <p class="text-sm text-slate-500 mb-6">{{ activeGoalTitle }}</p>
-
-          <div class="relative mb-6">
-            <input
-              v-model="depositAmount"
-              type="number"
-              placeholder="0"
-              autofocus
-              class="w-full text-4xl font-bold text-slate-900 border-b-2 border-slate-200 focus:border-green-500 outline-none py-2 text-center"
-            />
-            <span class="absolute right-4 bottom-4 text-slate-400 font-medium"
-              >PLN</span
-            >
-          </div>
-
-          <button
-            @click="handleDeposit"
-            class="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition shadow-lg shadow-green-500/30"
-          >
-            Zaksięguj wpłatę
-          </button>
-        </div>
-      </div>
-    </Transition>
+    <ModalGoal
+      :is-open="isGoalModalOpen"
+      :edit-id="editId"
+      @close="closeGoalModal"
+    />
   </div>
 </template>
 
