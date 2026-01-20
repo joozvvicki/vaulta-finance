@@ -98,6 +98,10 @@ const handleDelete = (id: number) => {
     store.removeGoal(id);
   }
 };
+
+onMounted(() => {
+  store.fetchGoals();
+});
 </script>
 
 <template>

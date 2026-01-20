@@ -53,7 +53,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 5. Pobierz origin (np. http://localhost:3000), żeby wiedzieć gdzie wrócić
   const origin = getRequestURL(event).origin;
 
   try {
