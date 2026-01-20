@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
@@ -21,9 +21,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const genAI = new GoogleGenAI({
-    apiKey,
-  });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" }); // Tutaj flash działa stabilnie
 
   const systemInstruction = `
     Jesteś inteligentnym asystentem finansowym w aplikacji "Vaulte".
@@ -40,12 +39,12 @@ export default defineEventHandler(async (event) => {
   `;
 
   try {
-    const response = await genAI.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: [systemInstruction, `Pytanie użytkownika: ${message}`],
-    });
+    const data = await model.generateContent([
+      systemInstruction,
+      `Pytanie użytkownika: ${message}`,
+    ]);
 
-    return { answer: response.text };
+    return { answer: data.response.text() };
   } catch (error: any) {
     console.error("Błąd Gemini:", error);
     throw createError({
