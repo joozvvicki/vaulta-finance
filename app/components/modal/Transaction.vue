@@ -126,7 +126,7 @@ const handleSave = () => {
   if (props.editId) {
     store.updateTransaction(props.editId, payload);
   } else {
-    store.addTransaction({ id: Date.now().toString(), ...payload });
+    store.addTransaction({ ...payload });
   }
   emit("saved");
   emit("close");
@@ -325,8 +325,6 @@ const handleTouchEnd = () => {
 </template>
 
 <style scoped>
-/* === ANIMACJE WEJŚCIA/WYJŚCIA === */
-
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-out;

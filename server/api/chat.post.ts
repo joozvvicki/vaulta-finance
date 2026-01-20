@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const genAI = new GoogleGenAI({
-    apiKey: config.geminiApiKey,
+    apiKey,
   });
 
   const systemInstruction = `

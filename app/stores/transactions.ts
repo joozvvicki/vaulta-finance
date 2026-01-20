@@ -16,19 +16,15 @@ export interface Transaction {
 
 export const useTransactionStore = defineStore("transactions", () => {
   const client = useSupabaseClient();
-  const user = useSupabaseUser();
 
   const { profile, updateProfileBalance } = useProfile();
 
   const transactions = ref<Transaction[]>([]);
   const isLoading = ref(false);
 
-  // --- AKCJE API ---
-
   async function fetchTransactions() {
     isLoading.value = true;
     try {
-      // Pobieramy ID bezpośrednio z sesji dla pewności
       const {
         data: { session },
       } = await client.auth.getSession();
@@ -53,9 +49,14 @@ export const useTransactionStore = defineStore("transactions", () => {
 
   async function addTransaction(t: Omit<Transaction, "id">) {
     try {
+      const {
+        data: { session },
+      } = await client.auth.getSession();
+      const userId = session?.user?.id;
+
       const { data, error } = await client
         .from("transactions")
-        .insert([{ ...t, user_id: user.value?.id }])
+        .insert([{ ...t, user_id: userId }])
         .select()
         .single();
 
