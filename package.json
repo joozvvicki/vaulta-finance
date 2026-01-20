@@ -29,6 +29,7 @@
     "vue3-apexcharts": "^1.10.0"
   },
   "devDependencies": {
-    "@types/date-fns": "^2.6.3"
+    "@types/date-fns": "^2.6.3",
+    "@vite-pwa/nuxt": "^1.1.0"
   }
 }

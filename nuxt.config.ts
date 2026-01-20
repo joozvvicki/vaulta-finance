@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     "@nuxtjs/tailwindcss",
     "@vueuse/motion/nuxt",
     "@nuxtjs/supabase",
+    "@vite-pwa/nuxt",
   ],
   build: {
     transpile: ["vue3-apexcharts"],
@@ -53,4 +54,45 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
   ssr: false,
+  pwa: {
+    manifest: {
+      name: "Vaulte Finance",
+      short_name: "Vaulte",
+      description: "Twoje finanse pod kontrolą",
+      theme_color: "#ffffff",
+      background_color: "#ffffff",
+      display: "standalone",
+      orientation: "portrait",
+      lang: "pl",
+      icons: [
+        {
+          src: "pwa-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+        },
+        {
+          src: "pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+        },
+        {
+          src: "pwa-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any maskable",
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: "/",
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: true,
+      type: "module",
+    },
+  },
 });
