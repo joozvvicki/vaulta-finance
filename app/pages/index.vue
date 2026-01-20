@@ -58,7 +58,7 @@ const pricing = [
     period: "indywidualna",
     description: "Dla biur rachunkowych, doradców i firm potrzebujących API.",
     features: [
-      "Dostęp do API Vaulta",
+      "Dostęp do API Vaulte",
       "Panel dla wielu użytkowników",
       "Raporty White-Label",
       "Dedykowany opiekun konta",
@@ -82,7 +82,7 @@ const testimonials = [
 
 const faqs = [
   {
-    q: "Czy Vaulta jest bezpieczna?",
+    q: "Czy Vaulte jest bezpieczna?",
     a: "Bezpieczeństwo to nasz priorytet. Korzystamy z szyfrowania AES-256 oraz połączeń SSL. Współpracujemy wyłącznie z licencjonowanymi dostawcami Open Banking (zgodnymi z dyrektywą PSD2), co oznacza, że nigdy nie widzimy Twoich haseł do bankowości – logowanie odbywa się bezpośrednio na stronie banku.",
   },
   {
@@ -91,7 +91,7 @@ const faqs = [
   },
   {
     q: "Czy mogę wykonywać przelewy przez aplikację?",
-    a: "W obecnej wersji Vaulta skupia się na agregacji danych (usługa AIS), co pozwala na analizę finansów. Moduł płatności (PIS), pozwalający na zlecanie przelewów, jest w fazie testów i zostanie udostępniony użytkownikom wersji Pro w Q4 2026.",
+    a: "W obecnej wersji Vaulte skupia się na agregacji danych (usługa AIS), co pozwala na analizę finansów. Moduł płatności (PIS), pozwalający na zlecanie przelewów, jest w fazie testów i zostanie udostępniony użytkownikom wersji Pro w Q4 2026.",
   },
   {
     q: "Czy mogę zrezygnować w dowolnym momencie?",
@@ -198,7 +198,7 @@ const toggleFaq = (index: number) => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16" v-motion-slide-visible-once-bottom>
           <h2 class="text-3xl font-bold text-slate-900 mb-4">
-            Co potrafi Vaulta?
+            Co potrafi Vaulte?
           </h2>
           <p class="text-slate-600 max-w-2xl mx-auto">
             Wykorzystujemy technologię Open Banking, aby dać Ci pełną kontrolę
@@ -331,7 +331,7 @@ const toggleFaq = (index: number) => {
                 @click="
                   plan.name === 'Business'
                     ? $router.push('/kontakt')
-                    : $router.push('/register')
+                    : $router.push('/app/plan')
                 "
               >
                 {{ plan.cta }}
@@ -395,7 +395,7 @@ const toggleFaq = (index: number) => {
             Częste pytania
           </h2>
           <p class="text-slate-500 text-lg">
-            Wszystko, co musisz wiedzieć o bezpieczeństwie i funkcjach Vaulta.
+            Wszystko, co musisz wiedzieć o bezpieczeństwie i funkcjach Vaulte.
           </p>
         </div>
 

@@ -62,7 +62,7 @@ onMounted(async () => {
             V
           </div>
           <span class="text-white font-bold text-xl tracking-tight"
-            >Vaulta</span
+            >Vaulte</span
           >
         </NuxtLink>
       </div>

@@ -31,7 +31,7 @@ export type Database = {
           id?: string
           keywords?: string[] | null
           limit?: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           category?: string
@@ -63,7 +63,7 @@ export type Database = {
           saved?: number | null
           target: number
           title: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           color?: string | null
@@ -86,7 +86,10 @@ export type Database = {
           full_name: string | null
           id: string
           initial_balance: number | null
+          plan: string | null
           saved_balance: number | null
+          stripe_customer_id: string | null
+          subscription_status: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -96,7 +99,10 @@ export type Database = {
           full_name?: string | null
           id: string
           initial_balance?: number | null
+          plan?: string | null
           saved_balance?: number | null
+          stripe_customer_id?: string | null
+          subscription_status?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -106,7 +112,10 @@ export type Database = {
           full_name?: string | null
           id?: string
           initial_balance?: number | null
+          plan?: string | null
           saved_balance?: number | null
+          stripe_customer_id?: string | null
+          subscription_status?: string | null
         }
         Relationships: []
       }
@@ -135,7 +144,7 @@ export type Database = {
           id?: string
           merchant: string
           status?: string | null
-          user_id: string
+          user_id?: string
         }
         Update: {
           amount?: number

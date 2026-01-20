@@ -56,7 +56,7 @@ const stats = [
           :initial="{ opacity: 0, y: -30 }"
           :enter="{ opacity: 1, y: 0, transition: { duration: 800 } }"
         >
-          Misja Vaulta
+          Misja Vaulte
         </h1>
         <p
           class="mt-6 text-xl text-blue-100 max-w-3xl mx-auto"
@@ -90,7 +90,7 @@ const stats = [
         :visibleOnce="{ opacity: 1, transition: { duration: 800, delay: 200 } }"
       >
         <p>
-          Projekt Vaulta narodził się w 2024 roku, kiedy zauważyliśmy, jak
+          Projekt Vaulte narodził się w 2024 roku, kiedy zauważyliśmy, jak
           trudne jest zarządzanie budżetem, posiadając konta w trzech różnych
           bankach. Logowanie się do każdego z nich, spisywanie wydatków w
           Excelu... to była strata czasu.

@@ -6,6 +6,7 @@ export const useProfile = () => {
     currency: "PLN",
     initial_balance: 0,
     saved_balance: 0,
+    plan: "free",
   }));
 
   const isLoading = useState("profile-loading", () => true);

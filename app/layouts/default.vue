@@ -32,7 +32,7 @@ onMounted(async () => {
               V
             </div>
             <span class="text-xl font-bold tracking-tight text-slate-900"
-              >Vaulta</span
+              >Vaulte</span
             >
           </NuxtLink>
         </div>
@@ -135,7 +135,7 @@ onMounted(async () => {
             >
               V
             </div>
-            Vaulta
+            Vaulte
           </div>
           <p class="text-sm">Twoje centrum dowodzenia finansami.</p>
         </div>
@@ -183,7 +183,7 @@ onMounted(async () => {
       <div
         class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs"
       >
-        &copy; 2026 Vaulta Sp. z o.o.
+        &copy; 2026 Vaulte Sp. z o.o.
       </div>
     </footer>
   </div>

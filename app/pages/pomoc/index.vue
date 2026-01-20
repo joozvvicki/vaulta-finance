@@ -46,7 +46,7 @@ const popularArticles = [
   "Jak zresetować zapomniane hasło?",
   "Dlaczego muszę odnawiać dostęp do banku co 90 dni?",
   "Jak pobrać fakturę VAT?",
-  "Czy Vaulta działa z kontami firmowymi?",
+  "Czy Vaulte działa z kontami firmowymi?",
 ];
 </script>
 
@@ -63,7 +63,7 @@ const popularArticles = [
       <div class="relative z-10 max-w-2xl mx-auto" v-motion-fade>
         <span
           class="text-blue-400 font-bold tracking-widest text-xs uppercase mb-4 block"
-          >Centrum Pomocy Vaulta</span
+          >Centrum Pomocy Vaulte</span
         >
         <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-8">
           Jak możemy Ci pomóc?

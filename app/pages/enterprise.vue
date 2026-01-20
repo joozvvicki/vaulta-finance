@@ -31,7 +31,7 @@ const benefits = [
   },
   {
     title: "Wdrożenie On-Premise",
-    desc: "Możliwość instalacji Vaulta na Twojej infrastrukturze.",
+    desc: "Możliwość instalacji Vaulte na Twojej infrastrukturze.",
   },
   { title: "Custom SLA", desc: "Gwarancja dostępności usług do 99.99%." },
   {
@@ -67,7 +67,7 @@ const benefits = [
           </h1>
 
           <p class="text-slate-400 text-lg mb-12 leading-relaxed">
-            Vaulta Enterprise to rozwiązanie szyte na miarę. Porozmawiajmy o
+            Vaulte Enterprise to rozwiązanie szyte na miarę. Porozmawiajmy o
             tym, jak możemy zautomatyzować procesy finansowe w Twojej
             organizacji.
           </p>

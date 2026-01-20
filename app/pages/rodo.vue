@@ -56,7 +56,7 @@ definePageMeta({
           </li>
           <li>
             Kontakt do naszego Inspektora Ochrony Danych:
-            <strong>iod@vaulta.pl</strong>.
+            <strong>iod@Vaulte.pl</strong>.
           </li>
         </ul>
       </div>
@@ -70,7 +70,7 @@ definePageMeta({
           </h2>
           <p>
             Administratorem Twoich danych osobowych jest
-            <strong>Vaulta Sp. z o.o.</strong> z siedzibą w Warszawie (00-001),
+            <strong>Vaulte Sp. z o.o.</strong> z siedzibą w Warszawie (00-001),
             przy ul. Fintechowej 12, wpisana do rejestru przedsiębiorców KRS pod
             numerem 0000123456, NIP: 5250000000.
           </p>
@@ -88,9 +88,9 @@ definePageMeta({
           <p class="mt-2">
             📧 Kontakt:
             <a
-              href="mailto:iod@vaulta.pl"
+              href="mailto:iod@Vaulte.pl"
               class="text-blue-600 font-medium hover:underline"
-              >iod@vaulta.pl</a
+              >iod@Vaulte.pl</a
             >
           </p>
         </section>
@@ -118,7 +118,7 @@ definePageMeta({
             </li>
             <li>
               <strong>Marketing bezpośredni</strong> (Art. 6 ust. 1 lit. f RODO)
-              – informowanie o nowych funkcjach Vaulta.
+              – informowanie o nowych funkcjach Vaulte.
             </li>
           </ul>
         </section>
@@ -188,7 +188,7 @@ definePageMeta({
             6. Okres przechowywania danych
           </h2>
           <p>
-            Dane przechowujemy przez okres posiadania konta w serwisie Vaulta.
+            Dane przechowujemy przez okres posiadania konta w serwisie Vaulte.
             Po jego usunięciu, dane mogą być przechowywane przez okres
             przedawnienia roszczeń (zazwyczaj 3 lub 6 lat) oraz okres wynikający
             z przepisów podatkowych (5 lat).

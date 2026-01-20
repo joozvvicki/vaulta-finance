@@ -31,9 +31,9 @@ definePageMeta({
             1. Administrator Danych
           </h2>
           <p>
-            Administratorem Twoich danych osobowych jest Vaulta Sp. z o.o. z
+            Administratorem Twoich danych osobowych jest Vaulte Sp. z o.o. z
             siedzibą w Warszawie. Możesz skontaktować się z Inspektorem Ochrony
-            Danych pod adresem: iod@Vaulta.pl.
+            Danych pod adresem: iod@Vaulte.pl.
           </p>
         </section>
 

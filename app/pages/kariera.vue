@@ -62,7 +62,7 @@ const offers = [
 ];
 
 const openMail = (role: string) => {
-  window.location.href = `mailto:rekrutacja@Vaulta.pl?subject=Aplikacja na stanowisko: ${role}`;
+  window.location.href = `mailto:rekrutacja@Vaulte.pl?subject=Aplikacja na stanowisko: ${role}`;
 };
 </script>
 
@@ -96,7 +96,7 @@ const openMail = (role: string) => {
           >
         </h1>
         <p class="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">
-          Tworzymy Vaulta, aby każdy miał kontrolę nad swoimi pieniędzmi.
+          Tworzymy Vaulte, aby każdy miał kontrolę nad swoimi pieniędzmi.
           Szukamy pasjonatów, którzy nie boją się wyzwań i trudnych problemów
           technicznych.
         </p>
@@ -114,7 +114,7 @@ const openMail = (role: string) => {
     <section class="py-20 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold text-slate-900">Dlaczego Vaulta?</h2>
+          <h2 class="text-3xl font-bold text-slate-900">Dlaczego Vaulte?</h2>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

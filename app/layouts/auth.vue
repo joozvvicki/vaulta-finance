@@ -23,7 +23,7 @@ const title = computed(() => {
           V
         </div>
         <span class="text-2xl font-bold tracking-tight text-slate-900"
-          >Vaulta</span
+          >Vaulte</span
         >
       </NuxtLink>
       <h2 class="mt-6 text-3xl font-extrabold text-slate-900 tracking-tight">

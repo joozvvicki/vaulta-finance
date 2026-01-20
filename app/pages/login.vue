@@ -43,7 +43,7 @@ const handlePekaoLogin = () => {
 onMounted(async () => {
   if (route.query.demo === "true") {
     await new Promise((r) => setTimeout(r, 500));
-    email.value = "demo@vaulta.app";
+    email.value = "demo@Vaulte.app";
     password.value = "demo123";
     handleLogin();
   }

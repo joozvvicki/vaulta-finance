@@ -19,9 +19,22 @@ export default defineNuxtConfig({
       secure: process.env.NODE_ENV === "production",
     },
   },
+  runtimeConfig: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    supabaseServiceKey: process.env.SUPABASE_SECRET_KEY,
+
+    public: {
+      stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+
+      supabase: {
+        url: process.env.SUPABASE_URL,
+        key: process.env.SUPABASE_KEY,
+      },
+    },
+  },
   app: {
     head: {
-      title: "Vaulta - Twoje finanse w jednym miejscu",
+      title: "Vaulte - Twoje finanse w jednym miejscu",
       meta: [
         {
           name: "description",

@@ -88,7 +88,7 @@ const chartOptions = computed(() => ({
     fontFamily: "inherit",
     animations: { enabled: true },
   },
-  colors: ["#2563eb"], // Niebieski Vaulta
+  colors: ["#2563eb"], // Niebieski Vaulte
   fill: {
     type: "gradient",
     gradient: {

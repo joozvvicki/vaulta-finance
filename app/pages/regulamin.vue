@@ -25,11 +25,11 @@ definePageMeta({
           </h2>
           <p>
             1. Niniejszy Regulamin określa zasady korzystania z aplikacji
-            internetowej <strong>Vaulta</strong>, dostępnej pod adresem
-            Vaulta.pl.
+            internetowej <strong>Vaulte</strong>, dostępnej pod adresem
+            Vaulte.pl.
           </p>
           <p>
-            2. Operatorem serwisu jest Vaulta Sp. z o.o. z siedzibą w Warszawie
+            2. Operatorem serwisu jest Vaulte Sp. z o.o. z siedzibą w Warszawie
             (00-001), wpisana do rejestru przedsiębiorców KRS pod numerem
             0000000000.
           </p>
@@ -53,7 +53,7 @@ definePageMeta({
             chronienia hasła dostępowego przed osobami trzecimi.
           </p>
           <p>
-            3. Vaulta nie przechowuje danych logowania do bankowości
+            3. Vaulte nie przechowuje danych logowania do bankowości
             elektronicznej użytkownika. Proces logowania odbywa się bezpośrednio
             na stronach banków lub licencjonowanych integratorów (TPP).
           </p>
@@ -92,7 +92,7 @@ definePageMeta({
           </h2>
           <p>
             1. Wszelkie reklamacje dotyczące działania Serwisu należy zgłaszać
-            drogą elektroniczną na adres: pomoc@Vaulta.pl.
+            drogą elektroniczną na adres: pomoc@Vaulte.pl.
           </p>
           <p>
             2. Reklamacje rozpatrywane są w terminie 14 dni od daty ich
