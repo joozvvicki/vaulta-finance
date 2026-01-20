@@ -2,6 +2,7 @@
   <NuxtLayout>
     <VitePwaManifest />
     <NuxtPage />
+    <PwaUpdate />
   </NuxtLayout>
 </template>
 
