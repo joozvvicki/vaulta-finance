@@ -9,18 +9,15 @@ definePageMeta({ layout: "dashboard" });
 const transactionStore = useTransactionStore();
 const budgetStore = useBudgetStore();
 
-// Inicjalizacja danych
 onMounted(() => {
   budgetStore.fetchCategories();
-  transactionStore.fetchTransactions(); // Upewniamy się, że transakcje też są
+  transactionStore.fetchTransactions();
 });
 
-// Łączymy loadingi
 const isLoading = computed(
   () => budgetStore.isLoading || transactionStore.isLoading,
 );
 
-// --- LOGIKA MODALA ZARZĄDZANIA ---
 const isManageModalOpen = ref(false);
 const isEditing = ref(false);
 const editingId = ref<string | null>(null);
@@ -116,11 +113,9 @@ const budgets = computed(() => {
           tDate.getTime() === firstDayOfMonth.getTime();
         if (!isCurrentMonth) return false;
 
-        // Dopasowanie po słowach kluczowych lub nazwie kategorii
         const cat = t.category.toLowerCase();
         const merch = t.merchant.toLowerCase();
 
-        // Zabezpieczenie na null w keywords
         const keywords = b.keywords || [];
 
         const matches =
@@ -153,7 +148,6 @@ const totalStats = computed(() => {
   };
 });
 
-// Helpery UI
 const getPercentage = (spent: number, limit: number) =>
   Math.min((spent / limit) * 100, 100);
 

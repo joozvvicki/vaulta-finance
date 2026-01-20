@@ -137,7 +137,9 @@ const getIconByCategory = (cat: string) => {
 
 <template>
   <div>
-    <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+    <div
+      class="flex flex-col md:flex-row justify-between md:items-end mb-8 gap-4"
+    >
       <div>
         <h1 class="text-2xl font-bold text-slate-900">Historia Transakcji</h1>
         <p class="text-slate-500">Przeglądaj i filtruj swoje wydatki.</p>
@@ -197,121 +199,115 @@ const getIconByCategory = (cat: string) => {
         <option>Oczekujące</option>
       </select>
     </div>
-
     <div
-      class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px]"
+      class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-[400px]"
     >
-      <table class="w-full text-left border-collapse">
-        <thead
-          class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold"
-        >
-          <tr>
-            <th class="px-6 py-4">Nazwa</th>
-            <th class="px-6 py-4">Kategoria</th>
-            <th class="px-6 py-4">Data</th>
-            <th class="px-6 py-4">Status</th>
-            <th class="px-6 py-4 text-right">Kwota</th>
-            <th class="px-6 py-4 w-10"></th>
-          </tr>
-        </thead>
-
-        <tbody v-if="store.isLoading" class="divide-y divide-slate-100">
-          <tr v-for="i in 6" :key="i" class="animate-pulse">
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-slate-200"></div>
-                <div class="space-y-2">
-                  <div class="h-3 w-24 bg-slate-200 rounded"></div>
-                  <div class="h-2 w-16 bg-slate-100 rounded"></div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="h-5 w-20 bg-slate-100 rounded"></div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="h-3 w-20 bg-slate-200 rounded"></div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="h-5 w-16 bg-slate-200 rounded-full"></div>
-            </td>
-            <td class="px-6 py-4 text-right">
-              <div class="h-4 w-24 bg-slate-200 rounded ml-auto"></div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="h-6 w-6 bg-slate-100 rounded-full"></div>
-            </td>
-          </tr>
-        </tbody>
-
-        <TransitionGroup
-          v-else
-          name="list"
-          tag="tbody"
-          class="divide-y divide-slate-100"
-        >
-          <tr
-            v-for="t in filteredTransactions"
-            :key="t.id"
-            class="hover:bg-slate-50 transition-colors group cursor-pointer"
-            @click="openEditModal(t)"
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-left border-collapse min-w-[900px]">
+          <thead
+            class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold"
           >
-            <td class="px-6 py-4">
-              <div class="flex items-center gap-3">
-                <div
-                  class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm"
-                >
-                  {{ t.icon || getIconByCategory(t.category) }}
-                </div>
-                <div>
-                  <span class="font-medium text-slate-900 block">{{
-                    t.merchant
-                  }}</span>
-                  <span
-                    v-if="t.description"
-                    class="text-xs text-slate-400 truncate max-w-[200px] block"
-                    >{{ t.description }}</span
+            <tr>
+              <th class="px-6 py-4 whitespace-nowrap">Nazwa</th>
+              <th class="px-6 py-4 whitespace-nowrap">Kategoria</th>
+              <th class="px-6 py-4 whitespace-nowrap">Data</th>
+              <th class="px-6 py-4 whitespace-nowrap">Status</th>
+              <th class="px-6 py-4 whitespace-nowrap text-right">Kwota</th>
+              <th class="px-6 py-4 w-10"></th>
+            </tr>
+          </thead>
+
+          <tbody v-if="store.isLoading" class="divide-y divide-slate-100">
+            <tr v-for="i in 6" :key="i" class="animate-pulse">
+              <td class="px-6 py-4">
+                <div class="h-3 w-24 bg-slate-200 rounded"></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="h-3 w-20 bg-slate-100 rounded"></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="h-3 w-20 bg-slate-200 rounded"></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="h-5 w-16 bg-slate-200 rounded-full"></div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="h-4 w-24 bg-slate-200 rounded ml-auto"></div>
+              </td>
+              <td class="px-6 py-4"></td>
+            </tr>
+          </tbody>
+
+          <TransitionGroup
+            v-else
+            name="list"
+            tag="tbody"
+            class="divide-y divide-slate-100"
+          >
+            <tr
+              v-for="t in filteredTransactions"
+              :key="t.id"
+              class="hover:bg-slate-50 transition-colors group cursor-pointer"
+              @click="openEditModal(t)"
+            >
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm"
                   >
+                    {{ t.icon || getIconByCategory(t.category) }}
+                  </div>
+                  <div>
+                    <span class="font-medium text-slate-900 block">{{
+                      t.merchant
+                    }}</span>
+                    <span
+                      v-if="t.description"
+                      class="text-xs text-slate-400 truncate max-w-[200px] block"
+                      >{{ t.description }}</span
+                    >
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="px-6 py-4 text-slate-600 text-sm">
-              <span class="px-2 py-1 bg-slate-100 rounded text-xs">{{
-                t.category
-              }}</span>
-            </td>
-            <td class="px-6 py-4 text-slate-500 text-sm">{{ t.date }}</td>
-            <td class="px-6 py-4">
-              <span
+              </td>
+              <td class="px-6 py-4 text-slate-600 text-sm whitespace-nowrap">
+                <span class="px-2 py-1 bg-slate-100 rounded text-xs">{{
+                  t.category
+                }}</span>
+              </td>
+              <td class="px-6 py-4 text-slate-500 text-sm whitespace-nowrap">
+                {{ t.date }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  :class="[
+                    'px-2 py-1 rounded-full text-xs font-bold',
+                    statusColor(t.status),
+                  ]"
+                >
+                  {{ t.status === "Completed" ? "Zakończone" : "Oczekujące" }}
+                </span>
+              </td>
+              <td
                 :class="[
-                  'px-2 py-1 rounded-full text-xs font-bold',
-                  statusColor(t.status),
+                  'px-6 py-4 text-right font-bold whitespace-nowrap',
+                  t.amount > 0 ? 'text-green-600' : 'text-slate-900',
                 ]"
               >
-                {{ t.status === "Completed" ? "Zakończone" : "Oczekujące" }}
-              </span>
-            </td>
-            <td
-              :class="[
-                'px-6 py-4 text-right font-bold',
-                t.amount > 0 ? 'text-green-600' : 'text-slate-900',
-              ]"
-            >
-              {{ t.amount > 0 ? "+" : "" }}{{ t.amount.toFixed(2) }} PLN
-            </td>
-            <td class="px-4 py-4 text-right">
-              <button
-                @click.stop="handleDelete(t.id)"
-                class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                title="Usuń"
-              >
-                🗑️
-              </button>
-            </td>
-          </tr>
-        </TransitionGroup>
-      </table>
-
+                {{ t.amount > 0 ? "+" : "" }}{{ t.amount.toFixed(2) }} PLN
+              </td>
+              <td class="px-4 py-4 text-right">
+                <button
+                  @click.stop="handleDelete(t.id)"
+                  class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
+                  title="Usuń"
+                >
+                  🗑️
+                </button>
+              </td>
+            </tr>
+          </TransitionGroup>
+        </table>
+      </div>
       <div
         v-if="!store.isLoading && filteredTransactions.length === 0"
         class="flex flex-col items-center justify-center py-24"
@@ -323,7 +319,7 @@ const getIconByCategory = (cat: string) => {
       </div>
 
       <div
-        class="px-6 py-4 border-t border-slate-100 flex justify-between items-center text-sm text-slate-500"
+        class="px-6 py-4 border-t border-slate-100 flex justify-between items-center text-sm text-slate-500 mt-auto"
       >
         <p v-if="store.isLoading">Odświeżanie...</p>
         <p v-else>
