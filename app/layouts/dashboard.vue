@@ -255,6 +255,8 @@ onMounted(async () => {
         </NuxtLink>
       </div>
     </nav>
+
+    <AiAssistant />
   </div>
 </template>
 

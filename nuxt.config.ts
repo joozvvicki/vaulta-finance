@@ -23,6 +23,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     supabaseServiceKey: process.env.SUPABASE_SECRET_KEY,
+    geminiApiKey: process.env.NUXT_GEMINI_API_KEY,
 
     public: {
       stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
@@ -91,7 +92,7 @@ export default defineNuxtConfig({
       installPrompt: true,
     },
     devOptions: {
-      enabled: true,
+      enabled: false,
       type: "module",
     },
   },
