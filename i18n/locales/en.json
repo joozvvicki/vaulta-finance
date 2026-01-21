@@ -1,0 +1,215 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "budget": "Budget",
+    "goals": "Goals",
+    "plan": "Plan",
+    "account": "Account",
+    "app": "App"
+  },
+  "auth": {
+    "login": {
+      "emailLabel": "Email Address",
+      "passwordLabel": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "orContinue": "Or continue with",
+      "noAccount": "Don't have an account?",
+      "registerNow": "Sign up for free",
+      "errors": {
+        "invalid": "Invalid email or password.",
+        "general": "Login error occurred.",
+        "unexpected": "An unexpected error occurred."
+      }
+    }
+  },
+  "common": {
+    "user": "User",
+    "logout": "Logout"
+  },
+  "layout": {
+    "nav": {
+      "home": "Home",
+      "about": "About us",
+      "pricing": "Pricing",
+      "careers": "Careers"
+    },
+    "auth": {
+      "loggedInAs": "Logged in as",
+      "dashboard": "Dashboard",
+      "login": "Login",
+      "register": "Register"
+    },
+    "footer": {
+      "tagline": "Your financial command center.",
+      "company": "Company",
+      "legal": "Legal",
+      "terms": "Terms",
+      "privacy": "Privacy Policy",
+      "gdpr": "GDPR Compliance"
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "New integration: Bank Pekao API 🚀",
+      "title": "Your finances.",
+      "subtitle": "In one place.",
+      "description": "Connect bank accounts, track spending, and control your home budget with a secure API. No manual data entry.",
+      "cta_start": "Start for free",
+      "cta_demo": "View demo"
+    },
+    "features": {
+      "title": "What can Vaulte do?",
+      "subtitle": "We use Open Banking technology to give you full control over your money.",
+      "items": [
+        {
+          "title": "Account Aggregation",
+          "desc": "Connect accounts from PKO, Pekao, mBank, Revolut, and others into one clear view.",
+          "icon": "🏦"
+        },
+        {
+          "title": "Smart Analytics",
+          "desc": "AI algorithms automatically categorize your spending, detecting subscriptions and trends.",
+          "icon": "🧠"
+        },
+        {
+          "title": "Budget Control",
+          "desc": "Set limits for categories (e.g., 'Dining out') and receive push notifications.",
+          "icon": "📉"
+        }
+      ]
+    },
+    "pricing": {
+      "title": "Simple pricing plans",
+      "subtitle": "No hidden fees. Cancel at any time.",
+      "plans": {
+        "basic": {
+          "name": "Basic",
+          "price": "$0",
+          "period": "forever",
+          "desc": "Perfect to start controlling the chaos in your wallet.",
+          "features": [
+            "Connect up to 2 banks",
+            "3 months transaction history",
+            "Basic spending categories",
+            "Manual cash entries"
+          ],
+          "cta": "Create free account"
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "$4.99",
+          "period": "/ mo",
+          "tag": "Most popular",
+          "desc": "Full automation and artificial intelligence for your finances.",
+          "features": [
+            "Unlimited banks",
+            "Full transaction history",
+            "AI Smart categorization",
+            "Budget alerts & notifications",
+            "Excel export (XLSX/CSV)",
+            "Savings goals tracking"
+          ],
+          "cta": "Start free trial"
+        },
+        "business": {
+          "name": "Business",
+          "price": "Custom",
+          "period": "pricing",
+          "desc": "For accounting offices, advisors, and companies needing API.",
+          "features": [
+            "Vaulte API access",
+            "Multi-user panel",
+            "White-Label reports",
+            "Dedicated account manager",
+            "On-Premise deployment"
+          ],
+          "cta": "Contact us"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Trusted by users",
+      "items": [
+        {
+          "text": "Finally, I can see all my expenses in one place. The integration works instantly.",
+          "author": "Mark K., Freelancer"
+        },
+        {
+          "text": "Budget Tracker saved my finances before the holidays. Highly recommend Pro!",
+          "author": "Ann N., Designer"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about Vaulte security and features.",
+      "items": [
+        {
+          "q": "Is Vaulte safe?",
+          "a": "Security is our priority. We use AES-256 encryption and SSL connections..."
+        },
+        {
+          "q": "Which banks are supported?",
+          "a": "We support over 20 institutions in Poland and Europe, including Revolut and major banks."
+        },
+        {
+          "q": "Can I make transfers?",
+          "a": "Currently, Vaulte focuses on data aggregation. Payment module (PIS) is coming in Q4 2026."
+        },
+        {
+          "q": "Can I cancel anytime?",
+          "a": "Yes. The subscription is monthly, and you can cancel with one click."
+        }
+      ],
+      "footer_title": "Still have questions?",
+      "footer_desc": "Can't find the answer you're looking for? Talk to our team.",
+      "cta_help": "Help Center",
+      "cta_contact": "Contact us"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Vaulte Mission",
+      "description": "We want everyone to have full control over their finances. We believe that Open Banking is the future that belongs to the user, not the institutions."
+    },
+    "history": {
+      "title": "Our History",
+      "p1": "The Vaulte project was born in 2024 when we noticed how difficult it is to manage a budget while having accounts in three different banks. Logging into each of them, writing down expenses in Excel... it was a waste of time.",
+      "p2_start": "We decided to use the",
+      "p2_end": "directive to create one secure place that aggregates this data. Today, we are proud to help thousands of people save smarter."
+    },
+    "stats": [
+      { "label": "Connected banks", "value": "15+" },
+      { "label": "Processed transactions", "value": "2M+" },
+      { "label": "Satisfied users", "value": "10k" }
+    ],
+    "team": {
+      "title": "Meet the Team",
+      "subtitle": "The people who take care of your data security.",
+      "members": [
+        {
+          "name": "Adam Kowalski",
+          "role": "CEO & Founder",
+          "bio": "Formerly Senior Dev at Pekao Bank. Fintech enthusiast.",
+          "img": "https://i.pravatar.cc/150?u=adam"
+        },
+        {
+          "name": "Ewa Nowak",
+          "role": "CTO",
+          "bio": "Expert in cybersecurity and PSD2.",
+          "img": "https://i.pravatar.cc/150?u=ewa"
+        },
+        {
+          "name": "Piotr Wiśniewski",
+          "role": "Head of Product",
+          "bio": "Created apps for the largest startups in Poland.",
+          "img": "https://i.pravatar.cc/150?u=piotr"
+        }
+      ]
+    }
+  }
+}

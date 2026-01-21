@@ -22,9 +22,8 @@ const goBack = () => useRouter().back();
     ></div>
 
     <div class="max-w-lg w-full text-center">
-      <div
+      <Motion
         class="relative mb-8"
-        v-motion
         :initial="{ opacity: 0, scale: 0.5 }"
         :enter="{
           opacity: 1,
@@ -38,9 +37,8 @@ const goBack = () => useRouter().back();
           404
         </h1>
 
-        <div
+        <Motion
           class="absolute -top-4 -right-4 bg-white p-3 rounded-2xl shadow-lg border border-slate-100"
-          v-motion
           :initial="{ y: 0 }"
           :enter="{
             y: -10,
@@ -52,11 +50,10 @@ const goBack = () => useRouter().back();
           }"
         >
           <span class="text-4xl">💸</span>
-        </div>
-      </div>
+        </Motion>
+      </Motion>
 
-      <div
-        v-motion
+      <Motion
         :initial="{ opacity: 0, y: 20 }"
         :enter="{ opacity: 1, y: 0, transition: { delay: 200 } }"
       >
@@ -83,7 +80,7 @@ const goBack = () => useRouter().back();
             <span>←</span> Cofnij się
           </button>
         </div>
-      </div>
+      </Motion>
 
       <div class="mt-12 text-xs text-slate-400">
         Kod błędu: {{ error.statusCode }} •

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { watch, onMounted, computed } from "vue";
+import en from "~/assets/img/GB.svg";
+import pl from "~/assets/img/PL.svg";
 
 import {
   IconChartBar,
@@ -7,6 +8,10 @@ import {
   IconListDetails,
   IconTarget,
 } from "@tabler/icons-vue";
+
+const toggleLocale = () => {
+  setLocale(locale.value === "pl" ? "en" : "pl");
+};
 
 const { profile, fetchProfile } = useProfile();
 const user = useSupabaseUser();
@@ -29,30 +34,34 @@ const handleLogout = async () => {
   await client.auth.signOut();
   router.push("/login");
 };
+const { t, locale, setLocale } = useI18n();
 
-const mainItems = [
-  { name: "Pulpit", icon: "📊", to: "/app/dashboard" },
-  { name: "Transakcje", icon: "💳", to: "/app/transakcje" },
-  { name: "Budżet", icon: "📉", to: "/app/budzet" },
-  { name: "Cele", icon: "🎯", to: "/app/cele" },
-];
+const mainItems = computed(() => [
+  { name: t("nav.dashboard"), icon: "📊", to: "/app/dashboard" },
+  { name: t("nav.transactions"), icon: "💳", to: "/app/transakcje" },
+  { name: t("nav.budget"), icon: "📉", to: "/app/budzet" },
+  { name: t("nav.goals"), icon: "🎯", to: "/app/cele" },
+]);
 
-const settingsItems = [
-  { name: "Plan", icon: "💎", to: "/app/plan", highlight: true },
-  { name: "Konto", icon: "⚙️", to: "/app/konto" },
-];
+const settingsItems = computed(() => [
+  { name: t("nav.plan"), icon: "💎", to: "/app/plan", highlight: true },
+  { name: t("nav.account"), icon: "⚙️", to: "/app/konto" },
+]);
 
-// Łączymy listy dla mobilnego menu (wybieramy 5 najważniejszych)
-const mobileNavItems = [
-  { name: "Transakcje", icon: IconListDetails, to: "/app/transakcje" },
-  { name: "Budżet", icon: IconChartBar, to: "/app/budzet" },
-  { name: "Home", icon: IconHome, to: "/app/dashboard" },
-  { name: "Cele", icon: IconTarget, to: "/app/cele" },
-  { name: "Konto", icon: "image", to: "/app/konto" },
-];
+const mobileNavItems = computed(() => [
+  { name: t("nav.transactions"), icon: IconListDetails, to: "/app/transakcje" },
+  { name: t("nav.budget"), icon: IconChartBar, to: "/app/budzet" },
+  { name: t("nav.dashboard"), icon: IconHome, to: "/app/dashboard" },
+  { name: t("nav.goals"), icon: IconTarget, to: "/app/cele" },
+  { name: t("nav.account"), icon: "image", to: "/app/konto" },
+]);
+
+const toggleLanguage = () => {
+  setLocale(locale.value === "pl" ? "en" : "pl");
+};
 
 const activeIndex = computed(() => {
-  const index = mobileNavItems.findIndex((item) =>
+  const index = mobileNavItems.value.findIndex((item) =>
     route.path.startsWith(item.to),
   );
   return index === -1 ? 2 : index;
@@ -99,7 +108,7 @@ onMounted(async () => {
           <p
             class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4"
           >
-            Aplikacja
+            {{ $t("nav.app") }}
           </p>
           <div class="space-y-1">
             <NuxtLink
@@ -168,6 +177,10 @@ onMounted(async () => {
             {{ profile.full_name || "Użytkownik" }}
           </p>
         </div>
+        <button @click="toggleLocale">
+          <img :src="pl" v-if="locale === 'pl'" class="w-6 h-4" />
+          <img :src="en" v-if="locale === 'en'" class="w-6 h-4" />
+        </button>
         <button
           @click="handleLogout"
           class="ml-auto text-slate-400 hover:text-red-400 transition-transform hover:scale-110"

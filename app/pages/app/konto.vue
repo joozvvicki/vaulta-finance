@@ -7,10 +7,9 @@ const router = useRouter();
 
 const isUploading = ref(false);
 const isSaving = ref(false);
-const isPortalLoading = ref(false); // Loading dla przycisku portalu
+const isPortalLoading = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 
-// --- LOGIKA PLANÓW ---
 const planDetails = computed(() => {
   const p = profile.value.plan || "free";
   switch (p) {
@@ -78,7 +77,7 @@ const manageSubscription = async () => {
     isPortalLoading.value = false;
   }
 };
-// --- AKTUALIZACJA DANYCH ---
+
 const updateProfile = async () => {
   const {
     data: { session },

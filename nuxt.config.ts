@@ -1,16 +1,39 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   modules: [
     "@pinia/nuxt",
     "@nuxtjs/tailwindcss",
     "@vueuse/motion/nuxt",
     "@nuxtjs/supabase",
     "@vite-pwa/nuxt",
+    "@nuxtjs/i18n",
   ],
   build: {
     transpile: ["vue3-apexcharts"],
+  },
+  i18n: {
+    strategy: "no_prefix",
+    defaultLocale: "pl",
+    langDir: "locales",
+    locales: [
+      {
+        code: "pl",
+        iso: "pl-PL",
+        file: "pl.json",
+      },
+      {
+        code: "en",
+        iso: "en-US",
+        file: "en.json",
+      },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: "i18n_redirected",
+      alwaysRedirect: true,
+    },
   },
   supabase: {
     redirect: false,
@@ -92,8 +115,7 @@ export default defineNuxtConfig({
       installPrompt: true,
     },
     devOptions: {
-      enabled: false,
-      type: "module",
+      enabled: true,
     },
   },
 });

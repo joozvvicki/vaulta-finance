@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
+
 definePageMeta({ layout: "auth" });
 
+const { t } = useI18n();
 const client = useSupabaseClient();
 const router = useRouter();
 const route = useRoute();
@@ -22,16 +25,16 @@ const handleLogin = async () => {
 
     if (error) {
       if (error.message.includes("Invalid login")) {
-        errorMsg.value = "Nieprawidłowy email lub hasło.";
+        errorMsg.value = t("auth.login.errors.invalid");
       } else {
-        errorMsg.value = "Wystąpił błąd logowania.";
+        errorMsg.value = t("auth.login.errors.general");
       }
       isLoading.value = false;
     } else {
       router.push("/app/dashboard");
     }
   } catch (e) {
-    errorMsg.value = "Wystąpił nieoczekiwany błąd.";
+    errorMsg.value = t("auth.login.errors.unexpected");
     isLoading.value = false;
   }
 };
@@ -54,7 +57,7 @@ onMounted(async () => {
   <form class="space-y-6" @submit.prevent="handleLogin">
     <div
       v-if="errorMsg"
-      class="bg-red-50 text-red-600 text-sm p-3 rounded-lg flex items-center gap-2 animate-pulse border border-red-100"
+      class="bg-red-50 text-red-600 text-sm p-3 rounded-lg flex items-center gap-2 animate-fade-in border border-red-100"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -72,9 +75,9 @@ onMounted(async () => {
     </div>
 
     <div>
-      <label for="email" class="block text-sm font-medium text-slate-700"
-        >Adres Email</label
-      >
+      <label for="email" class="block text-sm font-medium text-slate-700">
+        {{ $t("auth.login.emailLabel") }}
+      </label>
       <div class="mt-1">
         <input
           v-model="email"
@@ -88,9 +91,9 @@ onMounted(async () => {
     </div>
 
     <div>
-      <label for="password" class="block text-sm font-medium text-slate-700"
-        >Hasło</label
-      >
+      <label for="password" class="block text-sm font-medium text-slate-700">
+        {{ $t("auth.login.passwordLabel") }}
+      </label>
       <div class="mt-1">
         <input
           v-model="password"
@@ -111,15 +114,15 @@ onMounted(async () => {
           type="checkbox"
           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded"
         />
-        <label for="remember-me" class="ml-2 block text-sm text-slate-900"
-          >Zapamiętaj mnie</label
-        >
+        <label for="remember-me" class="ml-2 block text-sm text-slate-900">
+          {{ $t("auth.login.rememberMe") }}
+        </label>
       </div>
 
       <div class="text-sm">
-        <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
-          >Zapomniałeś hasła?</a
-        >
+        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+          {{ $t("auth.login.forgotPassword") }}
+        </a>
       </div>
     </div>
 
@@ -150,9 +153,9 @@ onMounted(async () => {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          Logowanie...
+          {{ $t("auth.login.submitting") }}
         </span>
-        <span v-else>Zaloguj się</span>
+        <span v-else>{{ $t("auth.login.submit") }}</span>
       </button>
     </div>
 
@@ -161,7 +164,11 @@ onMounted(async () => {
         <div class="w-full border-t border-slate-200"></div>
       </div>
       <div class="relative flex justify-center text-sm">
-        <span class="px-2 bg-white text-slate-500">Lub zaloguj przez</span>
+        <span
+          class="px-2 bg-white text-slate-500 uppercase tracking-widest text-[10px] font-bold"
+        >
+          {{ $t("auth.login.orContinue") }}
+        </span>
       </div>
     </div>
 
@@ -177,18 +184,34 @@ onMounted(async () => {
         @click="handlePekaoLogin"
         class="w-full inline-flex justify-center items-center py-2 px-4 border border-red-200 rounded-lg shadow-sm bg-white text-sm font-medium text-red-700 hover:bg-red-50 transition"
       >
-        <span class="mr-2 text-lg">🐂</span> Apple
+        <span class="mr-2 text-lg">🐂</span> Pekao
       </button>
     </div>
 
     <div class="mt-6 text-center text-sm">
-      <span class="text-slate-500">Nie masz jeszcze konta? </span>
+      <span class="text-slate-500">{{ $t("auth.login.noAccount") }} </span>
       <NuxtLink
         to="/register"
         class="font-bold text-blue-600 hover:text-blue-500 transition"
       >
-        Zarejestruj się za darmo
+        {{ $t("auth.login.registerNow") }}
       </NuxtLink>
     </div>
   </form>
 </template>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

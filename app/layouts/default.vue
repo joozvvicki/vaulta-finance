@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
+import en from "~/assets/img/GB.svg";
+import pl from "~/assets/img/PL.svg";
+
 const user = useSupabaseUser();
 const { profile, fetchProfile } = useProfile();
+const { t, locale, setLocale } = useI18n();
 
 const userInitial = computed(() => {
   const name = profile.value?.full_name || user.value?.email;
@@ -8,8 +13,12 @@ const userInitial = computed(() => {
 });
 
 const displayName = computed(() => {
-  return profile.value?.full_name?.split(" ")[0] || "Użytkownik";
+  return profile.value?.full_name?.split(" ")[0] || t("common.user");
 });
+
+const toggleLocale = () => {
+  setLocale(locale.value === "pl" ? "en" : "pl");
+};
 
 onMounted(async () => {
   await fetchProfile();
@@ -40,36 +49,37 @@ onMounted(async () => {
         <nav
           class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-8 text-sm font-medium text-slate-600"
         >
-          <NuxtLink to="/" class="hover:text-blue-600 transition"
-            >Strona główna</NuxtLink
-          >
-          <NuxtLink to="/o-nas" class="hover:text-blue-600 transition"
-            >O nas</NuxtLink
-          >
-          <NuxtLink to="/#cennik" class="hover:text-blue-600 transition"
-            >Cennik</NuxtLink
-          >
-          <NuxtLink to="/kariera" class="hover:text-blue-600 transition"
-            >Kariera</NuxtLink
-          >
+          <NuxtLink to="/" class="hover:text-blue-600 transition">{{
+            $t("layout.nav.home")
+          }}</NuxtLink>
+          <NuxtLink to="/o-nas" class="hover:text-blue-600 transition">{{
+            $t("layout.nav.about")
+          }}</NuxtLink>
+          <NuxtLink to="/#cennik" class="hover:text-blue-600 transition">{{
+            $t("layout.nav.pricing")
+          }}</NuxtLink>
+          <NuxtLink to="/kariera" class="hover:text-blue-600 transition">{{
+            $t("layout.nav.careers")
+          }}</NuxtLink>
         </nav>
 
         <div class="flex-1 flex items-center justify-end gap-4">
           <div v-if="user" class="flex items-center gap-3">
             <div class="hidden sm:flex flex-col items-end mr-1">
               <span
-                class="text-xs font-bold text-slate-400 uppercase tracking-wider"
-                >Zalogowany jako</span
+                class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"
               >
+                {{ $t("layout.auth.loggedInAs") }}
+              </span>
               <span class="text-sm font-bold text-slate-900 leading-tight">{{
                 displayName
               }}</span>
             </div>
 
             <img
-              v-if="user && profile.avatar_url"
+              v-if="profile.avatar_url"
               :src="profile.avatar_url"
-              class="w-8 h-8 rounded-full flex items-center justify-center font-bold border border-blue-200"
+              class="w-8 h-8 rounded-full border border-blue-200 object-cover"
             />
             <div
               v-else
@@ -80,9 +90,9 @@ onMounted(async () => {
 
             <NuxtLink
               to="/app/dashboard"
-              class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-900/20 flex items-center gap-2"
+              class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition shadow-lg flex items-center gap-2"
             >
-              Pulpit
+              {{ $t("layout.auth.dashboard") }}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="h-4 w-4"
@@ -103,17 +113,21 @@ onMounted(async () => {
           <div v-else class="flex gap-2">
             <button
               class="text-slate-600 px-4 py-2 rounded-xl text-sm font-medium hover:bg-slate-100 transition"
-              @click="$router.push({ path: '/login' })"
+              @click="$router.push('/login')"
             >
-              Zaloguj się
+              {{ $t("layout.auth.login") }}
             </button>
             <button
-              class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-500/30"
-              @click="$router.push({ path: '/register' })"
+              class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition shadow-lg"
+              @click="$router.push('/register')"
             >
-              Załóż konto
+              {{ $t("layout.auth.register") }}
             </button>
           </div>
+          <button @click="toggleLocale">
+            <img :src="pl" v-if="locale === 'pl'" class="w-6 h-4" />
+            <img :src="en" v-if="locale === 'en'" class="w-6 h-4" />
+          </button>
         </div>
       </div>
     </header>
@@ -137,51 +151,52 @@ onMounted(async () => {
             </div>
             Vaulte
           </div>
-          <p class="text-sm">Twoje centrum dowodzenia finansami.</p>
+          <p class="text-sm">{{ $t("layout.footer.tagline") }}</p>
         </div>
         <div>
-          <h4 class="text-white font-bold mb-4">Firma</h4>
+          <h4 class="text-white font-bold mb-4">
+            {{ $t("layout.footer.company") }}
+          </h4>
           <ul class="space-y-2 text-sm">
             <li>
-              <NuxtLink to="/o-nas" class="hover:text-white transition"
-                >O nas</NuxtLink
-              >
+              <NuxtLink to="/o-nas" class="hover:text-white transition">{{
+                $t("layout.nav.about")
+              }}</NuxtLink>
             </li>
             <li>
-              <NuxtLink to="/kariera" class="hover:text-white transition"
-                >Kariera</NuxtLink
-              >
+              <NuxtLink to="/kariera" class="hover:text-white transition">{{
+                $t("layout.nav.careers")
+              }}</NuxtLink>
             </li>
           </ul>
         </div>
         <div>
-          <h4 class="text-white font-bold mb-4">Prawne</h4>
+          <h4 class="text-white font-bold mb-4">
+            {{ $t("layout.footer.legal") }}
+          </h4>
           <ul class="space-y-2 text-sm">
             <li>
-              <NuxtLink to="/regulamin" class="hover:text-white transition"
-                >Regulamin</NuxtLink
-              >
+              <NuxtLink to="/regulamin" class="hover:text-white transition">{{
+                $t("layout.footer.terms")
+              }}</NuxtLink>
             </li>
             <li>
               <NuxtLink
                 to="/polityka-prywatnosci"
                 class="hover:text-white transition"
-                >Polityka Prywatności</NuxtLink
+                >{{ $t("layout.footer.privacy") }}</NuxtLink
               >
             </li>
             <li>
-              <NuxtLink
-                to="/rodo"
-                class="hover:text-white transition flex items-center gap-2"
-              >
-                Obowiązek RODO
-              </NuxtLink>
+              <NuxtLink to="/rodo" class="hover:text-white transition">{{
+                $t("layout.footer.gdpr")
+              }}</NuxtLink>
             </li>
           </ul>
         </div>
       </div>
       <div
-        class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-xs"
+        class="max-w-7xl mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-center text-[10px] uppercase tracking-widest font-bold"
       >
         &copy; 2026 Vaulte Sp. z o.o.
       </div>

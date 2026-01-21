@@ -1,0 +1,215 @@
+{
+  "nav": {
+    "dashboard": "Pulpit",
+    "transactions": "Transakcje",
+    "budget": "Budżet",
+    "goals": "Cele",
+    "plan": "Plan",
+    "account": "Konto",
+    "app": "Aplikacja"
+  },
+  "auth": {
+    "login": {
+      "emailLabel": "Adres Email",
+      "passwordLabel": "Hasło",
+      "rememberMe": "Zapamiętaj mnie",
+      "forgotPassword": "Zapomniałeś hasła?",
+      "submit": "Zaloguj się",
+      "submitting": "Logowanie...",
+      "orContinue": "Lub zaloguj przez",
+      "noAccount": "Nie masz jeszcze konta?",
+      "registerNow": "Zarejestruj się za darmo",
+      "errors": {
+        "invalid": "Nieprawidłowy email lub hasło.",
+        "general": "Wystąpił błąd logowania.",
+        "unexpected": "Wystąpił nieoczekiwany błąd."
+      }
+    }
+  },
+  "common": {
+    "user": "Użytkownik",
+    "logout": "Wyloguj"
+  },
+  "layout": {
+    "nav": {
+      "home": "Strona główna",
+      "about": "O nas",
+      "pricing": "Cennik",
+      "careers": "Kariera"
+    },
+    "auth": {
+      "loggedInAs": "Zalogowany jako",
+      "dashboard": "Pulpit",
+      "login": "Zaloguj się",
+      "register": "Załóż konto"
+    },
+    "footer": {
+      "tagline": "Twoje centrum dowodzenia finansami.",
+      "company": "Firma",
+      "legal": "Prawne",
+      "terms": "Regulamin",
+      "privacy": "Polityka Prywatności",
+      "gdpr": "Obowiązek RODO"
+    }
+  },
+  "landing": {
+    "hero": {
+      "badge": "Nowa integracja: Bank Pekao API 🚀",
+      "title": "Twoje finanse.",
+      "subtitle": "W jednym miejscu.",
+      "description": "Połącz konta bankowe, śledź wydatki i kontroluj budżet domowy za pomocą bezpiecznego API. Bez ręcznego wpisywania danych.",
+      "cta_start": "Zacznij za darmo",
+      "cta_demo": "Zobacz demo"
+    },
+    "features": {
+      "title": "Co potrafi Vaulte?",
+      "subtitle": "Wykorzystujemy technologię Open Banking, aby dać Ci pełną kontrolę nad pieniędzmi.",
+      "items": [
+        {
+          "title": "Agregacja Kont",
+          "desc": "Połącz rachunki z PKO, Pekao, mBanku, Revoluta i innych w jeden przejrzysty widok.",
+          "icon": "🏦"
+        },
+        {
+          "title": "Inteligentna Analityka",
+          "desc": "Algorytmy AI automatycznie kategoryzują Twoje wydatki, wykrywając subskrypcje i trendy.",
+          "icon": "🧠"
+        },
+        {
+          "title": "Kontrola Budżetu",
+          "desc": "Ustaw limity dla kategorii (np. 'Jedzenie na mieście') i otrzymuj powiadomienia push.",
+          "icon": "📉"
+        }
+      ]
+    },
+    "pricing": {
+      "title": "Proste plany cenowe",
+      "subtitle": "Bez ukrytych opłat. Zrezygnuj w dowolnym momencie.",
+      "plans": {
+        "basic": {
+          "name": "Basic",
+          "price": "0 zł",
+          "period": "na zawsze",
+          "desc": "Idealny na start, by zapanować nad chaosem w portfelu.",
+          "features": [
+            "Podłączenie do 2 banków",
+            "Historia transakcji: 3 miesiące",
+            "Podstawowe kategorie wydatków",
+            "Ręczne dodawanie gotówki"
+          ],
+          "cta": "Załóż darmowe konto"
+        },
+        "pro": {
+          "name": "Pro",
+          "price": "19,99 zł",
+          "period": "/ mies",
+          "tag": "Najczęściej wybierany",
+          "desc": "Pełna automatyzacja i sztuczna inteligencja dla Twoich finansów.",
+          "features": [
+            "Nielimitowana liczba banków",
+            "Pełna historia transakcji",
+            "Inteligentna kategoryzacja (AI)",
+            "Alerty budżetowe i powiadomienia",
+            "Eksport do Excel (XLSX/CSV)",
+            "Śledzenie celów oszczędnościowych"
+          ],
+          "cta": "Rozpocznij okres próbny"
+        },
+        "business": {
+          "name": "Business",
+          "price": "Wycena",
+          "period": "indywidualna",
+          "desc": "Dla biur rachunkowych, doradców i firm potrzebujących API.",
+          "features": [
+            "Dostęp do API Vaulte",
+            "Panel dla wielu użytkowników",
+            "Raporty White-Label",
+            "Dedykowany opiekun konta",
+            "Wdrożenie On-Premise"
+          ],
+          "cta": "Skontaktuj się z nami"
+        }
+      }
+    },
+    "testimonials": {
+      "title": "Zaufali nam",
+      "items": [
+        {
+          "text": "W końcu widzę wszystkie wydatki w jednym miejscu. Integracja z Pekao działa błyskawicznie.",
+          "author": "Marek K., Freelancer"
+        },
+        {
+          "text": "Budget Tracker uratował moje finanse przed wakacjami. Polecam wersję Pro!",
+          "author": "Anna N., Graficzka"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "Częste pytania",
+      "subtitle": "Wszystko, co musisz wiedzieć o bezpieczeństwie i funkcjach Vaulte.",
+      "items": [
+        {
+          "q": "Czy Vaulte jest bezpieczna?",
+          "a": "Bezpieczeństwo to nasz priorytet. Korzystamy z szyfrowania AES-256 oraz połączeń SSL..."
+        },
+        {
+          "q": "Jakie banki obsługujecie?",
+          "a": "Obsługujemy ponad 20 instytucji w Polsce, w tym największe banki: PKO BP, Pekao SA, mBank..."
+        },
+        {
+          "q": "Czy mogę wykonywać przelewy?",
+          "a": "W obecnej wersji Vaulte skupia się na agregacji danych. Moduł płatności (PIS) zostanie udostępniony w Q4 2026."
+        },
+        {
+          "q": "Czy mogę zrezygnować?",
+          "a": "Tak. Subskrypcja jest miesięczna i możesz ją anulować jednym kliknięciem."
+        }
+      ],
+      "footer_title": "Nadal masz pytania?",
+      "footer_desc": "Nie możesz znaleźć odpowiedzi, której szukasz? Porozmawiaj z naszym zespołem.",
+      "cta_help": "Centrum Pomocy",
+      "cta_contact": "Napisz do nas"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Misja Vaulte",
+      "description": "Chcemy, aby każdy miał pełną kontrolę nad swoimi finansami. Wierzymy, że otwarte dane bankowe (Open Banking) to przyszłość, która należy do użytkownika, a nie do instytucji."
+    },
+    "history": {
+      "title": "Nasza historia",
+      "p1": "Projekt Vaulte narodził się w 2024 roku, kiedy zauważyliśmy, jak trudne jest zarządzanie budżetem, posiadając konta w trzech różnych bankach. Logowanie się do każdego z nich, spisywanie wydatków w Excelu... to była strata czasu.",
+      "p2_start": "Postanowiliśmy wykorzystać dyrektywę",
+      "p2_end": "aby stworzyć jedno bezpieczne miejsce, które agreguje te dane. Dziś jesteśmy dumni, że pomagamy tysiącom Polaków oszczędzać mądrzej."
+    },
+    "stats": [
+      { "label": "Podłączonych banków", "value": "15+" },
+      { "label": "Przeanalizowanych transakcji", "value": "2M+" },
+      { "label": "Zadowolonych użytkowników", "value": "10k" }
+    ],
+    "team": {
+      "title": "Poznaj zespół",
+      "subtitle": "Ludzie, którzy dbają o bezpieczeństwo Twoich danych.",
+      "members": [
+        {
+          "name": "Adam Kowalski",
+          "role": "CEO & Founder",
+          "bio": "Wcześniej Senior Dev w banku Pekao. Pasjonat fintech.",
+          "img": "https://i.pravatar.cc/150?u=adam"
+        },
+        {
+          "name": "Ewa Nowak",
+          "role": "CTO",
+          "bio": "Ekspertka od cyberbezpieczeństwa i PSD2.",
+          "img": "https://i.pravatar.cc/150?u=ewa"
+        },
+        {
+          "name": "Piotr Wiśniewski",
+          "role": "Head of Product",
+          "bio": "Tworzył aplikacje dla największych startupów w PL.",
+          "img": "https://i.pravatar.cc/150?u=piotr"
+        }
+      ]
+    }
+  }
+}
