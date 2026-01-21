@@ -26,7 +26,7 @@ definePageMeta({
           <p>
             1. Niniejszy Regulamin określa zasady korzystania z aplikacji
             internetowej <strong>Vaulte</strong>, dostępnej pod adresem
-            Vaulte.pl.
+            Vaulte.pro.
           </p>
           <p>
             2. Operatorem serwisu jest Vaulte Sp. z o.o. z siedzibą w Warszawie
@@ -92,7 +92,7 @@ definePageMeta({
           </h2>
           <p>
             1. Wszelkie reklamacje dotyczące działania Serwisu należy zgłaszać
-            drogą elektroniczną na adres: pomoc@Vaulte.pl.
+            drogą elektroniczną na adres: pomoc@Vaulte.pro.
           </p>
           <p>
             2. Reklamacje rozpatrywane są w terminie 14 dni od daty ich

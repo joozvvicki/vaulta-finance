@@ -33,7 +33,7 @@ definePageMeta({
           <p>
             Administratorem Twoich danych osobowych jest Vaulte Sp. z o.o. z
             siedzibą w Warszawie. Możesz skontaktować się z Inspektorem Ochrony
-            Danych pod adresem: iod@Vaulte.pl.
+            Danych pod adresem: iod@Vaulte.pro.
           </p>
         </section>
 

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 const route = useRoute();
 
+const { t } = useI18n();
 const title = computed(() => {
-  if (route.path.includes("register")) return "Utwórz konto";
-  if (route.path.includes("forgot")) return "Reset hasła";
-  return "Zaloguj się";
+  if (route.path.includes("register")) return t("auth.register.title");
+  if (route.path.includes("forgot")) return t("auth.forgot.title");
+  return t("auth.login.title");
 });
 </script>
 

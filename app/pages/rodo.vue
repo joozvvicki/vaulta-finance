@@ -56,7 +56,7 @@ definePageMeta({
           </li>
           <li>
             Kontakt do naszego Inspektora Ochrony Danych:
-            <strong>iod@Vaulte.pl</strong>.
+            <strong>iod@Vaulte.pro</strong>.
           </li>
         </ul>
       </div>
@@ -88,9 +88,9 @@ definePageMeta({
           <p class="mt-2">
             📧 Kontakt:
             <a
-              href="mailto:iod@Vaulte.pl"
+              href="mailto:iod@Vaulte.pro"
               class="text-blue-600 font-medium hover:underline"
-              >iod@Vaulte.pl</a
+              >iod@Vaulte.pro</a
             >
           </p>
         </section>

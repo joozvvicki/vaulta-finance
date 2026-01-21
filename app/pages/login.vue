@@ -192,7 +192,7 @@ onMounted(async () => {
       <span class="text-slate-500">{{ $t("auth.login.noAccount") }} </span>
       <NuxtLink
         to="/register"
-        class="font-bold text-blue-600 hover:text-blue-500 transition"
+        class="font-bold text-blue-600 hover:text-blue-500 transition ml-1"
       >
         {{ $t("auth.login.registerNow") }}
       </NuxtLink>

@@ -1,68 +1,24 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "default",
+import { computed } from "vue";
+
+const { t, tm, rt } = useI18n();
+
+useHead({
+  title: `${t("careers.hero.badge")} | Vaulte Careers`,
+  meta: [{ name: "description", content: t("careers.hero.description") }],
 });
 
-const benefits = [
-  {
-    title: "Praca Zdalna",
-    desc: "Pracuj skąd chcesz. Biuro w Warszawie jest opcjonalne.",
-    icon: "🏠",
-  },
-  {
-    title: "Nowoczesny Stack",
-    desc: "Nuxt 3, TypeScript, Tailwind. Zero legacy code.",
-    icon: "💻",
-  },
-  {
-    title: "Budżet Edukacyjny",
-    desc: "3000 PLN rocznie na konferencje, kursy i książki.",
-    icon: "📚",
-  },
-  {
-    title: "Prywatna Opieka",
-    desc: "Pakiet VIP w LuxMed dla Ciebie i Twojej rodziny.",
-    icon: "❤️",
-  },
-];
-
-const offers = [
-  {
-    id: 1,
-    title: "Senior Frontend Developer",
-    salary: "20k - 28k PLN netto + VAT",
-    type: "B2B",
-    tags: ["Vue 3", "Nuxt", "TypeScript"],
-    new: true,
-  },
-  {
-    id: 2,
-    title: "Mid Backend Developer (Node.js)",
-    salary: "14k - 20k PLN netto + VAT",
-    type: "B2B",
-    tags: ["NestJS", "PostgreSQL", "Redis"],
-    new: false,
-  },
-  {
-    id: 3,
-    title: "Product Designer (UX/UI)",
-    salary: "12k - 18k PLN brutto",
-    type: "UoP",
-    tags: ["Figma", "Design System", "User Research"],
-    new: false,
-  },
-  {
-    id: 4,
-    title: "DevOps Engineer",
-    salary: "22k - 30k PLN netto + VAT",
-    type: "B2B",
-    tags: ["AWS", "Terraform", "Kubernetes"],
-    new: true,
-  },
-];
+const benefits = computed(() => tm("careers.benefits.items") as any);
+const offers = computed(() => tm("careers.offers.items") as any);
 
 const openMail = (role: string) => {
-  window.location.href = `mailto:rekrutacja@Vaulte.pl?subject=Aplikacja na stanowisko: ${role}`;
+  const subject = t("careers.offers.apply_subject");
+  window.location.href = `mailto:rekrutacja@vaulte.pro?subject=${subject}${role}`;
+};
+
+const scrollToOffers = () => {
+  const el = document.getElementById("oferty");
+  if (el) el.scrollIntoView({ behavior: "smooth" });
 };
 </script>
 
@@ -82,31 +38,28 @@ const openMail = (role: string) => {
         :enter="{ opacity: 1, y: 0, transition: { duration: 600 } }"
       >
         <span
-          class="inline-block py-1 px-3 rounded-full bg-blue-900/50 border border-blue-700 text-blue-300 text-xs font-bold tracking-wider mb-6"
+          class="inline-block py-1 px-3 rounded-full bg-blue-900/50 border border-blue-700 text-blue-300 text-xs font-bold tracking-wider mb-6 uppercase"
         >
-          DOŁĄCZ DO NAS
+          {{ $t("careers.hero.badge") }}
         </span>
         <h1
           class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-6"
         >
-          Budujemy przyszłość <br />
+          {{ $t("careers.hero.title") }} <br />
           <span
             class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400"
-            >polskich finansów.</span
           >
+            {{ $t("careers.hero.subtitle") }}
+          </span>
         </h1>
         <p class="text-lg text-slate-300 mb-10 max-w-2xl mx-auto">
-          Tworzymy Vaulte, aby każdy miał kontrolę nad swoimi pieniędzmi.
-          Szukamy pasjonatów, którzy nie boją się wyzwań i trudnych problemów
-          technicznych.
+          {{ $t("careers.hero.description") }}
         </p>
         <button
-          @click="
-            $el.querySelector('#oferty').scrollIntoView({ behavior: 'smooth' })
-          "
+          @click="scrollToOffers"
           class="bg-white text-slate-900 px-8 py-3 rounded-full font-bold hover:bg-slate-100 transition shadow-lg hover:shadow-xl"
         >
-          Zobacz oferty pracy
+          {{ $t("careers.hero.cta") }}
         </button>
       </div>
     </section>
@@ -114,23 +67,29 @@ const openMail = (role: string) => {
     <section class="py-20 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h2 class="text-3xl font-bold text-slate-900">Dlaczego Vaulte?</h2>
+          <h2 class="text-3xl font-bold text-slate-900">
+            {{ $t("careers.benefits.title") }}
+          </h2>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div
             v-for="(benefit, index) in benefits"
-            :key="benefit.title"
+            :key="index"
             class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition"
             v-motion
             :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0, transition: { delay: index * 100 } }"
+            :enter="{
+              opacity: 1,
+              y: 0,
+              transition: { delay: parseInt(`${index}`) * 100 },
+            }"
           >
-            <div class="text-4xl mb-4">{{ benefit.icon }}</div>
+            <div class="text-4xl mb-4">{{ rt(benefit.icon) }}</div>
             <h3 class="font-bold text-lg text-slate-900 mb-2">
-              {{ benefit.title }}
+              {{ rt(benefit.title) }}
             </h3>
-            <p class="text-sm text-slate-500">{{ benefit.desc }}</p>
+            <p class="text-sm text-slate-500">{{ rt(benefit.desc) }}</p>
           </div>
         </div>
       </div>
@@ -140,41 +99,49 @@ const openMail = (role: string) => {
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-end mb-12">
           <div>
-            <h2 class="text-3xl font-bold text-slate-900">Aktualne oferty</h2>
-            <p class="text-slate-500 mt-2">Dołącz do zespołu inżynierskiego.</p>
+            <h2 class="text-3xl font-bold text-slate-900">
+              {{ $t("careers.offers.title") }}
+            </h2>
+            <p class="text-slate-500 mt-2">
+              {{ $t("careers.offers.subtitle") }}
+            </p>
           </div>
         </div>
 
         <div class="space-y-4">
           <div
             v-for="(offer, index) in offers"
-            :key="offer.id"
+            :key="rt(offer.id)"
             class="group bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
             v-motion
             :initial="{ opacity: 0, x: -20 }"
-            :enter="{ opacity: 1, x: 0, transition: { delay: index * 100 } }"
-            @click="openMail(offer.title)"
+            :enter="{
+              opacity: 1,
+              x: 0,
+              transition: { delay: parseInt(`${index}`) * 100 },
+            }"
+            @click="openMail(rt(offer.title))"
           >
             <div
               v-if="offer.new"
-              class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg"
+              class="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase"
             >
-              NEW
+              {{ $t("careers.offers.new") }}
             </div>
 
             <div class="flex-1">
               <h3
                 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition"
               >
-                {{ offer.title }}
+                {{ rt(offer.title) }}
               </h3>
               <div class="flex flex-wrap gap-2 mt-3">
                 <span
                   v-for="tag in offer.tags"
-                  :key="tag"
+                  :key="rt(tag)"
                   class="px-2 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md border border-slate-200"
                 >
-                  {{ tag }}
+                  {{ rt(tag) }}
                 </span>
               </div>
             </div>
@@ -184,12 +151,14 @@ const openMail = (role: string) => {
             >
               <span
                 class="text-green-600 font-bold bg-green-50 px-2 py-1 rounded-md text-sm"
-                >{{ offer.salary }}</span
               >
+                {{ rt(offer.salary) }}
+              </span>
               <span
                 class="text-slate-400 text-xs font-medium uppercase tracking-wide"
-                >{{ offer.type }} • Zdalnie</span
               >
+                {{ rt(offer.type) }} • {{ $t("careers.offers.remote") }}
+              </span>
             </div>
 
             <div
@@ -217,17 +186,17 @@ const openMail = (role: string) => {
           class="mt-12 text-center bg-slate-50 rounded-2xl p-8 border border-slate-200"
         >
           <h3 class="font-bold text-slate-900 text-lg">
-            Nie widzisz oferty dla siebie?
+            {{ $t("careers.footer.title") }}
           </h3>
           <p class="text-slate-500 mt-2 mb-6">
-            Ciągle rośniemy. Wyślij nam swoje CV, a odezwiemy się, gdy otworzymy
-            nową rekrutację.
+            {{ $t("careers.footer.desc") }}
           </p>
-          <a
-            href="/pomoc/kontakt"
+          <NuxtLink
+            to="/pomoc/kontakt"
             class="text-blue-600 font-bold hover:underline"
-            >Napisz do nas &rarr;</a
           >
+            {{ $t("careers.footer.cta") }} &rarr;
+          </NuxtLink>
         </div>
       </div>
     </section>

@@ -10,6 +10,7 @@
   },
   "auth": {
     "login": {
+      "title": "Sign in",
       "emailLabel": "Email Address",
       "passwordLabel": "Password",
       "rememberMe": "Remember me",
@@ -23,6 +24,24 @@
         "invalid": "Invalid email or password.",
         "general": "Login error occurred.",
         "unexpected": "An unexpected error occurred."
+      }
+    },
+    "register": {
+      "title": "Create account",
+      "nameLabel": "Full Name",
+      "namePlaceholder": "e.g. John Doe",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Your email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Min. 6 characters",
+      "submit": "Sign up",
+      "submitting": "Registering...",
+      "haveAccount": "Already have an account?",
+      "loginNow": "Login",
+      "success": {
+        "title": "Almost there!",
+        "message": "Check your email inbox to confirm your account!",
+        "backToLogin": "Back to login"
       }
     }
   },
@@ -210,6 +229,86 @@
           "img": "https://i.pravatar.cc/150?u=piotr"
         }
       ]
+    }
+  },
+  "careers": {
+    "hero": {
+      "badge": "JOIN US",
+      "title": "We are building the future",
+      "subtitle": "of Polish finance.",
+      "description": "We are building Vaulte so that everyone has control over their money. We are looking for enthusiasts who are not afraid of challenges and complex technical problems.",
+      "cta": "View job openings"
+    },
+    "benefits": {
+      "title": "Why Vaulte?",
+      "items": [
+        {
+          "title": "Remote Work",
+          "desc": "Work from anywhere. Our Warsaw office is optional.",
+          "icon": "🏠"
+        },
+        {
+          "title": "Modern Stack",
+          "desc": "Nuxt 3, TypeScript, Tailwind. Zero legacy code.",
+          "icon": "💻"
+        },
+        {
+          "title": "Education Budget",
+          "desc": "3000 PLN per year for conferences, courses and books.",
+          "icon": "📚"
+        },
+        {
+          "title": "Private Care",
+          "desc": "VIP package at LuxMed for you and your family.",
+          "icon": "❤️"
+        }
+      ]
+    },
+    "offers": {
+      "title": "Current Openings",
+      "subtitle": "Join our engineering team.",
+      "remote": "Remote",
+      "new": "NEW",
+      "apply_subject": "Application for: ",
+      "items": [
+        {
+          "id": 1,
+          "title": "Senior Frontend Developer",
+          "salary": "20k - 28k PLN net + VAT",
+          "type": "B2B",
+          "tags": ["Vue 3", "Nuxt", "TypeScript"],
+          "new": true
+        },
+        {
+          "id": 2,
+          "title": "Mid Backend Developer (Node.js)",
+          "salary": "14k - 20k PLN net + VAT",
+          "type": "B2B",
+          "tags": ["NestJS", "PostgreSQL", "Redis"],
+          "new": false
+        },
+        {
+          "id": 3,
+          "title": "Product Designer (UX/UI)",
+          "salary": "12k - 18k PLN gross",
+          "type": "Employment",
+          "tags": ["Figma", "Design System", "User Research"],
+          "new": false
+        },
+        {
+          "id": 4,
+          "title": "DevOps Engineer",
+          "salary": "22k - 30k PLN net + VAT",
+          "type": "B2B",
+          "tags": ["AWS", "Terraform", "Kubernetes"],
+          "new": true
+        }
+      ]
+    },
+    "footer": {
+      "title": "Don't see a role for you?",
+      "desc": "We are constantly growing. Send us your CV, and we will get back to you when a new position opens up.",
+      "cta": "Contact us"
     }
   }
 }

@@ -10,6 +10,7 @@
   },
   "auth": {
     "login": {
+      "title": "Zaloguj się",
       "emailLabel": "Adres Email",
       "passwordLabel": "Hasło",
       "rememberMe": "Zapamiętaj mnie",
@@ -23,6 +24,24 @@
         "invalid": "Nieprawidłowy email lub hasło.",
         "general": "Wystąpił błąd logowania.",
         "unexpected": "Wystąpił nieoczekiwany błąd."
+      }
+    },
+    "register": {
+      "title": "Utwórz konto",
+      "nameLabel": "Imię i nazwisko",
+      "namePlaceholder": "np. Jan Kowalski",
+      "emailLabel": "Adres Email",
+      "emailPlaceholder": "Twój email",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Min. 6 znaków",
+      "submit": "Zarejestruj się",
+      "submitting": "Rejestrowanie...",
+      "haveAccount": "Masz już konto?",
+      "loginNow": "Zaloguj się",
+      "success": {
+        "title": "Prawie gotowe!",
+        "message": "Sprawdź swoją skrzynkę mailową, aby potwierdzić konto!",
+        "backToLogin": "Wróć do logowania"
       }
     }
   },
@@ -210,6 +229,86 @@
           "img": "https://i.pravatar.cc/150?u=piotr"
         }
       ]
+    }
+  },
+  "careers": {
+    "hero": {
+      "badge": "DOŁĄCZ DO NAS",
+      "title": "Budujemy przyszłość",
+      "subtitle": "polskich finansów.",
+      "description": "Tworzymy Vaulte, aby każdy miał kontrolę nad swoimi pieniędzmi. Szukamy pasjonatów, którzy nie boją się wyzwań i trudnych problemów technicznych.",
+      "cta": "Zobacz oferty pracy"
+    },
+    "benefits": {
+      "title": "Dlaczego Vaulte?",
+      "items": [
+        {
+          "title": "Praca Zdalna",
+          "desc": "Pracuj skąd chcesz. Biuro w Warszawie jest opcjonalne.",
+          "icon": "🏠"
+        },
+        {
+          "title": "Nowoczesny Stack",
+          "desc": "Nuxt 3, TypeScript, Tailwind. Zero legacy code.",
+          "icon": "💻"
+        },
+        {
+          "title": "Budżet Edukacyjny",
+          "desc": "3000 PLN rocznie na konferencje, kursy i książki.",
+          "icon": "📚"
+        },
+        {
+          "title": "Prywatna Opieka",
+          "desc": "Pakiet VIP w LuxMed dla Ciebie i Twojej rodziny.",
+          "icon": "❤️"
+        }
+      ]
+    },
+    "offers": {
+      "title": "Aktualne oferty",
+      "subtitle": "Dołącz do zespołu inżynierskiego.",
+      "remote": "Zdalnie",
+      "new": "NOWA",
+      "apply_subject": "Aplikacja na stanowisko: ",
+      "items": [
+        {
+          "id": 1,
+          "title": "Senior Frontend Developer",
+          "salary": "20k - 28k PLN netto + VAT",
+          "type": "B2B",
+          "tags": ["Vue 3", "Nuxt", "TypeScript"],
+          "new": true
+        },
+        {
+          "id": 2,
+          "title": "Mid Backend Developer (Node.js)",
+          "salary": "14k - 20k PLN netto + VAT",
+          "type": "B2B",
+          "tags": ["NestJS", "PostgreSQL", "Redis"],
+          "new": false
+        },
+        {
+          "id": 3,
+          "title": "Product Designer (UX/UI)",
+          "salary": "12k - 18k PLN brutto",
+          "type": "UoP",
+          "tags": ["Figma", "Design System", "User Research"],
+          "new": false
+        },
+        {
+          "id": 4,
+          "title": "DevOps Engineer",
+          "salary": "22k - 30k PLN netto + VAT",
+          "type": "B2B",
+          "tags": ["AWS", "Terraform", "Kubernetes"],
+          "new": true
+        }
+      ]
+    },
+    "footer": {
+      "title": "Nie widzisz oferty dla siebie?",
+      "desc": "Ciągle rośniemy. Wyślij nam swoje CV, a odezwiemy się, gdy otworzymy nową rekrutację.",
+      "cta": "Napisz do nas"
     }
   }
 }
