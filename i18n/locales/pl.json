@@ -43,6 +43,31 @@
         "message": "Sprawdź swoją skrzynkę mailową, aby potwierdzić konto!",
         "backToLogin": "Wróć do logowania"
       }
+    },
+    "reset": {
+      "title": "Zresetuj hasło",
+      "description": "Podaj adres email powiązany z Twoim kontem.",
+      "emailLabel": "Adres Email",
+      "emailPlaceholder": "Twój email",
+      "submit": "Wyślij link resetujący",
+      "sending": "Wysyłanie...",
+      "backToLogin": "Wróć do logowania",
+      "success": {
+        "title": "Sprawdź skrzynkę",
+        "message": "Wysłaliśmy instrukcję resetowania hasła na adres",
+        "retry": "Wpisz inny adres email"
+      }
+    },
+    "updatePassword": {
+      "title": "Ustaw nowe hasło",
+      "description": "Wprowadź nowe, bezpieczne hasło.",
+      "passwordLabel": "Nowe hasło",
+      "confirmPasswordLabel": "Powtórz hasło",
+      "submit": "Zmień hasło",
+      "submitting": "Zmienianie...",
+      "cancel": "Anuluj",
+      "errorMismatch": "Hasła nie są identyczne!",
+      "success": "Hasło zostało zmienione. Możesz się zalogować."
     }
   },
   "common": {

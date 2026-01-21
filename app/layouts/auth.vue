@@ -4,7 +4,7 @@ const route = useRoute();
 const { t } = useI18n();
 const title = computed(() => {
   if (route.path.includes("register")) return t("auth.register.title");
-  if (route.path.includes("forgot")) return t("auth.forgot.title");
+  if (route.path.includes("forgot")) return t("auth.reset.title");
   return t("auth.login.title");
 });
 </script>

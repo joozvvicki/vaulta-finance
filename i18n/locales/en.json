@@ -43,6 +43,31 @@
         "message": "Check your email inbox to confirm your account!",
         "backToLogin": "Back to login"
       }
+    },
+    "reset": {
+      "title": "Reset password",
+      "description": "Enter the email address associated with your account.",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Your email",
+      "submit": "Send reset link",
+      "sending": "Sending...",
+      "backToLogin": "Back to login",
+      "success": {
+        "title": "Check your inbox",
+        "message": "We've sent password reset instructions to",
+        "retry": "Enter a different email"
+      }
+    },
+    "updatePassword": {
+      "title": "Set new password",
+      "description": "Enter a new, secure password.",
+      "passwordLabel": "New password",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Change password",
+      "submitting": "Updating...",
+      "cancel": "Cancel",
+      "errorMismatch": "Passwords do not match!",
+      "success": "Password has been changed. You can now log in."
     }
   },
   "common": {
