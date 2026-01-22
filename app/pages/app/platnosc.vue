@@ -5,84 +5,82 @@ import { loadStripe } from "@stripe/stripe-js";
 
 definePageMeta({ layout: "dashboard" });
 
+const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const config = useRuntimeConfig();
 const client = useSupabaseClient();
 
-// Inicjalizacja Stripe (Public Key)
 const stripePromise = loadStripe(config.public.stripePublishableKey);
 
-// KONFIGURACJA PLANÓW
-// Upewnij się, że te ID (price_...) są z TRYBU TESTOWEGO jeśli testujesz!
 const PLANS = {
   monthly: {
     id: "price_1SrTDtPAN1TckpzfgAhJKHBQ",
     price: 19.99,
-    name: "Plan Pro (Miesięczny)",
   },
   yearly: {
     id: "price_1SrTFDPAN1Tckpzf3TmLP811",
     price: 199.99,
-    name: "Plan Pro (Roczny)",
   },
 };
 
 const selectedPlan = computed(() => {
   const cycle = route.query.cycle as string;
   if (cycle === "yearly") {
-    return { ...PLANS.yearly, period: "rok", desc: "Oszczędzasz 17%" };
+    return {
+      ...PLANS.yearly,
+      name: t("plans.data.pro.name") + " (" + t("plans.billing.yearly") + ")",
+      period: t("checkout.summary.year"),
+      desc: t("checkout.summary.yearly_desc"),
+    };
   }
-  return { ...PLANS.monthly, period: "miesiąc", desc: "Płatność co miesiąc" };
+  return {
+    ...PLANS.monthly,
+    name: t("plans.data.pro.name") + " (" + t("plans.billing.monthly") + ")",
+    period: t("checkout.summary.month"),
+    desc: t("checkout.summary.monthly_desc"),
+  };
 });
 
-// Stany UI
 const isLoading = ref(true);
 const isProcessing = ref(false);
 const isSuccess = ref(false);
 const errorMessage = ref<string | null>(null);
 
-// Zmienne Stripe (nie muszą być reaktywne w sensie Vue)
 let stripe: any = null;
 let elements: any = null;
+
+useHead({
+  title: `${t("checkout.title")} | Vaulte`,
+});
 
 onMounted(async () => {
   try {
     stripe = await stripePromise;
 
-    // 1. Sprawdź sesję Supabase
     const {
       data: { session },
     } = await client.auth.getSession();
-
     if (!session) {
-      errorMessage.value = "Sesja wygasła. Zaloguj się ponownie.";
+      errorMessage.value = t("checkout.errors.session");
       isLoading.value = false;
       return;
     }
 
-    // 2. Utwórz subskrypcję na backendzie (pobierz Client Secret)
     const { data, error } = await useFetch<any>("/api/create-subscription", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: {
-        priceId: selectedPlan.value.id,
-      },
+      headers: { Authorization: `Bearer ${session.access_token}` },
+      body: { priceId: selectedPlan.value.id },
     });
 
     if (error.value) {
-      console.error("Błąd API Subskrypcji:", error.value);
       errorMessage.value =
-        error.value.data?.message || "Nie udało się zainicjować płatności.";
+        error.value.data?.message || t("checkout.errors.init");
       isLoading.value = false;
       return;
     }
 
-    // Jeśli backend zwrócił sukces ale bez secretu (np. darmowy trial), obsłuż to:
     if (!data.value?.clientSecret) {
-      console.log("Subskrypcja aktywna bez płatności (Trial/Free).");
       isSuccess.value = true;
       isLoading.value = false;
       return;
@@ -90,9 +88,8 @@ onMounted(async () => {
 
     const clientSecret = data.value.clientSecret;
 
-    // 3. Skonfiguruj wygląd formularza Stripe
     const appearance = {
-      theme: "stripe",
+      theme: "stripe" as const,
       variables: {
         colorPrimary: "#2563eb",
         colorBackground: "#ffffff",
@@ -102,33 +99,25 @@ onMounted(async () => {
       },
     };
 
-    // 4. Zamontuj element płatności
     elements = stripe.elements({ appearance, clientSecret });
-    const paymentElement = elements.create("payment", {
-      layout: "tabs",
-    });
+    const paymentElement = elements.create("payment", { layout: "tabs" });
 
     paymentElement.mount("#payment-element");
-
     paymentElement.on("ready", () => {
       isLoading.value = false;
     });
   } catch (e: any) {
-    console.error("Błąd krytyczny w onMounted:", e);
-    errorMessage.value = "Wystąpił nieoczekiwany błąd.";
+    errorMessage.value = t("checkout.errors.unexpected");
     isLoading.value = false;
   }
 });
 
-// --- TUTAJ BYŁ BŁĄD, OTO POPRAWIONA WERSJA ---
 const handleSubmit = async () => {
   if (!stripe || !elements) return;
 
   isProcessing.value = true;
   errorMessage.value = null;
 
-  // Stripe zwraca obiekt { error, paymentIntent }, NIE Refa!
-  // Używamy "redirect: if_required", żeby nie przeładowywać strony jeśli nie trzeba
   const result = await stripe.confirmPayment({
     elements,
     confirmParams: {
@@ -137,21 +126,14 @@ const handleSubmit = async () => {
     redirect: "if_required",
   });
 
-  // 1. Obsługa błędu (np. karta odrzucona)
   if (result.error) {
-    console.error("Stripe Error:", result.error);
-    errorMessage.value = result.error.message || "Wystąpił błąd płatności.";
+    errorMessage.value = result.error.message || t("checkout.errors.payment");
     isProcessing.value = false;
-  }
-  // 2. Obsługa sukcesu (gdy redirect nie nastąpił)
-  else if (
+  } else if (
     result.paymentIntent &&
     result.paymentIntent.status === "succeeded"
   ) {
-    console.log("Płatność zakończona sukcesem:", result.paymentIntent);
     isSuccess.value = true;
-
-    // Przekierowanie po chwili
     setTimeout(() => {
       router.push("/app/platnosc-sukces");
     }, 1500);
@@ -164,7 +146,7 @@ const handleSubmit = async () => {
     <div class="mb-10 text-center sm:text-left">
       <button
         @click="router.back()"
-        class="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1 mb-4 transition-colors"
+        class="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1 mb-4 transition-colors font-medium"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -180,28 +162,30 @@ const handleSubmit = async () => {
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        Wróć do wyboru planu
+        {{ $t("checkout.back") }}
       </button>
-      <h1 class="text-3xl font-bold text-slate-900">Sfinalizuj płatność</h1>
-      <p class="text-slate-500 mt-1">
-        Bezpieczna subskrypcja SSL obsługiwana przez Stripe.
-      </p>
+      <h1 class="text-3xl font-bold text-slate-900 tracking-tight">
+        {{ $t("checkout.title") }}
+      </h1>
+      <p class="text-slate-500 mt-1">{{ $t("checkout.subtitle") }}</p>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-8 items-start">
       <div class="lg:col-span-2 space-y-6">
         <div
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 min-h-[400px] relative"
+          class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 min-h-[400px] relative overflow-hidden"
         >
           <div
             v-if="isLoading"
-            class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-10 rounded-2xl"
+            class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 z-10"
           >
             <div
               class="w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"
             ></div>
-            <p class="text-slate-500 text-sm font-medium mt-2">
-              Przygotowywanie płatności...
+            <p
+              class="text-slate-500 text-xs font-bold uppercase tracking-widest mt-4"
+            >
+              {{ $t("checkout.preparing") }}
             </p>
           </div>
 
@@ -209,7 +193,7 @@ const handleSubmit = async () => {
 
           <div
             v-if="errorMessage"
-            class="mt-6 p-4 bg-red-50 text-red-700 text-sm rounded-xl flex items-center gap-2 border border-red-100"
+            class="mt-6 p-4 bg-red-50 text-red-700 text-sm rounded-xl flex items-center gap-2 border border-red-100 animate-shake"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -228,47 +212,57 @@ const handleSubmit = async () => {
         </div>
 
         <div
-          class="flex items-center justify-center gap-2 text-slate-400 text-xs mt-4"
+          class="flex items-center justify-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-4"
         >
-          <span class="flex items-center gap-1">
-            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-            Szyfrowanie 256-bit
+          <span class="flex items-center gap-1.5">
+            <span
+              class="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.5)]"
+            ></span>
+            {{ $t("checkout.security") }}
           </span>
-          <span>•</span>
+          <span class="opacity-30">|</span>
           <span>Powered by Stripe</span>
         </div>
       </div>
 
       <div class="lg:col-span-1">
         <div
-          class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 sticky top-24"
+          class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 sticky top-24"
         >
           <h3
-            class="font-bold text-lg text-slate-900 mb-6 border-b border-slate-100 pb-4"
+            class="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6 border-b border-slate-50 pb-4"
           >
-            Podsumowanie
+            {{ $t("checkout.summary.title") }}
           </h3>
 
-          <div class="flex justify-between items-start mb-4">
+          <div class="flex justify-between items-start mb-6">
             <div>
               <p class="font-bold text-slate-900">{{ selectedPlan.name }}</p>
-              <p class="text-xs text-slate-500">{{ selectedPlan.desc }}</p>
+              <p
+                class="text-[10px] font-bold text-blue-600 uppercase tracking-tight"
+              >
+                {{ selectedPlan.desc }}
+              </p>
             </div>
-            <p class="font-bold text-slate-900">{{ selectedPlan.price }} zł</p>
+            <p class="font-black text-slate-900 text-lg">
+              {{ selectedPlan.price }} zł
+            </p>
           </div>
 
           <div
-            class="flex justify-between items-center text-sm text-slate-500 mb-6"
+            class="flex justify-between items-center text-xs font-medium text-slate-500 mb-8 bg-slate-50 p-3 rounded-xl"
           >
-            <p>Okres rozliczeniowy</p>
-            <p>1 {{ selectedPlan.period }}</p>
+            <p>{{ $t("checkout.summary.period_label") }}</p>
+            <p class="text-slate-900">{{ selectedPlan.period }}</p>
           </div>
 
           <div
-            class="border-t border-slate-100 py-4 flex justify-between items-center mb-6"
+            class="border-t-2 border-dashed border-slate-100 py-6 flex justify-between items-center mb-8"
           >
-            <p class="font-bold text-lg text-slate-900">Do zapłaty</p>
-            <p class="font-extrabold text-2xl text-blue-600">
+            <p class="font-bold text-slate-900">
+              {{ $t("checkout.summary.total") }}
+            </p>
+            <p class="font-black text-3xl text-blue-600 tracking-tighter">
               {{ selectedPlan.price }} zł
             </p>
           </div>
@@ -276,17 +270,13 @@ const handleSubmit = async () => {
           <button
             @click="handleSubmit"
             :disabled="isLoading || isProcessing || isSuccess"
-            class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center relative overflow-hidden group"
+            class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg shadow-blue-500/30 hover:bg-blue-700 transition disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center group active:scale-95"
           >
-            <span v-if="!isProcessing && !isSuccess">Zapłać i aktywuj</span>
-
+            <span v-if="!isProcessing && !isSuccess">{{
+              $t("checkout.cta.submit")
+            }}</span>
             <div v-if="isProcessing" class="flex items-center gap-2">
-              <svg
-                class="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
+              <svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
                 <circle
                   class="opacity-25"
                   cx="12"
@@ -301,9 +291,8 @@ const handleSubmit = async () => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              Przetwarzanie...
+              {{ $t("checkout.cta.processing") }}
             </div>
-
             <div v-if="isSuccess" class="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -317,19 +306,35 @@ const handleSubmit = async () => {
                   clip-rule="evenodd"
                 />
               </svg>
-              Gotowe!
+              {{ $t("checkout.cta.success") }}
             </div>
           </button>
 
           <p
-            class="text-[10px] text-center text-slate-400 mt-4 leading-relaxed"
+            class="text-[10px] text-center text-slate-400 mt-6 leading-relaxed font-medium"
           >
-            Klikając przycisk, akceptujesz regulamin i zgadzasz się na cykliczne
-            obciążanie karty kwotą {{ selectedPlan.price }} zł. Możesz anulować
-            w dowolnym momencie.
+            {{ $t("checkout.disclaimer", { amount: selectedPlan.price }) }}
           </p>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
+}
+</style>

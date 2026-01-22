@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { IconPlus } from "@tabler/icons-vue";
-import { ref, reactive } from "vue";
-import { useGoalsStore, type Goal } from "~/stores/goals";
+import { ref } from "vue";
+import { useGoalsStore } from "~/stores/goals";
 
 definePageMeta({ layout: "dashboard" });
 
+const { t } = useI18n();
 const store = useGoalsStore();
 
 const isGoalModalOpen = ref(false);
@@ -32,19 +33,11 @@ const closeDepositModal = () => {
   isDepositModalOpen.value = false;
 };
 
-const handleDelete = (id: number) => {
-  if (
-    confirm(
-      "Czy na pewno chcesz usunąć ten cel? Środki nie zostaną zwrócone na saldo.",
-    )
-  ) {
+const handleDelete = (id: string) => {
+  if (confirm(t("goals.delete_confirm"))) {
     store.removeGoal(id);
   }
 };
-
-onMounted(() => {
-  store.fetchGoals();
-});
 </script>
 
 <template>
@@ -52,12 +45,12 @@ onMounted(() => {
     <div class="mb-8 flex justify-between items-end">
       <div>
         <h1 class="text-2xl font-bold text-slate-900">
-          Cele Oszczędnościowe 🎯
+          {{ $t("goals.title") }}
         </h1>
-        <p class="text-slate-500">Małe kroki prowadzą do wielkich rzeczy.</p>
+        <p class="text-slate-500">{{ $t("goals.subtitle") }}</p>
       </div>
       <div class="text-sm text-slate-400">
-        Aktywne cele: {{ store.goals.length }}
+        {{ $t("goals.active_count", { count: store.goals.length }) }}
       </div>
     </div>
 
@@ -73,9 +66,9 @@ onMounted(() => {
             >+</span
           >
         </div>
-        <span class="font-bold text-slate-600 group-hover:text-blue-700"
-          >Utwórz nowy cel</span
-        >
+        <span class="font-bold text-slate-600 group-hover:text-blue-700">
+          {{ $t("goals.create_new") }}
+        </span>
       </button>
 
       <div
@@ -89,7 +82,7 @@ onMounted(() => {
         <button
           @click.stop="handleDelete(goal.id)"
           class="absolute top-2 right-2 z-20 bg-white/80 p-2 rounded-full text-slate-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
-          title="Usuń cel"
+          :title="$t('goals.delete_tooltip')"
         >
           <svg
             class="w-4 h-4"
@@ -124,13 +117,13 @@ onMounted(() => {
           <div
             class="absolute top-2 left-2 bg-black/40 text-white text-[10px] px-2 py-1 rounded backdrop-blur-sm"
           >
-            Edytuj
+            {{ $t("goals.edit") }}
           </div>
         </div>
 
         <div class="p-6 flex-1 flex flex-col">
           <div class="flex justify-between text-sm mb-2 font-medium">
-            <span class="text-slate-500">Postęp</span>
+            <span class="text-slate-500">{{ $t("goals.progress") }}</span>
             <span class="text-slate-900"
               >{{ Math.round((goal.saved / goal.target) * 100) }}%</span
             >
@@ -146,23 +139,27 @@ onMounted(() => {
                 width: `${Math.min((goal.saved / goal.target) * 100, 100)}%`,
               }"
             >
-              <div
-                class="absolute top-0 left-0 bottom-0 right-0 bg-white/20 w-full h-full animate-pulse"
-              ></div>
+              <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
             </div>
           </div>
 
           <div class="flex justify-between items-end mt-auto">
             <div>
-              <p class="text-xs text-slate-500 uppercase font-semibold">
-                Uzbierano
+              <p
+                class="text-[10px] text-slate-500 uppercase font-bold tracking-wider"
+              >
+                {{ $t("goals.saved") }}
               </p>
               <p class="text-xl font-bold text-slate-900">
                 {{ goal.saved.toLocaleString() }} zł
               </p>
             </div>
             <div class="text-right">
-              <p class="text-xs text-slate-500 uppercase font-semibold">Cel</p>
+              <p
+                class="text-[10px] text-slate-500 uppercase font-bold tracking-wider"
+              >
+                {{ $t("goals.target") }}
+              </p>
               <p class="text-sm font-medium text-slate-600">
                 {{ goal.target.toLocaleString() }} zł
               </p>
@@ -171,9 +168,9 @@ onMounted(() => {
 
           <button
             @click="openDepsitModal(goal.id)"
-            class="w-full mt-6 py-2 border border-slate-200 rounded-lg font-bold text-sm text-slate-700 hover:bg-slate-50 transition active:scale-95"
+            class="w-full mt-6 py-2.5 border border-slate-200 rounded-lg font-bold text-sm text-slate-700 hover:bg-slate-50 transition active:scale-95 flex items-center justify-center gap-1"
           >
-            Dopłać +
+            {{ $t("goals.add_funds") }}
           </button>
         </div>
       </div>
@@ -181,7 +178,7 @@ onMounted(() => {
 
     <button
       @click="isGoalModalOpen = true"
-      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-500/30 flex items-center gap-2 transition disabled:opacity-50"
+      class="fixed bottom-24 right-4 active:scale-90 duration-300 md:hidden bg-blue-600 text-white px-4 py-4 rounded-full shadow-lg shadow-blue-500/30 transition flex items-center gap-2"
     >
       <IconPlus />
     </button>
@@ -191,7 +188,6 @@ onMounted(() => {
       :goal-id="goalId"
       @close="closeDepositModal"
     />
-
     <ModalGoal
       :is-open="isGoalModalOpen"
       :edit-id="editId"
@@ -201,12 +197,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 </style>

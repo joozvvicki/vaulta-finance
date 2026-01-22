@@ -34,6 +34,9 @@ export default defineNuxtConfig({
       cookieKey: "i18n_redirected",
       alwaysRedirect: true,
     },
+    compilation: {
+      strictMessage: false,
+    },
   },
   supabase: {
     redirect: false,

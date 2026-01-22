@@ -335,5 +335,535 @@
       "desc": "Ciągle rośniemy. Wyślij nam swoje CV, a odezwiemy się, gdy otworzymy nową rekrutację.",
       "cta": "Napisz do nas"
     }
+  },
+  "budget": {
+    "title": "Twój Budżet",
+    "description": "Monitoruj wydatki w bieżącym miesiącu.",
+    "manage": "Zarządzaj",
+    "total_budget": "Całkowity budżet",
+    "planned": "planowane",
+    "spent": "Wydano",
+    "remaining": "Pozostało",
+    "status": {
+      "exceeded": "Przekroczono o {amount} PLN",
+      "no_spending": "Brak wydatków w tym miesiącu",
+      "on_track": "W normie ({percentage}%)",
+      "of": "z {limit} PLN"
+    },
+    "empty": {
+      "text": "Zaimportuj transakcje w zakładce \"Transakcje\", aby zobaczyć realizację budżetu.",
+      "link": "Przejdź do transakcji"
+    },
+    "alerts": {
+      "delete_confirm": "Czy na pewno chcesz usunąć tę kategorię budżetową?"
+    }
+  },
+  "goals": {
+    "title": "Cele Oszczędnościowe 🎯",
+    "subtitle": "Małe kroki prowadzą do wielkich rzeczy.",
+    "active_count": "Aktywne cele: {count}",
+    "create_new": "Utwórz nowy cel",
+    "edit": "Edytuj",
+    "progress": "Postęp",
+    "saved": "Uzbierano",
+    "target": "Cel",
+    "add_funds": "Dopłać +",
+    "delete_tooltip": "Usuń cel",
+    "delete_confirm": "Czy na pewno chcesz usunąć ten cel? Środki nie zostaną zwrócone na saldo."
+  },
+  "dashboard": {
+    "greeting": "Cześć, {name}! 👋",
+    "subtitle": "Oto podsumowanie Twoich finansów.",
+    "actions": {
+      "transfer": "Szybki przelew",
+      "new_transaction": "Nowa transakcja"
+    },
+    "stats": {
+      "total": "Całkowite środki",
+      "expenses": "Wydatki (Miesiąc)",
+      "savings": "Oszczędności",
+      "labels": {
+        "sum": "Suma",
+        "current": "Bieżące",
+        "piggy": "Skarbonka"
+      }
+    },
+    "edit_modal": {
+      "title_main": "Skoryguj stan konta",
+      "title_savings": "Edytuj oszczędności",
+      "desc": "Zaktualizuj kwotę ręcznie. System wyliczy różnicę i zapisze ją w Twoim profilu Supabase.",
+      "save": "Zapisz zmiany",
+      "cancel": "Anuluj"
+    },
+    "analysis": {
+      "title": "Analiza Salda",
+      "periods": {
+        "7d": "Ostatnie 7 dni",
+        "30d": "Ostatni miesiąc"
+      }
+    },
+    "recent": {
+      "title": "Ostatnie operacje",
+      "empty": "Brak ostatnich transakcji.",
+      "full_history": "PEŁNA HISTORIA"
+    }
+  },
+  "account": {
+    "title": "Moje Konto",
+    "actions": {
+      "save": "Zapisz profil",
+      "saving": "Zapisywanie...",
+      "saved_success": "Zmiany zostały zapisane!",
+      "error_save": "Błąd zapisu: ",
+      "error_session": "Błąd: Sesja użytkownika wygasła.",
+      "error_login_required": "Musisz być zalogowany.",
+      "error_upload": "Błąd przesyłania: "
+    },
+    "profile": {
+      "owner_label": "Właściciel konta",
+      "fallback_name": "Użytkownik Vaulte",
+      "status_active": "Aktywne"
+    },
+    "form": {
+      "name_label": "Imię i Nazwisko",
+      "name_placeholder": "np. Jan Kowalski",
+      "email_label": "Adres Email"
+    },
+    "plans": {
+      "start": "Plan Start",
+      "pro": "Plan Pro",
+      "enterprise": "Enterprise",
+      "free_desc": "Konto darmowe z ograniczeniami.",
+      "active_desc": "Następna płatność: Automatycznie"
+    },
+    "subscription": {
+      "title": "Subskrypcja i płatności",
+      "desc": "Zarządzaj swoim planem, fakturami i metodami płatności.",
+      "manage_stripe": "Zarządzaj w Stripe",
+      "upgrade_pro": "Przejdź na PRO",
+      "disclaimer": "Wszystkie płatności są bezpiecznie przetwarzane przez Stripe. Możesz anulować subskrypcję w dowolnym momencie."
+    }
+  },
+  "plans": {
+    "title": "Zarządzaj swoim planem",
+    "subtitle": "Wybierz opcję dopasowaną do Twoich celów finansowych. Zmień w dowolnym momencie.",
+    "billing": {
+      "monthly": "Miesięcznie",
+      "yearly": "Rocznie",
+      "discount": "-{amount}"
+    },
+    "badges": {
+      "current": "Twój obecny plan",
+      "recommended": "Polecany wybór"
+    },
+    "labels": {
+      "per_month": "/ mies",
+      "save_yearly": "Oszczędzasz {amount} zł rocznie",
+      "recurring": "Płatność odnawialna co miesiąc",
+      "individual": "Indywidualna",
+      "contact_sales": "Skontaktuj się z działem sprzedaży"
+    },
+    "buttons": {
+      "processing": "Przetwarzanie...",
+      "current": "Twój obecny plan",
+      "contact": "Zapytaj o ofertę",
+      "choose": "Wybierz {name}"
+    },
+    "faq": {
+      "title": "Pytania dotyczące płatności",
+      "q1": {
+        "title": "Czy mogę zmienić plan w trakcie miesiąca?",
+        "answer": "Tak. Jeśli ulepszasz plan (upgrade), różnicę w cenie doliczymy proporcjonalnie. Zmiana działa natychmiast i zyskujesz dostęp do nowych funkcji od razu."
+      },
+      "q2": {
+        "title": "Jak działają płatności?",
+        "answer": "Obsługujemy bezpieczne płatności kartą (Visa, Mastercard) oraz Apple Pay / Google Pay. Fakturę VAT otrzymasz automatycznie na maila po każdej transakcji."
+      }
+    },
+    "data": {
+      "free": {
+        "name": "Start",
+        "desc": "Dla początkujących, by uporządkować podstawy.",
+        "features": [
+          "Podłączenie 1 banku",
+          "Historia transakcji: 30 dni",
+          "Podstawowe wykresy",
+          "Ręczne dodawanie gotówki"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "desc": "Pełna automatyzacja i sztuczna inteligencja.",
+        "features": [
+          "Nielimitowana liczba banków",
+          "Pełna historia transakcji",
+          "Eksport do Excela/CSV",
+          "Kategorie wspierane przez AI",
+          "Priorytetowe wsparcie"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "desc": "Dla firm potrzebujących dedykowanych rozwiązań.",
+        "features": [
+          "Dostęp do API",
+          "Dedykowany opiekun",
+          "Wdrożenie On-Premise",
+          "SLA 99.9%",
+          "Umowa B2B"
+        ]
+      }
+    }
+  },
+  "transactions": {
+    "title": "Historia Transakcji",
+    "subtitle": "Przeglądaj i filtruj swoje wydatki.",
+    "actions": {
+      "import": "Import CSV",
+      "add": "Dodaj ręcznie"
+    },
+    "filters": {
+      "search": "Szukaj transakcji (sklep, kwota, kategoria)...",
+      "status": {
+        "all": "Wszystkie",
+        "completed": "Zakończone",
+        "pending": "Oczekujące"
+      }
+    },
+    "table": {
+      "name": "Nazwa",
+      "category": "Kategoria",
+      "date": "Data",
+      "status": "Status",
+      "amount": "Kwota",
+      "delete_confirm": "Czy na pewno usunąć tę transakcję?",
+      "delete_tooltip": "Usuń"
+    },
+    "empty": "Brak transakcji spełniających kryteria.",
+    "footer": {
+      "loading": "Odświeżanie...",
+      "showing": "Pokazano {filtered} z {total}"
+    }
+  },
+  "checkout": {
+    "back": "Wróć do wyboru planu",
+    "title": "Sfinalizuj płatność",
+    "subtitle": "Bezpieczna subskrypcja SSL obsługiwana przez Stripe.",
+    "preparing": "Przygotowywanie płatności...",
+    "security": "Szyfrowanie 256-bit",
+    "summary": {
+      "title": "Podsumowanie",
+      "period_label": "Okres rozliczeniowy",
+      "month": "1 miesiąc",
+      "year": "1 rok",
+      "total": "Do zapłaty",
+      "monthly_desc": "Płatność co miesiąc",
+      "yearly_desc": "Oszczędzasz 17%"
+    },
+    "cta": {
+      "submit": "Zapłać i aktywuj",
+      "processing": "Przetwarzanie...",
+      "success": "Gotowe!"
+    },
+    "disclaimer": "Klikając przycisk, akceptujesz regulamin i zgadzasz się na cykliczne obciążanie karty kwotą {amount} zł. Możesz anulować w dowolnym momencie.",
+    "errors": {
+      "session": "Sesja wygasła. Zaloguj się ponownie.",
+      "init": "Nie udało się zainicjować płatności.",
+      "unexpected": "Wystąpił nieoczekiwany błąd.",
+      "payment": "Wystąpił błąd płatności."
+    },
+    "success": {
+      "title": "Płatność zakończona sukcesem!",
+      "description": "Dziękujemy za subskrypcję Vaulte Pro. Twoje konto zostało zaktualizowane i masz teraz pełny dostęp do wszystkich funkcji premium.",
+      "status_label": "Status transakcji:",
+      "status_paid": "Opłacono",
+      "session_id": "ID Sesji:",
+      "cta_dashboard": "Przejdź do Dashboardu",
+      "cta_manage": "Zarządzaj subskrypcją",
+      "footer_note": "Potwierdzenie płatności zostało wysłane na Twój adres email. W razie pytań skontaktuj się z nami przez support."
+    }
+  },
+  "help": {
+    "hero": {
+      "badge": "Centrum Pomocy Vaulte",
+      "title": "Jak możemy Ci pomóc?",
+      "searchPlaceholder": "Szukaj tematu (np. zmiana hasła)..."
+    },
+    "categories": [
+      {
+        "title": "Konto i Logowanie",
+        "desc": "Problemy z dostępem, zmiana hasła, 2FA.",
+        "icon": "🔐"
+      },
+      {
+        "title": "Płatności i Plany",
+        "desc": "Faktury, zmiana metody płatności, cennik.",
+        "icon": "💳"
+      },
+      {
+        "title": "Bezpieczeństwo",
+        "desc": "Jak chronimy Twoje dane, RODO, PSD2.",
+        "icon": "🛡️"
+      },
+      {
+        "title": "Aplikacja Mobilna",
+        "desc": "Pobieranie, instalacja, błędy techniczne.",
+        "icon": "📱"
+      },
+      {
+        "title": "Integracje Bankowe",
+        "desc": "Dodawanie konta, odnawianie zgód (90 dni).",
+        "icon": "🏦"
+      },
+      {
+        "title": "Przelewy",
+        "desc": "Limity, czas realizacji, anulowanie.",
+        "icon": "💸"
+      }
+    ],
+    "popular": {
+      "title": "Często czytane",
+      "articles": [
+        "Jak zresetować zapomniane hasło?",
+        "Dlaczego muszę odnawiać dostęp do banku co 90 dni?",
+        "Jak pobrać fakturę VAT?",
+        "Czy Vaulte działa z kontami firmowymi?"
+      ]
+    },
+    "footer": {
+      "text": "Nie znalazłeś odpowiedzi?",
+      "cta": "Skontaktuj się z Supportem"
+    },
+    "contact": {
+      "back": "Wróć do Centrum Pomocy",
+      "title": "Napisz do nas",
+      "subtitle": "Nasi eksperci odpowiadają zazwyczaj w ciągu 24h.",
+      "email_label": "Twój adres email",
+      "email_placeholder": "Twój email",
+      "topic_label": "Temat zgłoszenia",
+      "topics": [
+        "Problem techniczny",
+        "Płatności i Faktury",
+        "Zgłoszenie błędu (Bug)",
+        "Pytanie o ofertę",
+        "Inne"
+      ],
+      "message_label": "Wiadomość",
+      "message_placeholder": "Opisz dokładnie swój problem...",
+      "message_hint": "Minimum 20 znaków",
+      "upload": {
+        "label": "Dodaj zrzut ekranu",
+        "or": "lub upuść plik tutaj",
+        "hint": "PNG, JPG, PDF do 5MB"
+      },
+      "submit": "Wyślij zgłoszenie",
+      "sending": "Wysyłanie...",
+      "success": {
+        "title": "Zgłoszenie przyjęte!",
+        "desc": "Numer Twojego zgłoszenia to {ticket}. Potwierdzenie wysłaliśmy na Twój email.",
+        "home": "Strona główna",
+        "back_help": "Wróć do pomocy"
+      }
+    }
+  },
+  "enterprise": {
+    "hero": {
+      "badge": "DLA FIRM I INSTYTUCJI",
+      "title": "Przenieś finanse firmy na",
+      "subtitle": "wyższy poziom.",
+      "description": "Vaulte Enterprise to rozwiązanie szyte na miarę. Porozmawiajmy o tym, jak możemy zautomatyzować procesy finansowe w Twojej organizacji.",
+      "certs": "Certyfikaty bezpieczeństwa"
+    },
+    "benefits": [
+      {
+        "title": "Dedykowany Opiekun",
+        "desc": "Twój osobisty Account Manager dostępny 24/7."
+      },
+      {
+        "title": "Wdrożenie On-Premise",
+        "desc": "Możliwość instalacji Vaulte na Twojej infrastrukturze."
+      },
+      {
+        "title": "Custom SLA",
+        "desc": "Gwarancja dostępności usług do 99.99%."
+      },
+      {
+        "title": "White-Label",
+        "desc": "Pełny branding aplikacji Twoim logo i kolorami."
+      }
+    ],
+    "form": {
+      "title": "Skontaktuj się z działem sprzedaży",
+      "subtitle": "Wypełnij formularz, a nasz konsultant odezwie się do Ciebie w ciągu 2 godzin.",
+      "labels": {
+        "name": "Imię i Nazwisko",
+        "email": "Służbowy adres email",
+        "company": "Nazwa firmy",
+        "role": "Stanowisko",
+        "size": "Wielkość firmy (liczba pracowników)",
+        "message": "Wiadomość / Potrzeby"
+      },
+      "placeholders": {
+        "name": "Jan Kowalski",
+        "email": "Adres email",
+        "company": "Twoja Firma S.A.",
+        "role": "np. CFO / Dyrektor Finansowy",
+        "message": "Opisz krótko, czego szukasz..."
+      },
+      "submit": "Wyślij zapytanie",
+      "sending": "Wysyłanie...",
+      "privacy": "Klikając wyślij, akceptujesz naszą {link}."
+    },
+    "success": {
+      "title": "Dziękujemy za kontakt!",
+      "description": "Twoje zgłoszenie trafiło do naszego zespołu sprzedaży Enterprise. Nasz konsultant skontaktuje się z Tobą pod adresem {email} w ciągu najbliższych 2 godzin.",
+      "back": "Wróć na stronę główną"
+    }
+  },
+  "privacy": {
+    "hero": {
+      "title": "Polityka Prywatności",
+      "subtitle": "Dbamy o bezpieczeństwo Twoich finansów."
+    },
+    "summary": {
+      "title": "W skrócie:",
+      "text": "Nie sprzedajemy Twoich danych. Nie widzimy Twoich haseł do banku. Dane są szyfrowane (AES-256). Służą wyłącznie do wyświetlania Twoich statystyk."
+    },
+    "sections": {
+      "s1": {
+        "title": "1. Administrator Danych",
+        "text": "Administratorem Twoich danych osobowych jest Vaulte Sp. z o.o. z siedzibą w Warszawie. Możesz skontaktować się z Inspektorem Ochrony Danych pod adresem: iod{'@'}Vaulte.pro."
+      },
+      "s2": {
+        "title": "2. Jakie dane przetwarzamy?",
+        "items": {
+          "account": "<strong>Dane konta:</strong> adres email, imię i nazwisko (niezbędne do logowania).",
+          "financial": "<strong>Dane finansowe (AIS):</strong> historia transakcji, saldo, numer konta IBAN. Dane te pobierane są wyłącznie na Twoje wyraźne żądanie za pośrednictwem bezpiecznego API.",
+          "technical": "<strong>Dane techniczne:</strong> adres IP, typ przeglądarki, pliki cookies."
+        }
+      },
+      "s3": {
+        "title": "3. Bezpieczeństwo (Open Banking)",
+        "text": "Korzystamy z usług licencjonowanych dostawców (TPP) działających zgodnie z unijną dyrektywą PSD2. Kiedy łączysz konto bankowe:",
+        "steps": [
+          "Zostajesz przekierowany na szyfrowaną stronę swojego banku.",
+          "Logujesz się w banku (my nie widzimy tych danych).",
+          "Bank wysyła nam bezpieczny, czasowy \"token\", który pozwala nam pobrać historię transakcji."
+        ]
+      },
+      "s4": {
+        "title": "4. Komu udostępniamy dane?",
+        "text": "Twoje dane mogą być przetwarzane przez podmioty techniczne wspierające naszą infrastrukturę (np. dostawcy chmury obliczeniowej, dostawcy API bankowego). Podmioty te przetwarzają dane wyłącznie na nasze polecenie i są zobowiązane do zachowania poufności."
+      },
+      "s5": {
+        "title": "5. Twoje prawa (RODO)",
+        "text": "Masz prawo do: dostępu do swoich danych, ich sprostowania, usunięcia (\"prawo do bycia zapomnianym\"), ograniczenia przetwarzania oraz przenoszenia danych."
+      }
+    },
+    "back": "Powrót do strony głównej"
+  },
+  "regulamin": {
+    "hero": {
+      "title": "Regulamin Serwisu",
+      "updated": "Ostatnia aktualizacja: 19 Stycznia 2026"
+    },
+    "sections": {
+      "s1": {
+        "title": "§1. Postanowienia ogólne",
+        "p1": "1. Niniejszy Regulamin określa zasady korzystania z aplikacji internetowej <strong>Vaulte</strong>, dostępnej pod adresem Vaulte.pro.",
+        "p2": "2. Operatorem serwisu jest Vaulte Sp. z o.o. z siedzibą w Warszawie (00-001), wpisana do rejestru przedsiębiorców KRS pod numerem 0000000000.",
+        "p3": "3. Aplikacja służy do agregacji danych finansowych użytkownika (usługa AIS - Account Information Service) w oparciu o otwarte API bankowe zgodne z dyrektywą PSD2."
+      },
+      "s2": {
+        "title": "§2. Zasady działania konta",
+        "p1": "1. Dostęp do pełnej funkcjonalności serwisu wymaga rejestracji i utworzenia Konta Użytkownika.",
+        "p2": "2. Użytkownik zobowiązany jest do podania prawdziwych danych oraz chronienia hasła dostępowego przed osobami trzecimi.",
+        "p3": "3. Vaulte nie przechowuje danych logowania do bankowości elektronicznej użytkownika. Proces logowania odbywa się bezpośrednio na stronach banków lub licencjonowanych integratorów (TPP)."
+      },
+      "s3": {
+        "title": "§3. Płatności i Subskrypcje",
+        "p1": "1. Serwis oferuje plany darmowe oraz płatne (Premium).",
+        "p2": "2. Opłaty za subskrypcje pobierane są w cyklach miesięcznych. Użytkownik może zrezygnować z subskrypcji w dowolnym momencie, zachowując dostęp do końca okresu rozliczeniowego."
+      },
+      "s4": {
+        "title": "§4. Odpowiedzialność",
+        "p1": "1. Operator dokłada wszelkich starań, aby dane prezentowane w Aplikacji były aktualne, jednak nie ponosi odpowiedzialności za opóźnienia wynikające z działania API banków.",
+        "p2": "2. Aplikacja ma charakter analityczny i informacyjny. Nie stanowi doradztwa inwestycyjnego w rozumieniu przepisów prawa."
+      },
+      "s5": {
+        "title": "§5. Postępowanie reklamacyjne",
+        "p1": "1. Wszelkie reklamacje dotyczące działania Serwisu należy zgłaszać drogą elektroniczną na adres: pomoc{'@'}Vaulte.pro.",
+        "p2": "2. Reklamacje rozpatrywane są w terminie 14 dni od daty ich wpłynięcia."
+      }
+    },
+    "back": "Powrót do strony głównej"
+  },
+  "rodo": {
+    "hero": {
+      "badge": "Ochrona Danych Osobowych",
+      "title": "Obowiązek Informacyjny RODO",
+      "subtitle": "Dowiedz się, jak przetwarzamy Twoje dane zgodnie z europejskim rozporządzeniem."
+    },
+    "summary": {
+      "title": "Najważniejsze informacje w skrócie:",
+      "item1": "Twoje dane są u nas bezpieczne (szyfrowanie, standardy bankowe).",
+      "item2": "Przetwarzamy je głównie po to, by świadczyć usługę (agregacja kont, analiza).",
+      "item3": "Masz prawo w każdej chwili zażądać ich usunięcia (\"prawo do bycia zapomnianym\").",
+      "item4": "Kontakt do naszego Inspektora Ochrony Danych: <strong>iod{'@'}Vaulte.pro</strong>."
+    },
+    "sections": {
+      "s1": {
+        "title": "1. Administrator Danych Osobowych",
+        "text": "Administratorem Twoich danych osobowych jest <strong>Vaulte Sp. z o.o.</strong> z siedzibą w Warszawie (00-001), przy ul. Fintechowej 12, wpisana do rejestru przedsiębiorców KRS pod numerem 0000123456, NIP: 5250000000."
+      },
+      "s2": {
+        "title": "2. Inspektor Ochrony Danych (IOD)",
+        "text": "Wyznaczyliśmy Inspektora Ochrony Danych, z którym możesz się skontaktować we wszystkich sprawach dotyczących przetwarzania danych osobowych oraz korzystania z praw związanych z tym przetwarzaniem.",
+        "contact": "📧 Kontakt: "
+      },
+      "s3": {
+        "title": "3. Cele i podstawy prawne przetwarzania",
+        "intro": "Przetwarzamy Twoje dane w następujących celach:",
+        "p1": "<strong>Świadczenie usług drogą elektroniczną</strong> (Art. 6 ust. 1 lit. b RODO) – niezbędne do wykonania umowy (założenie konta, agregacja danych bankowych).",
+        "p2": "<strong>Wypełnienie obowiązków prawnych</strong> (Art. 6 ust. 1 lit. c RODO) – np. przepisy o rachunkowości, przepisy podatkowe, przeciwdziałanie praniu pieniędzy (AML).",
+        "p3": "<strong>Cele analityczne i statystyczne</strong> (Art. 6 ust. 1 lit. f RODO) – nasz uzasadniony interes polegający na ulepszaniu aplikacji.",
+        "p4": "<strong>Marketing bezpośredni</strong> (Art. 6 ust. 1 lit. f RODO) – informowanie o nowych funkcjach Vaulte."
+      },
+      "s4": {
+        "title": "4. Odbiorcy danych",
+        "intro": "Twoje dane mogą być przekazywane podmiotom przetwarzającym je na nasze zlecenie, m.in.:",
+        "items": [
+          "Dostawcom usług IT i chmurowych (np. AWS, Google Cloud).",
+          "Licencjonowanym dostawcom usług Open Banking (TPP).",
+          "Biurem księgowym i prawnym.",
+          "Organom państwowym (np. KNF, Urząd Skarbowy) – tylko gdy wymagają tego przepisy prawa."
+        ]
+      },
+      "s5": {
+        "title": "5. Twoje prawa",
+        "intro": "Zgodnie z RODO przysługuje Ci:",
+        "rights": [
+          "Prawo dostępu do danych",
+          "Prawo do sprostowania danych",
+          "Prawo do usunięcia danych (\"bycia zapomnianym\")",
+          "Prawo do ograniczenia przetwarzania",
+          "Prawo do przenoszenia danych",
+          "Prawo wniesienia sprzeciwu"
+        ],
+        "outro": "Masz również prawo wniesienia skargi do organu nadzorczego – Prezesa Urzędu Ochrony Danych Osobowych (PUODO)."
+      },
+      "s6": {
+        "title": "6. Okres przechowywania danych",
+        "text": "Dane przechowujemy przez okres posiadania konta w serwisie Vaulte. Po jego usunięciu, dane mogą być przechowywane przez okres przedawnienia roszczeń (zazwyczaj 3 lub 6 lat) oraz okres wynikający z przepisów podatkowych (5 lat)."
+      },
+      "s7": {
+        "title": "7. Profilowanie",
+        "text": "W ramach usługi \"Budget Tracker\" możemy stosować zautomatyzowaną analizę Twoich wydatków (profilowanie), aby proponować Ci kategorie budżetowe. Nie podejmujemy jednak na tej podstawie decyzji wywołujących skutki prawne (np. odmowa kredytu)."
+      }
+    },
+    "footer": {
+      "back": "Powrót do strony głównej",
+      "updated": "Aktualizacja: Styczeń 2026"
+    }
   }
 }
