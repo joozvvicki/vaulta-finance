@@ -4,7 +4,7 @@ import { useGoalsStore } from "~/stores/goals";
 
 const props = defineProps<{
   isOpen: boolean;
-  goalId?: string | number | null;
+  goalId?: string | null;
   goalTitle?: string;
 }>();
 
@@ -26,7 +26,6 @@ const handleDeposit = () => {
   if (!depositAmount.value || !props.goalId) return;
 
   store.deposit(props.goalId, parseFloat(depositAmount.value));
-
   emit("close");
 };
 
@@ -62,7 +61,7 @@ const handleTouchEnd = () => {
       ></div>
 
       <div
-        class="modal-card relative bg-white w-full md:w-full md:max-w-sm flex flex-col shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
+        class="modal-card relative bg-white w-full md:max-w-sm flex flex-col shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
         :style="{
           transform:
             isDragging || currentTranslateY > 0
@@ -80,7 +79,6 @@ const handleTouchEnd = () => {
           <div
             class="md:hidden w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-2"
           ></div>
-          <div class="flex justify-end px-4 md:hidden"></div>
         </div>
 
         <div class="p-8 pt-2 pb-10 md:pb-8 text-center bg-white">
@@ -90,30 +88,33 @@ const handleTouchEnd = () => {
             💸
           </div>
 
-          <h3 class="font-bold text-2xl text-slate-900 mb-1">Dopłać do celu</h3>
+          <h3 class="font-bold text-2xl text-slate-900 mb-1">
+            {{ $t("goals_deposit.title") }}
+          </h3>
           <p class="text-sm font-medium text-slate-500 mb-8 truncate px-4">
-            {{ goalTitle || "Wybrany cel" }}
+            {{ goalTitle || $t("goals_deposit.fallback_goal") }}
           </p>
 
           <div class="relative mb-8 group">
             <input
               v-model="depositAmount"
               type="number"
-              placeholder="0"
-              class="w-full text-5xl font-extrabold text-slate-900 border-b-2 border-slate-100 focus:border-green-500 outline-none py-4 text-center transition-colors placeholder:text-slate-200 bg-transparent"
+              :placeholder="$t('goals_deposit.placeholder')"
+              class="w-full text-5xl font-black text-slate-900 border-b-2 border-slate-100 focus:border-green-500 outline-none py-4 text-center transition-colors placeholder:text-slate-100 bg-transparent"
               autofocus
             />
             <span
-              class="absolute right-4 bottom-6 text-slate-400 font-bold text-lg pointer-events-none group-focus-within:text-green-500 transition-colors"
-              >PLN</span
+              class="absolute right-4 bottom-6 text-slate-400 font-bold text-lg pointer-events-none group-focus-within:text-green-500 transition-colors uppercase"
             >
+              {{ $t("goals_deposit.currency") }}
+            </span>
           </div>
 
           <button
             @click="handleDeposit"
-            class="w-full py-4 bg-green-600 text-white font-bold rounded-2xl hover:bg-green-700 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-green-500/30 text-lg"
+            class="w-full py-4 bg-green-600 text-white font-bold rounded-2xl hover:bg-green-700 transition-all shadow-xl shadow-green-500/30 text-lg active:scale-95"
           >
-            Zaksięguj wpłatę
+            {{ $t("goals_deposit.submit") }}
           </button>
         </div>
       </div>
@@ -122,7 +123,6 @@ const handleTouchEnd = () => {
 </template>
 
 <style scoped>
-/* Te same style co wszędzie */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-out;
@@ -145,6 +145,7 @@ const handleTouchEnd = () => {
 .slide-up-leave-to .modal-card {
   transform: translateY(100%) !important;
 }
+
 @media (min-width: 768px) {
   .slide-up-enter-from .modal-card,
   .slide-up-leave-to .modal-card {

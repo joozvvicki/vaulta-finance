@@ -2,6 +2,8 @@
 import Papa from "papaparse";
 
 const emit = defineEmits(["imported"]);
+const { t } = useI18n();
+
 const isProcessing = ref(false);
 const dragActive = ref(false);
 
@@ -22,17 +24,19 @@ const handleFile = (file: File) => {
       const transactions = results.data
         .map((row: any) => {
           const amount = parseAmount(row["Kwota operacji"]);
-
           const date = row["Data księgowania"] || row["Data waluty"];
 
           let merchant =
             row["Nadawca / Odbiorca"] || row["Nazwa nadawcy/odbiorcy"];
           if (!merchant || merchant.trim() === "") {
             merchant =
-              row["Tytułem"] || row["Typ operacji"] || "Operacja bankowa";
+              row["Tytułem"] ||
+              row["Typ operacji"] ||
+              t("transaction_import.default_merchant");
           }
 
-          const category = row["Kategoria"] || "Inne";
+          const category =
+            row["Kategoria"] || t("transaction_import.default_category");
 
           return {
             id:
@@ -58,13 +62,14 @@ const handleFile = (file: File) => {
     error: (err) => {
       console.error(err);
       isProcessing.value = false;
-      alert("Błąd odczytu pliku. Sprawdź czy to na pewno CSV.");
+      alert(t("transaction_import.error_read")); // Tłumaczony błąd
     },
   });
 };
 
 const getIconByCategory = (cat: string) => {
   const c = cat.toLowerCase();
+  // Te słowa zostawiamy po polsku, bo pochodzą z polskiego pliku CSV banku
   if (c.includes("zakupy") || c.includes("sklep")) return "🛒";
   if (c.includes("paliwo") || c.includes("transport")) return "⛽";
   if (c.includes("jedzenie") || c.includes("restauracja")) return "🍔";
@@ -123,18 +128,24 @@ const onFileSelect = (e: Event) => {
           </svg>
         </div>
         <p class="mb-2 text-sm text-slate-500">
-          <span class="font-bold text-slate-900">Kliknij</span> lub przeciągnij
-          plik CSV tutaj
+          <span class="font-bold text-slate-900">{{
+            $t("transaction_import.click")
+          }}</span>
+          {{ $t("transaction_import.upload_main") }}
         </p>
-        <p class="text-xs text-slate-400">Obsługujemy format Pekao / PKO BP</p>
+        <p
+          class="text-[10px] uppercase font-bold text-slate-400 tracking-widest"
+        >
+          {{ $t("transaction_import.supported") }}
+        </p>
       </div>
 
-      <div v-else class="flex flex-col items-center">
+      <div v-else class="flex flex-col items-center animate-pulse">
         <div
           class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-4"
         ></div>
-        <p class="text-sm font-medium text-slate-600">
-          Przetwarzanie Twoich wydatków...
+        <p class="text-sm font-bold text-slate-600 uppercase tracking-tight">
+          {{ $t("transaction_import.processing") }}
         </p>
       </div>
 

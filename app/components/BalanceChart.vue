@@ -2,16 +2,18 @@
 import { computed } from "vue";
 import { useTransactionStore } from "~/stores/transactions";
 import { subDays, isSameDay, parseISO, isValid, format } from "date-fns";
-import { pl } from "date-fns/locale";
+import { pl, enUS } from "date-fns/locale";
 
 const props = defineProps<{
   period: "7d" | "30d";
 }>();
 
+const { t, locale } = useI18n();
 const store = useTransactionStore();
-const { profile } = useProfile(); // Pobieramy dostęp do zsynchronizowanego profilu
+const { profile } = useProfile();
 
-// Bezpieczne parsowanie daty z Supabase (format YYYY-MM-DD)
+const dateLocale = computed(() => (locale.value === "pl" ? pl : enUS));
+
 const parseDateSafe = (dateStr: string) => {
   if (!dateStr) return new Date();
   const date = parseISO(dateStr);
@@ -19,17 +21,18 @@ const parseDateSafe = (dateStr: string) => {
 };
 
 const formatMoney = (amount: number) => {
-  return amount.toLocaleString("pl-PL", { minimumFractionDigits: 2 }) + " PLN";
+  const code = locale.value === "pl" ? "pl-PL" : "en-US";
+  return (
+    amount.toLocaleString(code, { minimumFractionDigits: 2 }) +
+    ` ${t("chart.currency")}`
+  );
 };
 
 const chartData = computed(() => {
   const daysCount = props.period === "7d" ? 7 : 30;
-
-  // Pobieramy wartości z profilu (Supabase)
   const currentSavings = Number(profile.value.saved_balance || 0);
   const initialBalanceFromDB = Number(profile.value.initial_balance || 0);
 
-  // Wyliczamy aktualny stan konta bieżącego na podstawie transakcji w store
   const currentCheckingBalance =
     initialBalanceFromDB +
     store.transactions.reduce((acc, t) => acc + Number(t.amount), 0);
@@ -37,11 +40,8 @@ const chartData = computed(() => {
   let runningCheckingBalance = currentCheckingBalance;
   const history = [];
 
-  // Generujemy punkty danych cofając się w czasie
   for (let i = 0; i < daysCount; i++) {
     const dateCursor = subDays(new Date(), i);
-
-    // Filtrujemy transakcje z konkretnego dnia
     const dailyTransactions = store.transactions.filter((t) =>
       isSameDay(parseDateSafe(t.date), dateCursor),
     );
@@ -65,17 +65,15 @@ const chartData = computed(() => {
       expense: dailyExpense,
     });
 
-    // Odejmujemy zmianę z danego dnia, aby uzyskać stan z dnia poprzedniego
     runningCheckingBalance -= dailyNetChange;
   }
 
-  // Odwracamy, aby wykres szedł od lewej (przeszłość) do prawej (dziś)
   return history.reverse();
 });
 
 const series = computed(() => [
   {
-    name: "Całkowite środki",
+    name: t("chart.total_funds"),
     data: chartData.value.map((d) => parseFloat(d.total.toFixed(2))),
   },
 ]);
@@ -88,7 +86,7 @@ const chartOptions = computed(() => ({
     fontFamily: "inherit",
     animations: { enabled: true },
   },
-  colors: ["#2563eb"], // Niebieski Vaulte
+  colors: ["#2563eb"],
   fill: {
     type: "gradient",
     gradient: {
@@ -99,10 +97,7 @@ const chartOptions = computed(() => ({
     },
   },
   dataLabels: { enabled: false },
-  stroke: {
-    curve: "smooth",
-    width: 3,
-  },
+  stroke: { curve: "smooth", width: 3 },
   markers: {
     size: 4,
     colors: ["#fff"],
@@ -112,11 +107,10 @@ const chartOptions = computed(() => ({
   },
   xaxis: {
     categories: chartData.value.map((d) => {
-      if (props.period === "7d") {
-        return format(d.date, "eee", { locale: pl });
-      } else {
-        return format(d.date, "d MMM", { locale: pl });
-      }
+      // Dynamiczne formatowanie osi X
+      return format(d.date, props.period === "7d" ? "eee" : "d MMM", {
+        locale: dateLocale.value,
+      });
     }),
     axisBorder: { show: false },
     axisTicks: { show: false },
@@ -124,9 +118,7 @@ const chartOptions = computed(() => ({
       style: { colors: "#64748b", fontSize: "10px", fontWeight: 600 },
     },
   },
-  yaxis: {
-    show: false,
-  },
+  yaxis: { show: false },
   grid: {
     borderColor: "#f1f5f9",
     strokeDashArray: 4,
@@ -137,23 +129,26 @@ const chartOptions = computed(() => ({
     x: { show: false },
     custom: function ({ dataPointIndex }: any) {
       const data: any = chartData.value[dataPointIndex];
-      const dateStr = format(data.date, "d MMMM yyyy", { locale: pl });
+      // Format daty w tooltipie
+      const dateStr = format(data.date, "d MMMM yyyy", {
+        locale: dateLocale.value,
+      });
 
       return `
         <div class="px-4 py-3 bg-white border border-slate-100 rounded-2xl shadow-2xl text-sm font-sans z-50 min-w-[200px]">
-          <div class="font-bold text-slate-900 mb-2 border-b border-slate-50 pb-2 text-xs uppercase tracking-wider">${dateStr}</div>
+          <div class="font-bold text-slate-900 mb-2 border-b border-slate-50 pb-2 text-[10px] uppercase tracking-wider">${dateStr}</div>
           
           <div class="space-y-1.5 mb-3">
              <div class="flex items-center justify-between">
-                <span class="text-slate-400 text-[10px] font-bold uppercase">Oszczędności</span>
+                <span class="text-slate-400 text-[10px] font-bold uppercase">${t("chart.savings")}</span>
                 <span class="font-bold text-slate-700 text-xs">${formatMoney(data.savings)}</span>
              </div>
              <div class="flex items-center justify-between">
-                <span class="text-slate-400 text-[10px] font-bold uppercase">Bieżące</span>
+                <span class="text-slate-400 text-[10px] font-bold uppercase">${t("chart.checking")}</span>
                 <span class="font-bold text-slate-700 text-xs">${formatMoney(data.checking)}</span>
              </div>
              <div class="flex items-center justify-between pt-2 border-t border-slate-50">
-                <span class="text-slate-900 font-black text-xs uppercase">Razem</span>
+                <span class="text-slate-900 font-black text-xs uppercase">${t("chart.total")}</span>
                 <span class="font-black text-blue-600 text-sm">${formatMoney(data.total)}</span>
              </div>
           </div>
@@ -166,7 +161,7 @@ const chartOptions = computed(() => ({
                 data.income > 0
                   ? `
                 <div class="text-center">
-                  <span class="text-[9px] font-bold text-slate-400 uppercase block">Wpływy</span>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block">${t("chart.income")}</span>
                   <span class="font-bold text-green-600 text-[11px]">+${data.income.toFixed(2)}</span>
                 </div>
               `
@@ -176,7 +171,7 @@ const chartOptions = computed(() => ({
                 data.expense < 0
                   ? `
                 <div class="text-center">
-                  <span class="text-[9px] font-bold text-slate-400 uppercase block">Wydatki</span>
+                  <span class="text-[9px] font-bold text-slate-400 uppercase block">${t("chart.expenses")}</span>
                   <span class="font-bold text-red-500 text-[11px]">${data.expense.toFixed(2)}</span>
                 </div>
               `

@@ -8,11 +8,11 @@ const props = defineProps<{
 
 const emit = defineEmits(["close"]);
 
+const { t } = useI18n();
 const client = useSupabaseClient();
 const store = useTransactionStore();
 const isImporting = ref(false);
 
-// Reset stanu przy otwarciu
 watch(
   () => props.isOpen,
   (newVal) => {
@@ -22,8 +22,6 @@ watch(
     }
   },
 );
-
-// --- LOGIKA IMPORTU (Z twojego kodu) ---
 
 const handleImportedData = async (newTransactions: any[]) => {
   if (newTransactions.length === 0) return;
@@ -36,7 +34,7 @@ const handleImportedData = async (newTransactions: any[]) => {
   const userId = user?.id;
 
   if (!userId) {
-    alert("Błąd: Nie znaleziono sesji użytkownika. Zaloguj się ponownie.");
+    alert(t("import.alerts.session_error"));
     isImporting.value = false;
     return;
   }
@@ -68,17 +66,16 @@ const handleImportedData = async (newTransactions: any[]) => {
     if (error) throw error;
 
     await store.fetchTransactions();
-    alert(`Sukces! Zaimportowano ${newTransactions.length} transakcji.`);
+
+    alert(t("import.alerts.success", { count: newTransactions.length }));
     emit("close");
   } catch (e: any) {
     console.error("Błąd RLS/Bazy:", e.message);
-    alert("Błąd uprawnień: " + e.message);
+    alert(t("import.alerts.permission_error", { message: e.message }));
   } finally {
     isImporting.value = false;
   }
 };
-
-// --- LOGIKA SWIPE-TO-CLOSE ---
 
 const touchStartY = ref(0);
 const currentTranslateY = ref(0);
@@ -93,20 +90,13 @@ const handleTouchMove = (e: TouchEvent) => {
   if (!isDragging.value) return;
   const currentY = e.touches[0].clientY;
   const delta = currentY - touchStartY.value;
-
-  if (delta > 0) {
-    currentTranslateY.value = delta;
-  }
+  if (delta > 0) currentTranslateY.value = delta;
 };
 
 const handleTouchEnd = () => {
   isDragging.value = false;
-
-  if (currentTranslateY.value > 150) {
-    emit("close");
-  } else {
-    currentTranslateY.value = 0;
-  }
+  if (currentTranslateY.value > 150) emit("close");
+  else currentTranslateY.value = 0;
 };
 </script>
 
@@ -142,19 +132,19 @@ const handleTouchEnd = () => {
           </div>
 
           <div
-            class="px-6 py-4 flex justify-between items-center bg-slate-50/50"
+            class="px-6 py-4 flex justify-between items-center bg-slate-50/30"
           >
             <div>
               <h3 class="font-bold text-lg text-slate-900">
-                Importuj historię
+                {{ $t("import.title") }}
               </h3>
               <p class="text-xs text-slate-500">
-                Obsługa formatów: Pekao, PKO BP, mBank
+                {{ $t("import.supported_banks") }}
               </p>
             </div>
             <button
               @click="$emit('close')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition"
             >
               ✕
             </button>
@@ -162,15 +152,15 @@ const handleTouchEnd = () => {
         </div>
 
         <div class="p-8 overflow-y-auto custom-scrollbar bg-white">
-          <div v-if="isImporting" class="py-12 text-center">
+          <div v-if="isImporting" class="py-12 text-center" v-motion-fade>
             <div
               class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
             ></div>
             <p class="text-sm font-bold text-slate-900">
-              Zapisywanie w chmurze...
+              {{ $t("import.loading.title") }}
             </p>
             <p class="text-xs text-slate-500 mt-1">
-              To może potrwać chwilę przy dużej ilości danych.
+              {{ $t("import.loading.desc") }}
             </p>
           </div>
 
@@ -182,28 +172,22 @@ const handleTouchEnd = () => {
 </template>
 
 <style scoped>
-/* Te same style animacji co w reszcie aplikacji */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-out;
 }
-
 .slide-up-enter-active .backdrop,
 .slide-up-leave-active .backdrop {
   transition: opacity 0.3s ease;
 }
-
 .slide-up-enter-active .modal-card,
 .slide-up-leave-active .modal-card {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 .slide-up-enter-from .backdrop,
 .slide-up-leave-to .backdrop {
   opacity: 0;
 }
-
-/* === MOBILE === */
 .slide-up-enter-from .modal-card {
   transform: translateY(100%);
 }
@@ -211,12 +195,19 @@ const handleTouchEnd = () => {
   transform: translateY(100%) !important;
 }
 
-/* === DESKTOP === */
 @media (min-width: 768px) {
   .slide-up-enter-from .modal-card,
   .slide-up-leave-to .modal-card {
     transform: scale(0.95) !important;
     opacity: 0;
   }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 </style>

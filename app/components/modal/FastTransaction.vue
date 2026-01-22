@@ -8,6 +8,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["close", "sent"]);
 
+const { t } = useI18n();
 const store = useTransactionStore();
 const isSending = ref(false);
 
@@ -35,16 +36,16 @@ const handleTransfer = async () => {
 
   isSending.value = true;
 
+  // Symulacja opóźnienia bankowego
   await new Promise((resolve) => setTimeout(resolve, 800));
 
   const amountValue = parseFloat(form.amount.replace(",", "."));
 
   store.addTransaction({
-    id: Date.now().toString(),
     merchant: form.recipient,
     amount: -Math.abs(amountValue),
     date: new Date().toISOString().split("T")[0],
-    category: "Przelew",
+    category: t("quick_transfer.transaction.category"),
     status: "Completed",
     currency: "PLN",
     description: form.title,
@@ -56,6 +57,7 @@ const handleTransfer = async () => {
   emit("close");
 };
 
+// --- LOGIKA SWIPE-TO-CLOSE ---
 const touchStartY = ref(0);
 const currentTranslateY = ref(0);
 const isDragging = ref(false);
@@ -69,20 +71,13 @@ const handleTouchMove = (e: TouchEvent) => {
   if (!isDragging.value) return;
   const currentY = e.touches[0].clientY;
   const delta = currentY - touchStartY.value;
-
-  if (delta > 0) {
-    currentTranslateY.value = delta;
-  }
+  if (delta > 0) currentTranslateY.value = delta;
 };
 
 const handleTouchEnd = () => {
   isDragging.value = false;
-
-  if (currentTranslateY.value > 150) {
-    emit("close");
-  } else {
-    currentTranslateY.value = 0;
-  }
+  if (currentTranslateY.value > 150) emit("close");
+  else currentTranslateY.value = 0;
 };
 </script>
 
@@ -98,7 +93,7 @@ const handleTouchEnd = () => {
       ></div>
 
       <div
-        class="modal-card relative bg-white w-full md:w-full md:max-w-md flex flex-col max-h-[90vh] shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
+        class="modal-card relative bg-white w-full md:max-w-md flex flex-col max-h-[90vh] shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
         :style="{
           transform:
             isDragging || currentTranslateY > 0
@@ -108,7 +103,7 @@ const handleTouchEnd = () => {
         :class="{ 'transition-transform duration-300': !isDragging }"
       >
         <div
-          class="touch-none bg-white cursor-grab active:cursor-grabbing border-b border-slate-50"
+          class="touch-none bg-white cursor-grab active:cursor-grabbing border-b border-slate-50 flex-shrink-0"
           @touchstart="handleTouchStart"
           @touchmove="handleTouchMove"
           @touchend="handleTouchEnd"
@@ -118,10 +113,12 @@ const handleTouchEnd = () => {
           </div>
 
           <div class="px-8 pt-4 pb-4 flex justify-between items-center">
-            <h3 class="font-bold text-xl text-slate-900">Szybki przelew</h3>
+            <h3 class="font-bold text-xl text-slate-900">
+              {{ $t("quick_transfer.title") }}
+            </h3>
             <button
               @click="$emit('close')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition"
             >
               ✕
             </button>
@@ -134,7 +131,7 @@ const handleTouchEnd = () => {
               <label
                 class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1 tracking-wider"
               >
-                Odbiorca
+                {{ $t("quick_transfer.form.recipient_label") }}
               </label>
               <div class="relative">
                 <span
@@ -143,7 +140,7 @@ const handleTouchEnd = () => {
                 >
                 <input
                   v-model="form.recipient"
-                  placeholder="Np. Jan Kowalski"
+                  :placeholder="$t('quick_transfer.form.recipient_placeholder')"
                   class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-sm font-medium text-slate-900"
                 />
               </div>
@@ -153,7 +150,7 @@ const handleTouchEnd = () => {
               <label
                 class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1 tracking-wider"
               >
-                Tytuł przelewu
+                {{ $t("quick_transfer.form.title_label") }}
               </label>
               <div class="relative">
                 <span
@@ -162,7 +159,7 @@ const handleTouchEnd = () => {
                 >
                 <input
                   v-model="form.title"
-                  placeholder="Np. Rozliczenie za pizzę"
+                  :placeholder="$t('quick_transfer.form.title_placeholder')"
                   class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-10 pr-4 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-sm font-medium text-slate-900"
                 />
               </div>
@@ -172,14 +169,14 @@ const handleTouchEnd = () => {
               <label
                 class="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1 tracking-wider"
               >
-                Kwota (PLN)
+                {{ $t("quick_transfer.form.amount_label") }}
               </label>
               <div class="relative">
                 <input
                   v-model="form.amount"
                   type="number"
-                  placeholder="0.00"
-                  class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-2xl font-bold text-slate-900 placeholder:text-slate-300"
+                  :placeholder="$t('quick_transfer.form.amount_placeholder')"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-center outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition text-2xl font-bold text-slate-900 placeholder:text-slate-200"
                 />
               </div>
             </div>
@@ -189,13 +186,17 @@ const handleTouchEnd = () => {
             <button
               @click="handleTransfer"
               :disabled="isSending || !form.amount || !form.recipient"
-              class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              class="w-full py-4 bg-blue-600 text-white font-bold rounded-2xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               <span
                 v-if="isSending"
                 class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"
               ></span>
-              {{ isSending ? "Przetwarzanie..." : "Wyślij środki" }}
+              {{
+                isSending
+                  ? $t("quick_transfer.actions.processing")
+                  : $t("quick_transfer.actions.send")
+              }}
             </button>
           </div>
         </div>
@@ -205,28 +206,22 @@ const handleTouchEnd = () => {
 </template>
 
 <style scoped>
-/* Te same style animacji co w poprzednim modalu - dla spójności */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-out;
 }
-
 .slide-up-enter-active .backdrop,
 .slide-up-leave-active .backdrop {
   transition: opacity 0.3s ease;
 }
-
 .slide-up-enter-active .modal-card,
 .slide-up-leave-active .modal-card {
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 .slide-up-enter-from .backdrop,
 .slide-up-leave-to .backdrop {
   opacity: 0;
 }
-
-/* === MOBILE === */
 .slide-up-enter-from .modal-card {
   transform: translateY(100%);
 }
@@ -234,12 +229,19 @@ const handleTouchEnd = () => {
   transform: translateY(100%) !important;
 }
 
-/* === DESKTOP === */
 @media (min-width: 768px) {
   .slide-up-enter-from .modal-card,
   .slide-up-leave-to .modal-card {
     transform: scale(0.95) !important;
     opacity: 0;
   }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 </style>

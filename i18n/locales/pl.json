@@ -865,5 +865,172 @@
       "back": "Powrót do strony głównej",
       "updated": "Aktualizacja: Styczeń 2026"
     }
+  },
+  "budget_manage": {
+    "title_manage": "Zarządzaj budżetami",
+    "title_add": "Dodaj kategorię",
+    "title_edit": "Edytuj kategorię",
+    "limit_label": "Limit:",
+    "add_new_btn": "Dodaj nową kategorię",
+    "tooltips": {
+      "edit": "Edytuj",
+      "delete": "Usuń"
+    },
+    "form": {
+      "category_name": "Nazwa kategorii",
+      "category_placeholder": "np. Edukacja",
+      "limit_label": "Limit (PLN)",
+      "icon_label": "Ikona",
+      "icon_placeholder": "np. 📚",
+      "keywords_label": "Słowa kluczowe",
+      "keywords_hint": "Automatyczne przypisywanie (oddziel przecinkami).",
+      "keywords_placeholder": "np. udemy, kurs, książka, empik"
+    },
+    "actions": {
+      "cancel": "Anuluj",
+      "save": "Zapisz zmiany"
+    },
+    "alerts": {
+      "delete_confirm": "Czy na pewno usunąć tę kategorię?"
+    }
+  },
+  "goals_deposit": {
+    "title": "Dopłać do celu",
+    "fallback_goal": "Wybrany cel",
+    "placeholder": "0",
+    "currency": "PLN",
+    "submit": "Zaksięguj wpłatę"
+  },
+  "quick_transfer": {
+    "title": "Szybki przelew",
+    "form": {
+      "recipient_label": "Odbiorca",
+      "recipient_placeholder": "Np. Jan Kowalski",
+      "title_label": "Tytuł przelewu",
+      "title_placeholder": "Np. Rozliczenie za pizzę",
+      "amount_label": "Kwota (PLN)",
+      "amount_placeholder": "0.00"
+    },
+    "actions": {
+      "send": "Wyślij środki",
+      "processing": "Przetwarzanie..."
+    },
+    "transaction": {
+      "category": "Przelew"
+    }
+  },
+  "goals_manage": {
+    "title_add": "Nowy cel",
+    "title_edit": "Edytuj cel",
+    "form": {
+      "name_label": "Nazwa celu",
+      "name_placeholder": "np. Dom na Mazurach",
+      "target_label": "Kwota docelowa",
+      "saved_label": "Już uzbierano",
+      "img_label": "Zdjęcie (URL)",
+      "img_placeholder": "https://...",
+      "color_label": "Kolor paska"
+    },
+    "actions": {
+      "cancel": "Anuluj",
+      "save": "Zapisz cel"
+    }
+  },
+  "import": {
+    "title": "Importuj historię",
+    "supported_banks": "Obsługa formatów: Pekao, PKO BP, mBank",
+    "loading": {
+      "title": "Zapisywanie w chmurze...",
+      "desc": "To może potrwać chwilę przy dużej ilości danych."
+    },
+    "alerts": {
+      "session_error": "Błąd: Nie znaleziono sesji użytkownika. Zaloguj się ponownie.",
+      "success": "Sukces! Zaimportowano {count} transakcji.",
+      "permission_error": "Błąd uprawnień: {message}"
+    }
+  },
+  "transactions_modal": {
+    "title_add": "Nowa transakcja",
+    "title_edit": "Edytuj transakcję",
+    "types": {
+      "expense": "Wydatek",
+      "income": "Przychód"
+    },
+    "labels": {
+      "merchant": "Nazwa / Odbiorca",
+      "amount": "Kwota",
+      "date": "Data",
+      "category": "Kategoria",
+      "status": "Transakcja zakończona (zaksięgowana)"
+    },
+    "categories": {
+      "Jedzenie": "Jedzenie",
+      "Transport": "Transport",
+      "Rozrywka": "Rozrywka",
+      "Zakupy": "Zakupy",
+      "Rachunki": "Rachunki",
+      "Zdrowie": "Zdrowie",
+      "Wynagrodzenie": "Wynagrodzenie",
+      "Inne": "Inne",
+      "Edukacja": "Edukacja",
+      "Podróże": "Podróże",
+      "Przelew": "Przelew"
+    },
+    "actions": {
+      "cancel": "Anuluj",
+      "save": "Zapisz"
+    }
+  },
+  "assistant": {
+    "title": "Asystent Vaulte",
+    "placeholder": "Zadaj pytanie...",
+    "initial_message": "Cześć! Jestem Twoim asystentem Vaulte. **Jak mogę Ci dzisiaj pomóc?**",
+    "disclaimer": "AI może się mylić. Weryfikuj i potwierdzaj każdą operację.",
+    "reset_title": "Resetuj rozmowę",
+    "listening_error": "Brak uprawnień do mikrofonu.",
+    "browser_error": "Twoja przeglądarka nie wspiera rozpoznawania mowy.",
+    "api_error": "Coś poszło nie tak. Spróbuj ponownie.",
+    "confirmation": {
+      "required": "Wymagane potwierdzenie",
+      "yes": "✅ Tak",
+      "cancel": "Anuluj",
+      "success": "✅ Operacja wykonana pomyślnie.",
+      "error": "❌ Wystąpił błąd podczas operacji.",
+      "denied": "🚫 Operacja anulowana.",
+      "actions": {
+        "CREATE": "Utworzenie",
+        "UPDATE": "Aktualizacja",
+        "DELETE": "Usunięcie"
+      },
+      "domains": {
+        "TRANSACTION": "transakcją",
+        "GOAL": "celem",
+        "BUDGET": "budżetem"
+      }
+    }
+  },
+  "chart": {
+    "total_funds": "Całkowite środki",
+    "savings": "Oszczędności",
+    "checking": "Bieżące",
+    "total": "Razem",
+    "income": "Wpływy",
+    "expenses": "Wydatki",
+    "currency": "PLN"
+  },
+  "pwa": {
+    "offline_ready": "Aplikacja gotowa do pracy offline.",
+    "update_available": "Dostępna nowa wersja aplikacji! 🚀",
+    "refresh": "Odśwież",
+    "close": "Zamknij"
+  },
+  "transaction_import": {
+    "processing": "Przetwarzanie Twoich wydatków...",
+    "upload_main": "Kliknij lub przeciągnij plik CSV tutaj",
+    "click": "Kliknij",
+    "supported": "Obsługujemy format Pekao / PKO BP",
+    "error_read": "Błąd odczytu pliku. Sprawdź czy to na pewno CSV.",
+    "default_merchant": "Operacja bankowa",
+    "default_category": "Inne"
   }
 }

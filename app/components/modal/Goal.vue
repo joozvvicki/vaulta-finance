@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
-import { useGoalsStore } from "~/stores/goals"; // Zakładam, że masz taki store
+import { useGoalsStore } from "~/stores/goals";
 
 const props = defineProps<{
   isOpen: boolean;
-  editId?: string | number | null;
+  editId?: string | null;
 }>();
 
 const emit = defineEmits(["close"]);
@@ -31,7 +31,6 @@ const form = reactive({
   color: "bg-blue-500",
 });
 
-// Reset i wypełnianie danych
 watch(
   () => props.isOpen,
   (newVal) => {
@@ -73,9 +72,7 @@ const handleSave = () => {
   if (isEditing.value && props.editId) {
     store.updateGoal(props.editId, payload);
   } else {
-    store.addGoal({
-      ...payload,
-    });
+    store.addGoal({ ...payload });
   }
 
   emit("close");
@@ -116,7 +113,7 @@ const handleTouchEnd = () => {
       ></div>
 
       <div
-        class="modal-card relative bg-white w-full md:w-full md:max-w-md flex flex-col max-h-[90vh] shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
+        class="modal-card relative bg-white w-full md:max-w-md flex flex-col max-h-[90vh] shadow-2xl overflow-hidden rounded-t-3xl md:rounded-2xl will-change-transform"
         :style="{
           transform:
             isDragging || currentTranslateY > 0
@@ -136,11 +133,15 @@ const handleTouchEnd = () => {
           </div>
           <div class="px-6 py-4 flex justify-between items-center">
             <h3 class="font-bold text-xl text-slate-900">
-              {{ isEditing ? "Edytuj cel" : "Nowy cel" }}
+              {{
+                isEditing
+                  ? $t("goals_manage.title_edit")
+                  : $t("goals_manage.title_add")
+              }}
             </h3>
             <button
               @click="$emit('close')"
-              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition"
+              class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 transition"
             >
               ✕
             </button>
@@ -150,22 +151,22 @@ const handleTouchEnd = () => {
         <div class="p-6 overflow-y-auto custom-scrollbar bg-white flex-1">
           <div class="space-y-5">
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Nazwa celu</label
-              >
+              <label class="block text-sm font-bold text-slate-700 mb-2">{{
+                $t("goals_manage.form.name_label")
+              }}</label>
               <input
                 v-model="form.title"
                 type="text"
-                placeholder="np. Dom na Mazurach"
+                :placeholder="$t('goals_manage.form.name_placeholder')"
                 class="w-full border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none transition"
               />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Kwota docelowa</label
-                >
+                <label class="block text-sm font-bold text-slate-700 mb-2">{{
+                  $t("goals_manage.form.target_label")
+                }}</label>
                 <input
                   v-model="form.target"
                   type="number"
@@ -173,9 +174,9 @@ const handleTouchEnd = () => {
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1"
-                  >Już uzbierano</label
-                >
+                <label class="block text-sm font-bold text-slate-700 mb-2">{{
+                  $t("goals_manage.form.saved_label")
+                }}</label>
                 <input
                   v-model="form.saved"
                   type="number"
@@ -185,30 +186,30 @@ const handleTouchEnd = () => {
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-1"
-                >Zdjęcie (URL)</label
-              >
+              <label class="block text-sm font-bold text-slate-700 mb-2">{{
+                $t("goals_manage.form.img_label")
+              }}</label>
               <input
                 v-model="form.img"
                 type="text"
-                placeholder="https://..."
-                class="w-full border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-xs mb-2"
+                :placeholder="$t('goals_manage.form.img_placeholder')"
+                class="w-full border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 outline-none text-xs mb-3"
               />
               <div
                 v-if="form.img"
-                class="h-32 rounded-xl overflow-hidden border border-slate-200 relative group"
+                class="h-32 rounded-xl overflow-hidden border border-slate-200 relative group shadow-inner"
               >
                 <img :src="form.img" class="w-full h-full object-cover" />
                 <div
-                  class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition"
+                  class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"
                 ></div>
               </div>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-slate-700 mb-3"
-                >Kolor paska</label
-              >
+              <label class="block text-sm font-bold text-slate-700 mb-3">{{
+                $t("goals_manage.form.color_label")
+              }}</label>
               <div class="flex flex-wrap gap-3">
                 <button
                   v-for="color in availableColors"
@@ -220,7 +221,7 @@ const handleTouchEnd = () => {
                       ? 'ring-4 ring-offset-2 ring-slate-200 scale-110'
                       : 'opacity-70 hover:opacity-100',
                   ]"
-                  class="w-8 h-8 rounded-full transition-all duration-300"
+                  class="w-8 h-8 rounded-full transition-all duration-300 shadow-sm"
                 ></button>
               </div>
             </div>
@@ -229,15 +230,15 @@ const handleTouchEnd = () => {
           <div class="mt-8 pt-4 flex justify-end gap-3 pb-6 md:pb-0">
             <button
               @click="$emit('close')"
-              class="px-5 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition"
+              class="px-5 py-3 text-slate-600 hover:bg-slate-50 rounded-xl transition font-bold text-sm"
             >
-              Anuluj
+              {{ $t("goals_manage.actions.cancel") }}
             </button>
             <button
               @click="handleSave"
-              class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30"
+              class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 text-sm"
             >
-              Zapisz cel
+              {{ $t("goals_manage.actions.save") }}
             </button>
           </div>
         </div>
@@ -247,7 +248,6 @@ const handleTouchEnd = () => {
 </template>
 
 <style scoped>
-/* Te same style co w poprzednich modalach */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-out;
@@ -270,11 +270,20 @@ const handleTouchEnd = () => {
 .slide-up-leave-to .modal-card {
   transform: translateY(100%) !important;
 }
+
 @media (min-width: 768px) {
   .slide-up-enter-from .modal-card,
   .slide-up-leave-to .modal-card {
     transform: scale(0.95) !important;
     opacity: 0;
   }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 </style>

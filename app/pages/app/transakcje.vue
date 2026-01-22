@@ -281,20 +281,18 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="fixed bottom-24 right-4 flex flex-col gap-3 md:hidden">
-      <button
-        @click="isImportModalOpen = true"
-        class="bg-white text-slate-700 p-4 rounded-full shadow-lg border border-slate-200"
-      >
-        <IconUpload />
-      </button>
-      <button
-        @click="openAddModal()"
-        class="bg-blue-600 text-white p-4 rounded-full shadow-lg shadow-blue-500/30"
-      >
-        <IconPlus />
-      </button>
-    </div>
+    <button
+      @click="isImportModalOpen = true"
+      class="fixed bottom-24 right-20 text-sm flex flex-col gap-3 md:hidden bg-white text-slate-700 p-2 rounded-full shadow-lg border border-slate-200"
+    >
+      <IconUpload />
+    </button>
+    <button
+      @click="openAddModal()"
+      class="fixed bottom-24 right-4 flex flex-col gap-3 md:hidden bg-blue-600 text-white p-4 rounded-full shadow-lg shadow-blue-500/30"
+    >
+      <IconPlus />
+    </button>
 
     <ModalImport
       :is-open="isImportModalOpen"

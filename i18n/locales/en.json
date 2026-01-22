@@ -865,5 +865,172 @@
       "back": "Back to Home Page",
       "updated": "Updated: January 2026"
     }
+  },
+  "budget_manage": {
+    "title_manage": "Manage Budgets",
+    "title_add": "Add Category",
+    "title_edit": "Edit Category",
+    "limit_label": "Limit:",
+    "add_new_btn": "Add new category",
+    "tooltips": {
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "category_name": "Category Name",
+      "category_placeholder": "e.g. Education",
+      "limit_label": "Limit (PLN)",
+      "icon_label": "Icon",
+      "icon_placeholder": "e.g. 📚",
+      "keywords_label": "Keywords",
+      "keywords_hint": "Automatic assignment (separate with commas).",
+      "keywords_placeholder": "e.g. udemy, course, book, store"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "alerts": {
+      "delete_confirm": "Are you sure you want to delete this category?"
+    }
+  },
+  "goals_deposit": {
+    "title": "Add to goal",
+    "fallback_goal": "Selected goal",
+    "placeholder": "0",
+    "currency": "PLN",
+    "submit": "Record deposit"
+  },
+  "quick_transfer": {
+    "title": "Quick transfer",
+    "form": {
+      "recipient_label": "Recipient",
+      "recipient_placeholder": "e.g. John Doe",
+      "title_label": "Transfer title",
+      "title_placeholder": "e.g. Pizza settlement",
+      "amount_label": "Amount (PLN)",
+      "amount_placeholder": "0.00"
+    },
+    "actions": {
+      "send": "Send funds",
+      "processing": "Processing..."
+    },
+    "transaction": {
+      "category": "Transfer"
+    }
+  },
+  "goals_manage": {
+    "title_add": "New Goal",
+    "title_edit": "Edit Goal",
+    "form": {
+      "name_label": "Goal Name",
+      "name_placeholder": "e.g. House in Masuria",
+      "target_label": "Target Amount",
+      "saved_label": "Already Saved",
+      "img_label": "Image (URL)",
+      "img_placeholder": "https://...",
+      "color_label": "Progress Bar Color"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Goal"
+    }
+  },
+  "import": {
+    "title": "Import History",
+    "supported_banks": "Supported formats: Pekao, PKO BP, mBank",
+    "loading": {
+      "title": "Saving to cloud...",
+      "desc": "This may take a while with a large amount of data."
+    },
+    "alerts": {
+      "session_error": "Error: User session not found. Please log in again.",
+      "success": "Success! Imported {count} transactions.",
+      "permission_error": "Permission error: {message}"
+    }
+  },
+  "transactions_modal": {
+    "title_add": "New Transaction",
+    "title_edit": "Edit Transaction",
+    "types": {
+      "expense": "Expense",
+      "income": "Income"
+    },
+    "labels": {
+      "merchant": "Merchant / Recipient",
+      "amount": "Amount",
+      "date": "Date",
+      "category": "Category",
+      "status": "Transaction completed (posted)"
+    },
+    "categories": {
+      "Jedzenie": "Food",
+      "Transport": "Transport",
+      "Rozrywka": "Entertainment",
+      "Zakupy": "Shopping",
+      "Rachunki": "Bills",
+      "Zdrowie": "Health",
+      "Wynagrodzenie": "Salary",
+      "Inne": "Other",
+      "Edukacja": "Education",
+      "Podróże": "Travel",
+      "Przelew": "Transfer"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save"
+    }
+  },
+  "assistant": {
+    "title": "Vaulte Assistant",
+    "placeholder": "Ask a question...",
+    "initial_message": "Hi! I am your Vaulte assistant. **How can I help you today?**",
+    "disclaimer": "AI can make mistakes. Verify and confirm every operation.",
+    "reset_title": "Reset conversation",
+    "listening_error": "Microphone permission denied.",
+    "browser_error": "Your browser does not support speech recognition.",
+    "api_error": "Something went wrong. Please try again.",
+    "confirmation": {
+      "required": "Confirmation required",
+      "yes": "✅ Yes",
+      "cancel": "Cancel",
+      "success": "✅ Operation completed successfully.",
+      "error": "❌ An error occurred during the operation.",
+      "denied": "🚫 Operation cancelled.",
+      "actions": {
+        "CREATE": "Creating",
+        "UPDATE": "Updating",
+        "DELETE": "Deleting"
+      },
+      "domains": {
+        "TRANSACTION": "transaction",
+        "GOAL": "goal",
+        "BUDGET": "budget"
+      }
+    }
+  },
+  "chart": {
+    "total_funds": "Total Funds",
+    "savings": "Savings",
+    "checking": "Checking",
+    "total": "Total",
+    "income": "Income",
+    "expenses": "Expenses",
+    "currency": "PLN"
+  },
+  "pwa": {
+    "offline_ready": "App ready to work offline.",
+    "update_available": "New version available! 🚀",
+    "refresh": "Refresh",
+    "close": "Close"
+  },
+  "transaction_import": {
+    "processing": "Processing your expenses...",
+    "upload_main": "or drag CSV file here",
+    "click": "Click",
+    "supported": "Supported formats: Pekao / PKO BP",
+    "error_read": "File read error. Please check if it's a CSV file.",
+    "default_merchant": "Bank operation",
+    "default_category": "Other"
   }
 }

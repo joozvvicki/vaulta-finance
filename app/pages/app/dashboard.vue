@@ -140,7 +140,7 @@ const stats = computed(() => [
 
       <div class="gap-3 hidden md:flex">
         <button
-          @click="isTransferModalOpen = true"
+          @click="isFastTransferModalOpen = true"
           :disabled="isLoading"
           class="bg-white text-slate-700 border border-slate-200 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition shadow-sm disabled:opacity-50"
         >
@@ -354,6 +354,11 @@ const stats = computed(() => [
     >
       <IconPlus />
     </button>
+
+    <ModalFastTransaction
+      :is-open="isFastTransferModalOpen"
+      @close="isFastTransferModalOpen = false"
+    />
 
     <ModalTransaction
       :is-open="isTransactionModalOpen"
